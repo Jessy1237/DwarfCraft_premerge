@@ -409,16 +409,12 @@ public class DataManager {
 		assert (trainer != null);
 		trainerList.put(trainer.getUniqueId(), trainer);
 		try {
-			PreparedStatement prep = mDBCon.prepareStatement("UPDATE trainers SET yaw=? WHERE uniqueId=?;");
+			PreparedStatement prep = mDBCon.prepareStatement("UPDATE trainers SET yaw=?, pitch=? WHERE uniqueId=?;");
 			prep.setFloat(1, yaw);
-			prep.setString(2, trainer.getUniqueId());
+			prep.setFloat(2, pitch);
+			prep.setString(3, trainer.getUniqueId());
 			prep.execute();
 			prep.close();
-			PreparedStatement prep1 = mDBCon.prepareStatement("UPDATE trainers SET pitch=? WHERE uniqueId=?;");
-			prep1.setFloat(1, pitch);
-			prep1.setString(2, trainer.getUniqueId());
-			prep1.execute();
-			prep1.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

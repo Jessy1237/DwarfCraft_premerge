@@ -9,6 +9,7 @@ public class CSVReader {
 	private ArrayList<CSVRecord> mRecords = new ArrayList<CSVRecord>();
 	private int mVersion = -1;
 	
+	@SuppressWarnings("resource")
 	public CSVReader(String file) throws FileNotFoundException, IOException{
 		FileReader fr = new FileReader(file);
 		BufferedReader br = new BufferedReader(fr);

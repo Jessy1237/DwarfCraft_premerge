@@ -69,11 +69,11 @@ public class CommandCreateTrainer extends Command {
 					} else
 						throw e;
 				}
-				Location location = ((Player) sender).getLocation();
+				Player p = (Player)sender;
+				Location location = new Location(p.getWorld(),p.getLocation().getX() , p.getLocation().getY(), p.getLocation().getZ(), p.getLocation().getYaw() - 180, p.getLocation().getPitch());
 				DwarfTrainer d = new DwarfTrainer(plugin, location,
 						uniqueId, name, skill.getId(), maxSkill, null, false);
 				plugin.getDataManager().insertTrainer(d);
-				d.lookAt(((Player) sender), d);
 			} catch (DCCommandException e) {
 				e.describe(sender);
 				sender.sendMessage(CommandInformation.Usage.CREATETRAINER.getUsage());

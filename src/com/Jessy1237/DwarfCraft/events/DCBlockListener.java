@@ -10,6 +10,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -34,6 +35,17 @@ public class DCBlockListener implements Listener {
 	}
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBreak(BlockBreakEvent event) {
+		
+		if(plugin.getConfigManager().worldBlacklist){
+			for (World w : plugin.getConfigManager().worlds){
+				if(w != null){
+					if(event.getPlayer().getWorld() == w){
+						return;
+					}
+				}
+			}
+		}
+		
 		if (event.isCancelled())
 			return;
 		
@@ -68,6 +80,24 @@ public class DCBlockListener implements Listener {
 							item.setData(i.getData());
 						}
 							
+						//Checks for Silktouch & and allows for Silktouch items to override default
+						if(tool.containsEnchantment(Enchantment.SILK_TOUCH)){
+							if(item.getType() == Material.COBBLESTONE){
+								item.setType(Material.STONE);
+							} else if(item.getType() == Material.GOLD_INGOT){
+								item.setType(Material.GOLD_ORE);
+							} else if(item.getType() == Material.DIAMOND){
+								item.setType(Material.DIAMOND_ORE);
+							} else if(item.getType() == Material.COAL){
+								item.setType(Material.COAL_ORE);
+							} else if(item.getType() == Material.IRON_INGOT){
+								item.setType(Material.IRON_ORE);
+							} else if(item.getType() == Material.REDSTONE){
+								item.setType(Material.REDSTONE_ORE);
+							} else if(event.getBlock().getType() == Material.GRASS){
+								item.setType(Material.GRASS);
+							}
+						}
 						
 						if (DwarfCraft.debugMessagesThreshold < 6)
 							System.out.println("Debug: dropped " + item.toString());
@@ -106,6 +136,17 @@ public class DCBlockListener implements Listener {
 	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockDamage(BlockDamageEvent event) {
+		
+		if(plugin.getConfigManager().worldBlacklist){
+			for (World w : plugin.getConfigManager().worlds){
+				if(w != null){
+					if(event.getPlayer().getWorld() == w){
+						return;
+					}
+				}
+			}
+		}
+		
 		if (event.isCancelled())
 			return;
 		
@@ -142,6 +183,17 @@ public class DCBlockListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockPhysics(BlockPhysicsEvent event){
 		if (event.getBlock().getType() == Material.CACTUS && plugin.getConfigManager().disableCacti){
+			
+			if(plugin.getConfigManager().worldBlacklist){
+				for (World w : plugin.getConfigManager().worlds){
+					if(w != null){
+						if(event.getBlock().getWorld() == w){
+							return;
+						}
+					}
+				}
+			}
+			
 			World world = event.getBlock().getWorld();
 			Location loc = event.getBlock().getLocation();
 			//this is a re-implementation of BlockCactus's doPhysics event, minus the spawning of a droped item.

@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import java.util.List;
 
+import org.bukkit.World;
 import org.bukkit.craftbukkit.entity.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -34,6 +35,17 @@ public class DCEntityListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onEntityDamage(EntityDamageEvent event) {
+		
+		if(plugin.getConfigManager().worldBlacklist){
+			for (World w : plugin.getConfigManager().worlds){
+				if(w != null){
+					if(event.getEntity().getWorld() == w){
+						return;
+					}
+				}
+			}
+		}
+		
 		if (event instanceof EntityDamageByEntityEvent) {
 			if ((event.getEntity() instanceof HumanEntity) && plugin.getDataManager().isTrainer(event.getEntity())) {
 				EntityDamageByEntityEvent nevent = (EntityDamageByEntityEvent) event;
@@ -128,6 +140,17 @@ public class DCEntityListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onEntityAttack(EntityDamageByEntityEvent event) {
+		
+		if(plugin.getConfigManager().worldBlacklist){
+			for (World w : plugin.getConfigManager().worlds){
+				if(w != null){
+					if(event.getDamager().getWorld() == w){
+						return;
+					}
+				}
+			}
+		}
+		
 		if ((plugin.getDataManager().isTrainer(event.getEntity())) && event.getEntity() instanceof HumanEntity) {
 			event.setDamage(0);
 			return;
@@ -214,6 +237,17 @@ public class DCEntityListener implements Listener {
 	}
 
 	public void onEntityDamageByProjectile(EntityDamageByEntityEvent event) {
+		
+		if(plugin.getConfigManager().worldBlacklist){
+			for (World w : plugin.getConfigManager().worlds){
+				if(w != null){
+					if(event.getDamager().getWorld() == w){
+						return;
+					}
+				}
+			}
+		}
+		
 		if ((plugin.getDataManager().isTrainer(event.getEntity())) && event.getEntity() instanceof HumanEntity) {
 			event.setDamage(0);
 			return;
@@ -253,8 +287,20 @@ public class DCEntityListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onEntityDamagedByEnvirons(EntityDamageEvent event) {
+		
+		if(plugin.getConfigManager().worldBlacklist){
+			for (World w : plugin.getConfigManager().worlds){
+				if(w != null){
+					if(event.getEntity().getWorld() == w){
+						return;
+					}
+				}
+			}
+		}
+		
 		if ((plugin.getDataManager().isTrainer(event.getEntity())) && event.getEntity() instanceof HumanEntity) {
 			event.setDamage(0);
+			event.setCancelled(true);
 			return;
 		}
 		if ((event.getEntity() instanceof Player)) {
@@ -293,6 +339,17 @@ public class DCEntityListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onEntityDeath(EntityDeathEvent event) {
+		
+		if(plugin.getConfigManager().worldBlacklist){
+			for (World w : plugin.getConfigManager().worlds){
+				if(w != null){
+					if(event.getEntity().getWorld() == w){
+						return;
+					}
+				}
+			}
+		}
+		
 		Entity deadThing = event.getEntity();
 		if (deadThing instanceof Player)
 			return;

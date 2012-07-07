@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import com.topcat.npclib.nms.NPCEntity;
+
 public class HumanNPC extends NPC {
 
 	public HumanNPC(NPCEntity npcEntity) {
@@ -76,8 +77,6 @@ public class HumanNPC extends NPC {
 		}
 		getEntity().yaw = (float) (newYaw - 90);
 		getEntity().pitch = (float) newPitch;
-		getBukkitEntity().getLocation().setYaw((float)newYaw - 90);
-		getBukkitEntity().getLocation().setPitch((float)newPitch);
 		((EntityPlayer)getEntity()).X = (float)(newYaw - 90);
 	}
 

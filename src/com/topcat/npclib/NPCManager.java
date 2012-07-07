@@ -80,7 +80,6 @@ public class NPCManager {
 	}
 
 	private class SL implements Listener {
-		@SuppressWarnings("unused")
 		@EventHandler
 		public void onPluginDisable(PluginDisableEvent event) {
 			if (event.getPlugin() == plugin) {
@@ -91,7 +90,6 @@ public class NPCManager {
 	}
 
 	private class WL implements Listener {
-		@SuppressWarnings("unused")
 		@EventHandler
 		public void onChunkLoad(ChunkLoadEvent event) {
 			for (NPC npc : npcs.values()) {
@@ -126,11 +124,9 @@ public class NPCManager {
 			}
 			BWorld world = getBWorld(l.getWorld());
 			NPCEntity npcEntity = new NPCEntity(this, world, name, new ItemInWorldManager(world.getWorldServer()));
-			npcEntity.setLocation(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
 			npcEntity.setPositionRotation(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
-			npcEntity.X = (float)l.getYaw();
 			world.getWorldServer().addEntity(npcEntity); //the right way
-			HumanNPC npc = new HumanNPC(npcEntity);
+			NPC npc = new HumanNPC(npcEntity);
 			npcs.put(id, npc);
 			return npc;
 		}

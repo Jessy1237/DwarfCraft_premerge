@@ -112,11 +112,11 @@ public class DwarfCraft extends JavaPlugin {
 			if (hasNorm) {
 				cmd = new CommandTutorial(this);
 			}
-		} else if (name.equalsIgnoreCase("Info")) {
+		} else if (name.equalsIgnoreCase("DCInfo")) {
 			if (hasNorm) {
 				cmd = new CommandInfo(this);
 			}
-		} else if (name.equalsIgnoreCase("Rules")) {
+		} else if (name.equalsIgnoreCase("DCRules")) {
 			if (hasNorm) {
 				cmd = new CommandRules(this);
 			}
@@ -140,7 +140,7 @@ public class DwarfCraft extends JavaPlugin {
 			if (hasOp) {
 				cmd = new CommandRemoveNext(this);
 			}
-		} else if (name.equalsIgnoreCase("Debug")) {
+		} else if (name.equalsIgnoreCase("DCDebug")) {
 			if (hasOp) {
 				cmd = new CommandDebug(this);
 			}

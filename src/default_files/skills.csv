@@ -5,6 +5,7 @@ ID,Name,Item1,Item1Base,Item1Max,Item2,Item2Base,Item2Max,Item3,Item3Base,Item3M
 3,Axe Durability,17,8,2304,0,0,0,0,0,0,258,Dwarf
 4,Seed Gatherer,295,1,128,0,0,0,0,0,0,295,Dwarf
 5,Melon Farmer,360,3,300,0,0,0,0,0,0,0,Dwarf
+6,Fisher Man,349,1,1000,0,0,0,0,0,0,346,Dwarf
 8,Smelter,327,1,36,0,0,0,0,0,0,327,Dwarf
 11,Excavator,4,16,2304,0,0,0,0,0,0,274,Dwarf
 12,Quarry Worker,4,16,2304,0,0,0,0,0,0,4,Dwarf

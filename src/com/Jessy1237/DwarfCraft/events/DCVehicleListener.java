@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.bukkit.Location;
+import org.bukkit.World;
 
 import com.Jessy1237.DwarfCraft.DCPlayer;
 import com.Jessy1237.DwarfCraft.DwarfCraft;
@@ -39,6 +40,17 @@ public class DCVehicleListener implements Listener {
      */
 	@EventHandler(priority = EventPriority.HIGHEST)
     public void onVehicleDestroy(VehicleDestroyEvent event) {
+		
+		if(plugin.getConfigManager().worldBlacklist){
+			for (World w : plugin.getConfigManager().worlds){
+				if(w != null){
+					if(event.getAttacker().getWorld() == w){
+						return;
+					}
+				}
+			}
+		}
+		
     	boolean dropChange = false;
     	
     	if (event.getVehicle() instanceof Boat &&
@@ -72,6 +84,17 @@ public class DCVehicleListener implements Listener {
     }
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onVehicleEnter(VehicleEnterEvent event) {
+		
+		if(plugin.getConfigManager().worldBlacklist){
+			for (World w : plugin.getConfigManager().worlds){
+				if(w != null){
+					if(event.getVehicle().getWorld() == w){
+						return;
+					}
+				}
+			}
+		}
+		
 		if (!(event.getVehicle() instanceof CraftBoat)) return;
 		plugin.getDataManager().addVehicle(new DwarfVehicle(event.getVehicle()));
 		if (DwarfCraft.debugMessagesThreshold < 6)
@@ -90,6 +113,17 @@ public class DCVehicleListener implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onVehicleMove(VehicleMoveEvent event) {
+		
+		if(plugin.getConfigManager().worldBlacklist){
+			for (World w : plugin.getConfigManager().worlds){
+				if(w != null){
+					if(event.getVehicle().getWorld() == w){
+						return;
+					}
+				}
+			}
+		}
+		
 		if (event.getVehicle().getPassenger() == null) return;
 		if (!(event.getVehicle() instanceof CraftBoat)) return;
 		if (!(event.getVehicle().getPassenger() instanceof Player)) return;
