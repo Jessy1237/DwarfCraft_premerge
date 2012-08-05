@@ -162,6 +162,7 @@ public final class DwarfTrainer {
 
 		if (skill == null) {
 			plugin.getOut().sendMessage(player, "&cYour race doesn't have this skill!", tag);
+			setWait(false);
 			return;
 		}
 
@@ -171,11 +172,13 @@ public final class DwarfTrainer {
 
 		if (skill.getLevel() >= 30) {
 			plugin.getOut().sendMessage(player, "&cYour skill is max level (30)!", tag);
+			setWait(false);
 			return;
 		}
 
 		if (skill.getLevel() >= mMaxLevel) {
 			plugin.getOut().sendMessage(player, "&cI can't teach you any more, find a higher level trainer", tag);
+			setWait(false);
 			return;
 		}
 
