@@ -2,9 +2,21 @@ name: DwarfCraft
 description: A skills and progression plugin for character development in RPG worlds.
 author: Jessy1237 & Curtis1509
 main: com.Jessy1237.DwarfCraft.DwarfCraft
-version: 1.3
+version: 1.4
 commands: 
-   debug: 
+   renamenpc: 
+      description: Renames the trainer/greeter.
+      usage: |
+           /<command> [UniqueId] [New Name] Renames the trainer/greeter to the new name.
+           Example: /<command> 10  Steve - renames the trainer you hit.
+      aliases: []
+   renamenext: 
+      description: Renames the next trainer/greeter you hit.
+      usage: |
+           /<command> [Name] <command name> Renames the next trainer/greeter you hit.
+           Example: /<command> Joe - renames the trainer you hit.
+      aliases: []
+   dcdebug: 
       description: Sets the debug message threshold in console, from -10(everthing) to +10(critical only).
       usage: |
            /<command> [debug level]
@@ -13,22 +25,22 @@ commands:
    dchelp: 
       description: Displays general help information. Use /help <command> for command specific info.
       usage: /<command> <command name> Displays general help information. Use /help <command> for command specific info.
-      aliases: [dc]
-   info: 
+      aliases: []
+   dcinfo: 
       description: Displays general information about the DwarfCraft plugin.
       usage: /<command> Displays general information about the DwarfCraft plugin.
-      aliases: [dcinfo]
-   rules: 
+      aliases: []
+   dcrules: 
       description: Displays server rules defined in the DwarfCraft messages config file.
       usage: /rules Displays server rules defined in the DwarfCraft messages config file.
-      aliases: [dcrules]
+      aliases: []
    tutorial: 
       description: Displays a series of guide messages to instruct in the basics of DwarfCraft
       usage: |
              Displays a series of guide messages to instruct in the basics of DwarfCraft
              /tutorial <page number> 
              Example: /tutorial 2 - Prints the second tutorial section
-      aliases: [] 
+      aliases: []
    dccommands: 
       description: Displays all DwarfCraft commands.
       usage: /dccommands Displays all DwarfCraft commands.
