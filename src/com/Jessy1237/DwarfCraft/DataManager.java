@@ -29,6 +29,7 @@ public class DataManager {
 	private List<DwarfVehicle>              vehicleList = new ArrayList<DwarfVehicle>();
 	public HashMap<String, DwarfTrainer>    trainerList = new HashMap<String, DwarfTrainer>();
 	private HashMap<String, GreeterMessage> greeterMessageList = new HashMap<String, GreeterMessage>();
+	private HashMap<Player, String> 		Rename = new HashMap<Player, String>();
 	private final ConfigManager             configManager;
 	private final DwarfCraft plugin;
 	private List<Player> trainerRemove = new ArrayList<Player>();
@@ -337,6 +338,16 @@ public class DataManager {
 		return null;
 	}
 	
+	public DwarfTrainer getTrainerById(String uniqueId) {
+		for (Iterator<Map.Entry<String, DwarfTrainer>> i = trainerList.entrySet().iterator(); i.hasNext();) {
+			Map.Entry<String, DwarfTrainer> pairs = i.next();
+			DwarfTrainer trainer = (pairs.getValue());
+			if (trainer.getUniqueId() == uniqueId);
+				return trainer;
+		}
+		return null;
+	}
+	
 	public boolean isTrainer(Entity entity){
 		for(Iterator<Map.Entry<String, DwarfTrainer>> i = trainerList.entrySet().iterator(); i.hasNext();){
 			Map.Entry<String, DwarfTrainer> pairs = i.next();
@@ -405,9 +416,22 @@ public class DataManager {
 		}
 		return;
 	}
+	
+	public void renameTrainer(String mID, String name) {
+		try{
+			PreparedStatement prep = mDBCon.prepareStatement("UPDATE trainers SET name=? WHERE uniqueId=?;");
+			prep.setString(1, name);
+			prep.setString(2, mID);
+			prep.execute();
+			prep.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return;
+	}
+
+	
 	public void updateTrainerLocation(DwarfTrainer trainer, float yaw, float pitch) {
-		assert (trainer != null);
-		trainerList.put(trainer.getUniqueId(), trainer);
 		try {
 			PreparedStatement prep = mDBCon.prepareStatement("UPDATE trainers SET yaw=?, pitch=? WHERE uniqueId=?;");
 			prep.setFloat(1, yaw);
@@ -537,4 +561,7 @@ public class DataManager {
 		return trainerLookAt;
 	}
 
+	public HashMap<Player,String> getRename() {
+		return Rename;
+	}
 }

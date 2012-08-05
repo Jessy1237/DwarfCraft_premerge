@@ -35,17 +35,17 @@ public class DCEntityListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onEntityDamage(EntityDamageEvent event) {
-		
-		if(plugin.getConfigManager().worldBlacklist){
-			for (World w : plugin.getConfigManager().worlds){
-				if(w != null){
-					if(event.getEntity().getWorld() == w){
+
+		if (plugin.getConfigManager().worldBlacklist) {
+			for (World w : plugin.getConfigManager().worlds) {
+				if (w != null) {
+					if (event.getEntity().getWorld() == w) {
 						return;
 					}
 				}
 			}
 		}
-		
+
 		if (event instanceof EntityDamageByEntityEvent) {
 			if ((event.getEntity() instanceof HumanEntity) && plugin.getDataManager().isTrainer(event.getEntity())) {
 				EntityDamageByEntityEvent nevent = (EntityDamageByEntityEvent) event;
@@ -59,8 +59,8 @@ public class DCEntityListener implements Listener {
 				return;
 			}
 		}
-		
-		if(event.isCancelled())
+
+		if (event.isCancelled())
 			return;
 
 		if ((event.getCause() == DamageCause.BLOCK_EXPLOSION || event.getCause() == DamageCause.ENTITY_EXPLOSION || event.getCause() == DamageCause.FALL || event.getCause() == DamageCause.SUFFOCATION || event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK
@@ -69,13 +69,13 @@ public class DCEntityListener implements Listener {
 			if (DwarfCraft.debugMessagesThreshold < -1 && !event.isCancelled()) {
 				System.out.println("DC-1: Damage Event: " + event.getCause());
 			}
-				onEntityDamagedByEnvirons(event);
+			onEntityDamagedByEnvirons(event);
 
 		} else if (event instanceof EntityDamageByEntityEvent) {
 			EntityDamageByEntityEvent nevent = (EntityDamageByEntityEvent) event;
-			if (!(nevent.getDamager() instanceof Arrow)) {
+			if ((nevent.getDamager() instanceof Arrow)) {
 				if (DwarfCraft.debugMessagesThreshold < 2)
-				onEntityDamageByProjectile(nevent);
+					onEntityDamageByProjectile(nevent);
 			} else if (DwarfCraft.debugMessagesThreshold < 2) {
 				onEntityAttack(nevent);
 			}
@@ -89,15 +89,17 @@ public class DCEntityListener implements Listener {
 				if (plugin.getDataManager().getTrainerRemove().contains(event.getDamager())) {
 					plugin.getDataManager().removeTrainer(trainer.getUniqueId());
 					plugin.getDataManager().getTrainerRemove().remove(event.getDamager());
-				} else if (plugin.getDataManager().getTrainerLookAt().contains(event.getDamager())) {
-					trainer.lookAt((Player)event.getDamager(), trainer);
+				} else if (plugin.getDataManager().getTrainerLookAt().contains((Player) event.getDamager())) {
+					trainer.lookAt((Player) event.getDamager(), trainer);
 					plugin.getDataManager().getTrainerLookAt().remove(event.getDamager());
-				}else{
+				} else if (plugin.getDataManager().getRename().containsKey((Player) event.getDamager())) {
+					trainer.setDisplayName(plugin.getDataManager().getRename().get((Player) event.getDamager()));
+					plugin.getDataManager().getRename().remove((Player) event.getDamager());
+				} else {
 					// in business, left click
 					if (trainer.isGreeter()) {
 						trainer.printLeftClick((Player) (event.getDamager()));
 					} else {
-						trainer.lookAt(event.getDamager());
 						Player player = (Player) event.getDamager();
 						DCPlayer dCPlayer = plugin.getDataManager().find(player);
 						Skill skill = dCPlayer.getSkill(trainer.getSkillTrained());
@@ -121,9 +123,13 @@ public class DCEntityListener implements Listener {
 						if (trainer.isGreeter()) {
 							trainer.printRightClick((Player) (event.getTarget()));
 						} else {
-							trainer.lookAt(event.getTarget());
-							trainer.getEntity().animateArmSwing();
-							trainer.trainSkill(dCPlayer);
+							if (trainer.isWaiting()) {
+								plugin.getOut().sendMessage(dCPlayer.getPlayer(), "&6Please wait, Currently training a skill.");
+							} else {
+								trainer.setWait(true);
+								trainer.getEntity().animateArmSwing();
+								trainer.trainSkill(dCPlayer);
+							}
 						}
 					} else if (event.getNpcReason() == NpcTargetReason.NPC_BOUNCED) {
 						// player collided with mob
@@ -138,19 +144,18 @@ public class DCEntityListener implements Listener {
 		return false;
 	}
 
-	@EventHandler(priority = EventPriority.HIGH)
 	public void onEntityAttack(EntityDamageByEntityEvent event) {
-		
-		if(plugin.getConfigManager().worldBlacklist){
-			for (World w : plugin.getConfigManager().worlds){
-				if(w != null){
-					if(event.getDamager().getWorld() == w){
+
+		if (plugin.getConfigManager().worldBlacklist) {
+			for (World w : plugin.getConfigManager().worlds) {
+				if (w != null) {
+					if (event.getDamager().getWorld() == w) {
 						return;
 					}
 				}
 			}
 		}
-		
+
 		if ((plugin.getDataManager().isTrainer(event.getEntity())) && event.getEntity() instanceof HumanEntity) {
 			event.setDamage(0);
 			return;
@@ -158,7 +163,7 @@ public class DCEntityListener implements Listener {
 		if (!(event.getDamager() instanceof Player)) {
 			return;
 		}
-		
+
 		int Origdamage = event.getDamage();
 		Entity damager = event.getDamager();
 		LivingEntity victim;
@@ -191,7 +196,7 @@ public class DCEntityListener implements Listener {
 		} else {// EvP no effects, EvE no effects
 			if (DwarfCraft.debugMessagesThreshold < 4)
 				System.out.println(String.format("DC4: EVP %s attacked %s for %d of %d\r\n", damager.getClass().getSimpleName(), victim.getClass().getSimpleName(), damage, hp));
-			if(!(event.getEntity() instanceof Player)){
+			if (!(event.getEntity() instanceof Player)) {
 				event.setDamage(Origdamage);
 			}
 			return;
@@ -237,17 +242,17 @@ public class DCEntityListener implements Listener {
 	}
 
 	public void onEntityDamageByProjectile(EntityDamageByEntityEvent event) {
-		
-		if(plugin.getConfigManager().worldBlacklist){
-			for (World w : plugin.getConfigManager().worlds){
-				if(w != null){
-					if(event.getDamager().getWorld() == w){
+
+		if (plugin.getConfigManager().worldBlacklist) {
+			for (World w : plugin.getConfigManager().worlds) {
+				if (w != null) {
+					if (event.getDamager().getWorld() == w) {
 						return;
 					}
 				}
 			}
 		}
-		
+
 		if ((plugin.getDataManager().isTrainer(event.getEntity())) && event.getEntity() instanceof HumanEntity) {
 			event.setDamage(0);
 			return;
@@ -278,26 +283,25 @@ public class DCEntityListener implements Listener {
 
 		damage = Util.randomAmount(damage * mitigation);
 		event.setDamage((int) damage);
-		if(attacker instanceof Player)
-		((Player)attacker).sendMessage(""+(int)damage);
+		if (attacker instanceof Player)
+			((Player) attacker).sendMessage("" + (int) damage);
 		if (damage >= hp && attacker instanceof Player && !killMap.containsKey(hitThing) && !(hitThing instanceof Player)) {
 			killMap.put(hitThing, attackDwarf);
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGH)
 	public void onEntityDamagedByEnvirons(EntityDamageEvent event) {
-		
-		if(plugin.getConfigManager().worldBlacklist){
-			for (World w : plugin.getConfigManager().worlds){
-				if(w != null){
-					if(event.getEntity().getWorld() == w){
+
+		if (plugin.getConfigManager().worldBlacklist) {
+			for (World w : plugin.getConfigManager().worlds) {
+				if (w != null) {
+					if (event.getEntity().getWorld() == w) {
 						return;
 					}
 				}
 			}
 		}
-		
+
 		if ((plugin.getDataManager().isTrainer(event.getEntity())) && event.getEntity() instanceof HumanEntity) {
 			event.setDamage(0);
 			event.setCancelled(true);
@@ -339,17 +343,17 @@ public class DCEntityListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onEntityDeath(EntityDeathEvent event) {
-		
-		if(plugin.getConfigManager().worldBlacklist){
-			for (World w : plugin.getConfigManager().worlds){
-				if(w != null){
-					if(event.getEntity().getWorld() == w){
+
+		if (plugin.getConfigManager().worldBlacklist) {
+			for (World w : plugin.getConfigManager().worlds) {
+				if (w != null) {
+					if (event.getEntity().getWorld() == w) {
 						return;
 					}
 				}
 			}
 		}
-		
+
 		Entity deadThing = event.getEntity();
 		if (deadThing instanceof Player)
 			return;

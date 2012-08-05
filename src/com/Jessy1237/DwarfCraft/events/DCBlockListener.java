@@ -73,29 +73,46 @@ public class DCBlockListener implements Listener {
 					
 					if (effect.checkTool(tool)) {
 						ItemStack item = effect.getOutput(player, meta);
-						ItemStack i = new ItemStack(item.getTypeId());
+						ItemStack i = new ItemStack(item.getTypeId(), item.getAmount());
+						ItemStack item1 = null;
 						
 						if(item.getTypeId() != 351){
 							item.setDurability(i.getDurability());
 							item.setData(i.getData());
 						}
+						
+						// Makes sure logs drop the right logs
+						if(event.getBlock().getTypeId() == 17){
+							final ItemStack old = item;
+							item = new ItemStack(Material.LOG, old.getAmount(), (short)0, event.getBlock().getData());
+						}
 							
 						//Checks for Silktouch & and allows for Silktouch items to override default
 						if(tool.containsEnchantment(Enchantment.SILK_TOUCH)){
 							if(item.getType() == Material.COBBLESTONE){
-								item.setType(Material.STONE);
+								item.setAmount(item.getAmount() - 1);
+								item1 = new ItemStack(Material.STONE, 1);
 							} else if(item.getType() == Material.GOLD_INGOT){
-								item.setType(Material.GOLD_ORE);
+								item.setAmount(item.getAmount() - 1);
+								item1 = new ItemStack(Material.GOLD_ORE, 1);
 							} else if(item.getType() == Material.DIAMOND){
-								item.setType(Material.DIAMOND_ORE);
+								item.setAmount(item.getAmount() - 1);
+								item1 = new ItemStack(Material.DIAMOND_ORE, 1);
 							} else if(item.getType() == Material.COAL){
-								item.setType(Material.COAL_ORE);
+								item.setAmount(item.getAmount() - 1);
+								item1 = new ItemStack(Material.COAL_ORE, 1);
 							} else if(item.getType() == Material.IRON_INGOT){
 								item.setType(Material.IRON_ORE);
+								item1 = new ItemStack(Material.IRON_ORE, 1);
 							} else if(item.getType() == Material.REDSTONE){
-								item.setType(Material.REDSTONE_ORE);
+								item.setAmount(item.getAmount() - 1);
+								item1 = new ItemStack(Material.REDSTONE_ORE, 1);
 							} else if(event.getBlock().getType() == Material.GRASS){
-								item.setType(Material.GRASS);
+								item.setAmount(item.getAmount() - 1);
+								item1 = new ItemStack(Material.GRASS, 1);
+							} else if(event.getBlock().getType() == Material.LAPIS_ORE){
+								item.setAmount(item.getAmount() - 1);
+								item1 = new ItemStack(Material.LAPIS_ORE, 1);
 							}
 						}
 						
@@ -104,6 +121,10 @@ public class DCBlockListener implements Listener {
 						
 						if (item.getAmount() > 0)
 							loc.getWorld().dropItemNaturally(loc, item);
+						
+						if(item1 != null){
+							loc.getWorld().dropItemNaturally(loc, item1);
+						}
 						
 						blockDropChange = true;
 					}

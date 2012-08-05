@@ -4,6 +4,9 @@ package com.Jessy1237.DwarfCraft;
  * Original Authors: smartaleq, LexManos and RCarretta
  */
 
+import java.util.Random;
+
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.jbls.LexManos.CSV.CSVRecord;
@@ -418,6 +421,16 @@ public class Effect {
 		if (DwarfCraft.debugMessagesThreshold < 2)
 			System.out.println(String.format("DC2: Affected durability of a \"%s\" - Effect: %d Old: %d Base: %d Wear: %d", Util.getCleanName(tool), mID, tool.getDurability(), base, wear));
 
+		// Some code taken from net.minecraft.server.ItemStack line 165.
+		// Checks to see if damage should be skipped.
+		if(tool.containsEnchantment(Enchantment.DURABILITY)){
+			int level = tool.getEnchantmentLevel(Enchantment.DURABILITY);
+			Random r = new Random();
+			if(level > 0 && r.nextInt(level + 1) > 0){
+				return;
+			}
+		}
+		
 		base = (negate ? base : 0);
 
 		if (wear == base)

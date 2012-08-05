@@ -76,16 +76,18 @@ public class DwarfCraft extends JavaPlugin {
 		return perms != null;
 	}
 
-	private boolean checkPermission(CommandSender sender, String name, boolean opOnly) {
+	private boolean checkPermission(CommandSender sender, String name, String type) {
 
 		if (perms == null)
-			return (!opOnly || sender.isOp());
+			return false;
 
 		if (sender instanceof Player){
-			if(opOnly){
-				return perms.has((Player) sender, ("DwarfCraft." + ("op.") + name).toLowerCase());
-			}else{
-				return perms.has((Player) sender, ("DwarfCraft." + ("norm.") + name).toLowerCase());
+			if(type.equals("op")){
+				return perms.has((Player) sender, ("DwarfCraft.op." + name).toLowerCase());
+			}else if(type.equals("norm")){
+				return perms.has((Player) sender, ("DwarfCraft.norm." + name).toLowerCase());
+			} else if(type.equals("all")){
+				return perms.has((Player) sender, "DwarfCraft.*".toLowerCase());
 			}
 		}
 
@@ -96,80 +98,89 @@ public class DwarfCraft extends JavaPlugin {
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
 		Command cmd = null;
 		String name = commandLabel;
-		boolean hasNorm = checkPermission(sender, name, false);
-		boolean hasOp = checkPermission(sender, name, true);
+		boolean hasNorm = checkPermission(sender, name, "norm");
+		boolean hasOp = checkPermission(sender, name, "op");
+		boolean hasAll = checkPermission(sender, name, "all");
 		boolean isCmd = true;
 
 		if (name.equalsIgnoreCase("DCHelp")) {
-			if (hasNorm) {
+			if (hasNorm || hasAll) {
 				cmd = new CommandHelp(this);
 			}
 		} else if (name.equalsIgnoreCase("SkillSheet")) {
-			if (hasNorm) {
+			if (hasNorm || hasAll) {
 				cmd = new CommandSkillSheet(this);
 			}
 		} else if (name.equalsIgnoreCase("Tutorial")) {
-			if (hasNorm) {
+			if (hasNorm || hasAll) {
 				cmd = new CommandTutorial(this);
 			}
 		} else if (name.equalsIgnoreCase("DCInfo")) {
-			if (hasNorm) {
+			if (hasNorm || hasAll) {
 				cmd = new CommandInfo(this);
 			}
 		} else if (name.equalsIgnoreCase("DCRules")) {
-			if (hasNorm) {
+			if (hasNorm || hasAll) {
 				cmd = new CommandRules(this);
 			}
 		} else if (name.equalsIgnoreCase("DCCommands")) {
-			if (hasNorm) {
+			if (hasNorm || hasAll) {
 				cmd = new CommandDCCommands(this);
 			}
 		} else if (name.equalsIgnoreCase("SkillInfo")) {
-			if (hasNorm) {
+			if (hasNorm || hasAll) {
 				cmd = new CommandSkillInfo(this);
 			}
 		} else if (name.equalsIgnoreCase("Race")) {
-			if (hasNorm) {
+			if (hasNorm || hasAll) {
 				cmd = new CommandRace(this);
 			}
 		} else if (name.equalsIgnoreCase("EffectInfo")) {
-			if (hasNorm) {
+			if (hasNorm || hasAll) {
 				cmd = new CommandEffectInfo(this);
 			}
 		} else if (name.equalsIgnoreCase("RemoveNext")) {
-			if (hasOp) {
+			if (hasOp || hasAll) {
 				cmd = new CommandRemoveNext(this);
 			}
+		} else if (name.equalsIgnoreCase("RenameNext")) {
+			if (hasOp || hasAll) {
+				cmd = new CommandRenameNext(this);
+			}
+		} else if (name.equalsIgnoreCase("RenameNPC")) {
+			if (hasOp || hasAll) {
+				cmd = new CommandRenameNPC(this);
+			}
 		} else if (name.equalsIgnoreCase("DCDebug")) {
-			if (hasOp) {
+			if (hasOp || hasAll) {
 				cmd = new CommandDebug(this);
 			}
 		} else if (name.equalsIgnoreCase("ListTrainers")) {
-			if (hasOp) {
+			if (hasOp || hasAll) {
 				cmd = new CommandListTrainers(this);
 			}
 		} else if (name.equalsIgnoreCase("RemoveTrainer")) {
-			if (hasOp) {
+			if (hasOp || hasAll) {
 				cmd = new CommandRemoveTrainer(this);
 			}
 		} else if (name.equalsIgnoreCase("SetSkill")) {
-			if (hasOp) {
+			if (hasOp || hasAll) {
 				cmd = new CommandSetSkill(this);
 			}
 		} else if (name.equalsIgnoreCase("CreateGreeter")) {
-			if (hasOp) {
+			if (hasOp || hasAll) {
 				cmd = new CommandCreateGreeter(this);
 			}
 		} else if (name.equalsIgnoreCase("CreateTrainer")) {
-			if (hasOp) {
+			if (hasOp || hasAll) {
 				cmd = new CommandCreateTrainer(this);
 			}
 		} else if (name.equalsIgnoreCase("LookAtNext")) {
-			if (hasOp) {
+			if (hasOp || hasAll) {
 				cmd = new CommandLookAtNext(this);
 			}
 		} else if (name.equalsIgnoreCase("DMem")) {
-			if (hasOp) {
+			if (hasOp || hasAll) {
 				cmd = new CommandDMem(this);
 			}
 		} else {
@@ -181,9 +192,9 @@ public class DwarfCraft extends JavaPlugin {
 				return false;
 			} else {
 				if (hasNorm == false && hasOp == false) {
-					sender.sendMessage("§4You do not have permission to use that.");
+					sender.sendMessage("§4You do not have permission to do that.");
 				} else if (hasOp == false) {
-					sender.sendMessage("§4You do not have permission to use that.");
+					sender.sendMessage("§4You do not have permission to do that");
 				}
 				return true;
 			}
@@ -221,8 +232,6 @@ public class DwarfCraft extends JavaPlugin {
 		pm.registerEvents(vehicleListener, this);
 
 		pm.registerEvents(worldListener, this);
-		// pm.registerEvent(Event.Type.WORLD_LOAD, worldListener, Priority.Low,
-		// this);
 
 		npcm = new NPCManager(this);
 		cm = new ConfigManager(this, getDataFolder().getAbsolutePath(), "DwarfCraft.config");

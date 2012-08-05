@@ -16,15 +16,13 @@ public class CommandDCCommands extends Command {
 		super("DCCommands");
 		this.plugin = plugin;
 	}
-	
+
 	@Override
-	public boolean execute(CommandSender sender, String commandLabel, String[] args){
-		if (DwarfCraft.debugMessagesThreshold < 1){
+	public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+		if (DwarfCraft.debugMessagesThreshold < 1) {
 			System.out.println("DC1: started command 'dchelp'");
 		}
-		sender.sendMessage("DwarfCraft commands: debug, dchelp, info, rules, tutorial, " +
-			"dccommands, skillsheet, skillinfo, effectinfo, " +
-			"race, setskill, creategreeter, createtrainer, removetrainer, listtrainers, removenext, lookatnext");
+		sender.sendMessage("DwarfCraft commands: dcdebug, dchelp, dcinfo, dcrules, tutorial, " + "dccommands, skillsheet, skillinfo, effectinfo, " + "race, setskill, creategreeter, createtrainer, removetrainer, listtrainers, removenext, lookatnext, dmem, renamenext, renamenpc");
 		return true;
 	}
 }

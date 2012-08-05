@@ -29,6 +29,7 @@ public final class DwarfTrainer {
 	private String mName;
 	private String mID;
 	private final DwarfCraft plugin;
+	private boolean wait;
 
 	public DwarfTrainer(final DwarfCraft plugin, Location location, String uniqueId, String name, Integer skillId, Integer maxSkill, String greeterMessage, boolean isGreeter) {
 
@@ -41,7 +42,7 @@ public final class DwarfTrainer {
 		this.mName = name;
 		this.mID = uniqueId;
 		this.mEntity = (HumanNPC) plugin.getNPCManager().spawnHumanNPC(mName, location, uniqueId);
-
+		this.wait = false;
 		((EntityPlayer) getEntity().getEntity()).X = location.getYaw();
 		getEntity().getEntity().pitch = location.getPitch();
 
@@ -205,7 +206,7 @@ public final class DwarfTrainer {
 					int delta;
 					if (cost - inv >= 0) {
 						costStack.setAmount(cost - inv);
-						player.getInventory().remove(invStack);
+						player.getInventory().removeItem(invStack);
 						delta = inv;
 					} else {
 						costStack.setAmount(0);
@@ -227,6 +228,7 @@ public final class DwarfTrainer {
 			} else {
 				plugin.getOut().sendMessage(player, String.format("&cAn additional &2%d %s &c is required", costStack.getAmount(), costStack.getType()), tag);
 				hasMats = false;
+				deposited = true;
 			}
 
 		}
@@ -241,5 +243,22 @@ public final class DwarfTrainer {
 		if (deposited || hasMats) {
 			plugin.getDataManager().saveDwarfData(dCPlayer);
 		}
+		setWait(false);
+	}
+
+	public void setDisplayName(String name) {
+		Location loc = getLocation();
+		plugin.getNPCManager().despawnHumanByName(this.mName);
+		this.mName = name;
+		this.mEntity = (HumanNPC) plugin.getNPCManager().spawnHumanNPC(mName, loc, this.mID);
+		plugin.getDataManager().renameTrainer(this.mID, name);
+	}
+	
+	public boolean isWaiting(){
+		return this.wait;
+	}
+	
+	public void setWait(boolean wait){
+		this.wait = wait;
 	}
 }
