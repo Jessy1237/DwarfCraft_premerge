@@ -43,7 +43,8 @@ public final class DwarfTrainer {
 		this.mID = uniqueId;
 		this.mEntity = (HumanNPC) plugin.getNPCManager().spawnHumanNPC(mName, location, uniqueId);
 		this.wait = false;
-		((EntityPlayer) getEntity().getEntity()).X = location.getYaw();
+		getEntity().getEntity().yaw = location.getYaw();
+		((EntityPlayer) getEntity().getEntity()).as = location.getYaw();
 		getEntity().getEntity().pitch = location.getPitch();
 
 		if (mIsGreeter)
@@ -124,9 +125,9 @@ public final class DwarfTrainer {
 		if (p != null) {
 			Location l = p.getEyeLocation().clone();
 			d.getEntity().lookAtPoint(l);
-			d.getLocation().setYaw(((EntityPlayer) d.getEntity().getEntity()).X);
+			d.getLocation().setYaw(((EntityPlayer) d.getEntity().getEntity()).as);
 			d.getLocation().setPitch(d.getEntity().getEntity().pitch);
-			plugin.getDataManager().updateTrainerLocation(d, ((EntityPlayer) d.getEntity().getEntity()).X, d.getEntity().getEntity().pitch);
+			plugin.getDataManager().updateTrainerLocation(d, ((EntityPlayer) d.getEntity().getEntity()).as, d.getEntity().getEntity().pitch);
 		}
 		return;
 	}

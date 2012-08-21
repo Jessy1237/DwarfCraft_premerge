@@ -184,7 +184,7 @@ public class Effect {
 			description = String.format("&a%.0f%%&6 of the time &2%s &6break &2%s &6instantly ", effectAmount * 100, toolType, initiator);
 			break;
 		case BOWATTACK:
-			description = String.format("&6Your Arrows do %s%.0f &6hp damage (half hearts)", effectLevelColor, effectAmount);
+			description = String.format("&6Your Arrows (Fully Charge Bow) do %s%.0f &6hp damage (half hearts)", effectLevelColor, effectAmount + 2);
 			break;
 		case VEHICLEDROP:
 			description = String.format("&6DISABLED: When you break a boat &6approx. %s%.2f &2%s&6 are created", effectLevelColor, effectAmount, output);

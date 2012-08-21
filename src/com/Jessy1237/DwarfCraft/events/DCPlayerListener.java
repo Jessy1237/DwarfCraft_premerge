@@ -16,10 +16,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerFishEvent.State;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerInventoryEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -33,7 +33,6 @@ import com.Jessy1237.DwarfCraft.EffectType;
 import com.Jessy1237.DwarfCraft.Skill;
 import com.Jessy1237.DwarfCraft.Util;
 
-@SuppressWarnings("deprecation")
 public class DCPlayerListener implements Listener {
 	private final DwarfCraft plugin;
 
@@ -124,7 +123,7 @@ public class DCPlayerListener implements Listener {
 		if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) && item.getType() != Material.FISHING_ROD) {
 			for (Skill s : skills.values()) {
 				for (Effect e : s.getEffects()) {
-					if (e.getEffectType() == EffectType.EAT && e.checkInitiator(item)) {
+					if (e.getEffectType() == EffectType.EAT && (e.checkInitiator(item))) {
 						int health = Util.randomAmount((e.getEffectAmount(dcPlayer)));
 
 						if (DwarfCraft.debugMessagesThreshold < 8)
@@ -132,15 +131,79 @@ public class DCPlayerListener implements Listener {
 
 						Block block = event.getClickedBlock();
 
-						if(event.isCancelled()){
+						if (event.isCancelled()) {
 							return;
 						}
-						
+
 						onPlayerEat(event, item, health, origHealth, origItemAmount, block);
 
+					} else if (event.getClickedBlock() != null) {
+						if (e.getEffectType() == EffectType.EAT && e.checkInitiator(event.getClickedBlock().getTypeId(), event.getClickedBlock().getData())) {
+							int health = Util.randomAmount((e.getEffectAmount(dcPlayer)));
+
+							if (DwarfCraft.debugMessagesThreshold < 8)
+								System.out.println(String.format("DC8: Are Food: \"%s\" for %d health", event.getClickedBlock().getType().toString(), health));
+
+							Block block = event.getClickedBlock();
+
+							if (event.isCancelled()) {
+								return;
+							}
+							onPlayerEat(event, item, health, origHealth, origItemAmount, block);
+						}
 					}
 				}
 			}
+		}
+	}
+
+	public void onPlayerEat(PlayerInteractEvent event, ItemStack item, int health, int origHealth, int origItemAmount, Block block) {
+
+		int id = item.getTypeId();
+		int bId = 0;
+		if (block != null)
+			bId = block.getTypeId();
+		int itemFoodLevel = 0;
+		float itemSaturationLevel = 0.0f;
+
+		// Raw Fish
+		if (id == 349) {
+			itemFoodLevel = 2;
+			itemSaturationLevel = 1.2f;
+
+			// Mushroom Soup
+		} else if (id == 282) {
+			itemFoodLevel = 8;
+			itemSaturationLevel = 9.6f;
+
+			// Raw Pork
+		} else if (id == 319) {
+			itemFoodLevel = 3;
+			itemSaturationLevel = 1.8f;
+
+			// Cooked Pork
+		} else if (id == 320) {
+			itemFoodLevel = 9;
+			itemSaturationLevel = 12.8f;
+
+			// Cake
+		} else if (bId == 92) {
+			itemFoodLevel = 2;
+			itemSaturationLevel = 0.4f;
+		}
+
+		if (event.isCancelled()) {
+			return;
+		}
+		if(((origHealth - itemFoodLevel) + health) > 20){
+			if(bId == 92){
+				return;
+			}
+			event.getPlayer().setFoodLevel(20);
+			event.getPlayer().setSaturation(event.getPlayer().getSaturation() + itemSaturationLevel);
+		}else{
+			event.getPlayer().setFoodLevel((origHealth - itemFoodLevel) + health);
+			event.getPlayer().setSaturation(event.getPlayer().getSaturation() + itemSaturationLevel);	
 		}
 	}
 
@@ -150,42 +213,9 @@ public class DCPlayerListener implements Listener {
 	 * @param event
 	 *            Relevant event details
 	 */
-
-	public void onPlayerEat(PlayerInteractEvent event, ItemStack item, int health, int origHealth, int origItemAmount, Block block) {
-
-		int id = item.getTypeId();
-		int bId = 0;
-		if (block != null)
-			bId = block.getTypeId();
-		int itemFoodLevel = 0;
-
-		// Raw Fish
-		if (id == 349) {
-			itemFoodLevel = 2;
-
-			// Mushroom Soup
-		} else if (id == 282) {
-			itemFoodLevel = 8;
-
-			// Raw Pork
-		} else if (id == 319) {
-			itemFoodLevel = 3;
-		} else if (id == 320) {
-			itemFoodLevel = 9;
-		} else if (bId == 2) {
-			return;
-		}
-		
-		if(event.isCancelled()){
-			return;
-		}
-
-		event.getPlayer().setFoodLevel((origHealth - itemFoodLevel) + health);
-
-	}
-
+	
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onInventoryOpen(PlayerInventoryEvent event) {
+	public void onInventoryOpen(InventoryOpenEvent event) {
 
 		if (plugin.getConfigManager().worldBlacklist) {
 			for (World w : plugin.getConfigManager().worlds) {
@@ -197,7 +227,7 @@ public class DCPlayerListener implements Listener {
 			}
 		}
 
-		DCCraftSchedule sched = new DCCraftSchedule(plugin, plugin.getDataManager().find(event.getPlayer()));
+		DCCraftSchedule sched = new DCCraftSchedule(plugin, plugin.getDataManager().find((Player) event.getPlayer()));
 		int id = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, sched, 0, 2);
 		sched.setID(id);
 	}

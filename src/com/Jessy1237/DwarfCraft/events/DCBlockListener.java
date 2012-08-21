@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -33,6 +34,7 @@ public class DCBlockListener implements Listener {
 	public DCBlockListener(final DwarfCraft plugin) {
 		this.plugin = plugin;
 	}
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBreak(BlockBreakEvent event) {
 		
@@ -125,7 +127,30 @@ public class DCBlockListener implements Listener {
 						if(item1 != null){
 							loc.getWorld().dropItemNaturally(loc, item1);
 						}
+
+						if(blockID == 16){
+							((ExperienceOrb)loc.getWorld().spawn(loc, ExperienceOrb.class)).setExperience(event.getExpToDrop());
+						} else if(blockID == 56){
+							((ExperienceOrb)loc.getWorld().spawn(loc, ExperienceOrb.class)).setExperience(event.getExpToDrop());
+						} else if(blockID == 21){
+							((ExperienceOrb)loc.getWorld().spawn(loc, ExperienceOrb.class)).setExperience(event.getExpToDrop());
+						}
 						
+						/*
+						if(blockID == 16){
+							Random rand = new Random();
+							int value = MathHelper.a(rand, 0, 2);
+							((ExperienceOrb)loc.getWorld().spawn(loc, ExperienceOrb.class)).setExperience(value);
+						} else if(blockID == 56){
+							Random rand = new Random();
+							int value = MathHelper.a(rand, 3, 7);
+							((ExperienceOrb)loc.getWorld().spawn(loc, ExperienceOrb.class)).setExperience(value);
+						} else if(blockID == 21){
+							Random rand = new Random();
+							int value = MathHelper.a(rand, 2, 5);
+							((ExperienceOrb)loc.getWorld().spawn(loc, ExperienceOrb.class)).setExperience(value);
+						}
+						*/
 						blockDropChange = true;
 					}
 				}

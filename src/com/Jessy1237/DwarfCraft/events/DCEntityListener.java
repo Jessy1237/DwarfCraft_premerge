@@ -55,8 +55,6 @@ public class DCEntityListener implements Listener {
 						return;
 					}
 				}
-			} else {
-				return;
 			}
 		}
 
@@ -74,9 +72,8 @@ public class DCEntityListener implements Listener {
 		} else if (event instanceof EntityDamageByEntityEvent) {
 			EntityDamageByEntityEvent nevent = (EntityDamageByEntityEvent) event;
 			if ((nevent.getDamager() instanceof Arrow)) {
-				if (DwarfCraft.debugMessagesThreshold < 2)
-					onEntityDamageByProjectile(nevent);
-			} else if (DwarfCraft.debugMessagesThreshold < 2) {
+				onEntityDamageByProjectile(nevent);
+			} else {
 				onEntityAttack(nevent);
 			}
 		}
@@ -258,17 +255,18 @@ public class DCEntityListener implements Listener {
 			return;
 		}
 
-		LivingEntity attacker = (LivingEntity) event.getDamager();
+		Arrow arrow = (Arrow) event.getDamager();
+		LivingEntity attacker = arrow.getShooter();
 		LivingEntity hitThing = (LivingEntity) event.getEntity();
-
+		
 		int hp = hitThing.getHealth();
 		if (hp <= 0) {
 			event.setCancelled(true);
 			return;
 		}
 		double damage = event.getDamage();
+		final double origDamage = event.getDamage();
 		double mitigation = 1;
-
 		DCPlayer attackDwarf = null;
 
 		if (attacker instanceof Player) {
@@ -281,10 +279,8 @@ public class DCEntityListener implements Listener {
 			}
 		}
 
-		damage = Util.randomAmount(damage * mitigation);
+		damage = Util.randomAmount((damage * mitigation) + (origDamage / 4));
 		event.setDamage((int) damage);
-		if (attacker instanceof Player)
-			((Player) attacker).sendMessage("" + (int) damage);
 		if (damage >= hp && attacker instanceof Player && !killMap.containsKey(hitThing) && !(hitThing instanceof Player)) {
 			killMap.put(hitThing, attackDwarf);
 		}
