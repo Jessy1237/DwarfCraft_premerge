@@ -255,5 +255,4 @@ public class DwarfCraft extends JavaPlugin {
 
 		System.out.println(getDescription().getName() + " version " + getDescription().getVersion() + " is enabled!");
 	}
-
 }

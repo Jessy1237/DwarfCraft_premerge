@@ -464,7 +464,9 @@ public class DataManager {
 							rs.getInt("skill"), 
 							rs.getInt("maxSkill"),
 							rs.getString("messageId"),
-							rs.getBoolean("isGreeter")
+							rs.getBoolean("isGreeter"),
+							false,
+							0
 						);
 					
 					trainerList.put(rs.getString("uniqueId"), trainer);

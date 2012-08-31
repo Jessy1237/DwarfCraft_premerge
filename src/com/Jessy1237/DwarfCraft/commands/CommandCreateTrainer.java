@@ -72,7 +72,7 @@ public class CommandCreateTrainer extends Command {
 				Player p = (Player)sender;
 				Location location = new Location(p.getWorld(),p.getLocation().getX() , p.getLocation().getY(), p.getLocation().getZ(), p.getLocation().getYaw() - 180, p.getLocation().getPitch());
 				DwarfTrainer d = new DwarfTrainer(plugin, location,
-						uniqueId, name, skill.getId(), maxSkill, null, false);
+						uniqueId, name, skill.getId(), maxSkill, null, false, false, 0);
 				plugin.getDataManager().insertTrainer(d);
 			} catch (DCCommandException e) {
 				e.describe(sender);

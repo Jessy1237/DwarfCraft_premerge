@@ -37,6 +37,7 @@ public final class ConfigManager {
 	private String configWorldFileName;
 	private String cfgGreeterFile;
 	private String dbpath;
+	private int trainDelay;
 
 	private HashMap<Race, HashMap<Integer, Skill>> skillsArray = new HashMap<Race, HashMap<Integer, Skill>>();
 	public ArrayList<World> worlds = new ArrayList<World>();
@@ -211,7 +212,9 @@ public final class ConfigManager {
 					disableCacti = Boolean.parseBoolean(theline[1].trim());
 				if (theline[0].equalsIgnoreCase("World Blacklist"))
 					worldBlacklist = Boolean.parseBoolean(theline[1].trim());
-
+				if (theline[0].equalsIgnoreCase("Train Delay"))
+					trainDelay = Integer.parseInt(theline[1].trim());
+				
 				line = br.readLine();
 			}
 			defaultRace = new Race("Dwarf");
@@ -423,6 +426,10 @@ public final class ConfigManager {
 
 	public Race getOptOutRace() {
 		return optOutRace;
+	}
+
+	public int getTrainDelay() {
+		return trainDelay;
 	}
 
 }

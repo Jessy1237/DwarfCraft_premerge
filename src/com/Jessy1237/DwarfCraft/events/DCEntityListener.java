@@ -123,9 +123,16 @@ public class DCEntityListener implements Listener {
 							if (trainer.isWaiting()) {
 								plugin.getOut().sendMessage(dCPlayer.getPlayer(), "&6Please wait, Currently training a skill.");
 							} else {
-								trainer.setWait(true);
-								trainer.getEntity().animateArmSwing();
-								trainer.trainSkill(dCPlayer);
+								long currentTime = System.currentTimeMillis();
+								if ((currentTime - trainer.getLastTrain()) < (long)(plugin.getConfigManager().getTrainDelay() * 1000)) {
+									plugin.getOut().sendMessage(dCPlayer.getPlayer(), "&6Sorry, i need time to recuperate.");
+									return true;
+								} else {
+									trainer.setWait(true);
+									trainer.setLastTrain(currentTime);
+									trainer.getEntity().animateArmSwing();
+									trainer.trainSkill(dCPlayer);
+								}
 							}
 						}
 					} else if (event.getNpcReason() == NpcTargetReason.NPC_BOUNCED) {
@@ -258,7 +265,7 @@ public class DCEntityListener implements Listener {
 		Arrow arrow = (Arrow) event.getDamager();
 		LivingEntity attacker = arrow.getShooter();
 		LivingEntity hitThing = (LivingEntity) event.getEntity();
-		
+
 		int hp = hitThing.getHealth();
 		if (hp <= 0) {
 			event.setCancelled(true);

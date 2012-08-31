@@ -16,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerFishEvent.State;
@@ -86,10 +87,6 @@ public class DCPlayerListener implements Listener {
 		}
 
 		// Crafting changes
-
-		int origHealth = event.getPlayer().getFoodLevel();
-		int origItemAmount = event.getPlayer().getItemInHand().getAmount();
-
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == Material.WORKBENCH) {
 			DCCraftSchedule sched = new DCCraftSchedule(plugin, plugin.getDataManager().find(event.getPlayer()));
 			int id = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, sched, 0, 2);
@@ -119,37 +116,25 @@ public class DCPlayerListener implements Listener {
 			}
 		}
 
+		Block block = event.getClickedBlock();
+		int origFoodLevel = event.getPlayer().getFoodLevel();
+
 		// EffectType.EAT
-		if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) && item.getType() != Material.FISHING_ROD) {
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			for (Skill s : skills.values()) {
 				for (Effect e : s.getEffects()) {
-					if (e.getEffectType() == EffectType.EAT && (e.checkInitiator(item))) {
-						int health = Util.randomAmount((e.getEffectAmount(dcPlayer)));
+					if (e.getEffectType() == EffectType.EAT && e.checkInitiator(block.getTypeId(), block.getData())) {
 
-						if (DwarfCraft.debugMessagesThreshold < 8)
-							System.out.println(String.format("DC8: Are Food: \"%s\" for %d health", Util.getCleanName(item), health));
+						int foodLevel = Util.randomAmount((e.getEffectAmount(dcPlayer)));
 
-						Block block = event.getClickedBlock();
-
-						if (event.isCancelled()) {
-							return;
-						}
-
-						onPlayerEat(event, item, health, origHealth, origItemAmount, block);
-
-					} else if (event.getClickedBlock() != null) {
-						if (e.getEffectType() == EffectType.EAT && e.checkInitiator(event.getClickedBlock().getTypeId(), event.getClickedBlock().getData())) {
-							int health = Util.randomAmount((e.getEffectAmount(dcPlayer)));
-
-							if (DwarfCraft.debugMessagesThreshold < 8)
-								System.out.println(String.format("DC8: Are Food: \"%s\" for %d health", event.getClickedBlock().getType().toString(), health));
-
-							Block block = event.getClickedBlock();
-
-							if (event.isCancelled()) {
-								return;
+						if (block.getTypeId() == 92) {
+							if(((origFoodLevel - 2) + foodLevel) > 20){
+								event.getPlayer().setFoodLevel(20);
+								event.getPlayer().setSaturation(event.getPlayer().getSaturation() + 0.4f);
+							} else {
+								event.getPlayer().setFoodLevel((origFoodLevel - 2) + foodLevel);
+								event.getPlayer().setSaturation(event.getPlayer().getSaturation() + 0.4f);
 							}
-							onPlayerEat(event, item, health, origHealth, origItemAmount, block);
 						}
 					}
 				}
@@ -157,53 +142,33 @@ public class DCPlayerListener implements Listener {
 		}
 	}
 
-	public void onPlayerEat(PlayerInteractEvent event, ItemStack item, int health, int origHealth, int origItemAmount, Block block) {
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onFoodLevelChange(FoodLevelChangeEvent event) {
+		Player player = (Player) event.getEntity();
+		int lvl = event.getFoodLevel() - player.getFoodLevel();
+		ItemStack item = null;
+		DCPlayer dcPlayer = plugin.getDataManager().find(player);
+		HashMap<Integer, Skill> skills = dcPlayer.getSkills();
 
-		int id = item.getTypeId();
-		int bId = 0;
-		if (block != null)
-			bId = block.getTypeId();
-		int itemFoodLevel = 0;
-		float itemSaturationLevel = 0.0f;
-
-		// Raw Fish
-		if (id == 349) {
-			itemFoodLevel = 2;
-			itemSaturationLevel = 1.2f;
-
-			// Mushroom Soup
-		} else if (id == 282) {
-			itemFoodLevel = 8;
-			itemSaturationLevel = 9.6f;
-
-			// Raw Pork
-		} else if (id == 319) {
-			itemFoodLevel = 3;
-			itemSaturationLevel = 1.8f;
-
-			// Cooked Pork
-		} else if (id == 320) {
-			itemFoodLevel = 9;
-			itemSaturationLevel = 12.8f;
-
-			// Cake
-		} else if (bId == 92) {
-			itemFoodLevel = 2;
-			itemSaturationLevel = 0.4f;
+		if (lvl == 2) {
+			item = new ItemStack(349);
+		} else if (lvl == 8) {
+			item = new ItemStack(282);
+		} else if (lvl == 3) {
+			item = new ItemStack(319);
+		} else if (lvl == 9) {
+			item = new ItemStack(320);
 		}
 
-		if (event.isCancelled()) {
-			return;
-		}
-		if(((origHealth - itemFoodLevel) + health) > 20){
-			if(bId == 92){
-				return;
+		for (Skill s : skills.values()) {
+			for (Effect e : s.getEffects()) {
+				if (e.getEffectType() == EffectType.EAT && e.checkInitiator(item)) {
+
+					int foodLevel = Util.randomAmount((e.getEffectAmount(dcPlayer)));
+
+					event.setFoodLevel((event.getFoodLevel() - lvl) + foodLevel);
+				}
 			}
-			event.getPlayer().setFoodLevel(20);
-			event.getPlayer().setSaturation(event.getPlayer().getSaturation() + itemSaturationLevel);
-		}else{
-			event.getPlayer().setFoodLevel((origHealth - itemFoodLevel) + health);
-			event.getPlayer().setSaturation(event.getPlayer().getSaturation() + itemSaturationLevel);	
 		}
 	}
 
@@ -213,7 +178,7 @@ public class DCPlayerListener implements Listener {
 	 * @param event
 	 *            Relevant event details
 	 */
-	
+
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onInventoryOpen(InventoryOpenEvent event) {
 

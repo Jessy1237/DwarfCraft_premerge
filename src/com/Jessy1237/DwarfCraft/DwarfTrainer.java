@@ -30,8 +30,9 @@ public final class DwarfTrainer {
 	private String mID;
 	private final DwarfCraft plugin;
 	private boolean wait;
+	private long lastTrain;
 
-	public DwarfTrainer(final DwarfCraft plugin, Location location, String uniqueId, String name, Integer skillId, Integer maxSkill, String greeterMessage, boolean isGreeter) {
+	public DwarfTrainer(final DwarfCraft plugin, Location location, String uniqueId, String name, Integer skillId, Integer maxSkill, String greeterMessage, boolean isGreeter, boolean wait, long lastTrain) {
 
 		this.plugin = plugin;
 		this.mSkillID = skillId;
@@ -42,7 +43,8 @@ public final class DwarfTrainer {
 		this.mName = name;
 		this.mID = uniqueId;
 		this.mEntity = (HumanNPC) plugin.getNPCManager().spawnHumanNPC(mName, location, uniqueId);
-		this.wait = false;
+		this.wait = wait;
+		this.lastTrain = lastTrain;
 		getEntity().getEntity().yaw = location.getYaw();
 		((EntityPlayer) getEntity().getEntity()).as = location.getYaw();
 		getEntity().getEntity().pitch = location.getPitch();
@@ -257,12 +259,20 @@ public final class DwarfTrainer {
 		this.mEntity = (HumanNPC) plugin.getNPCManager().spawnHumanNPC(mName, loc, this.mID);
 		plugin.getDataManager().renameTrainer(this.mID, name);
 	}
-	
-	public boolean isWaiting(){
+
+	public boolean isWaiting() {
 		return this.wait;
 	}
-	
-	public void setWait(boolean wait){
+
+	public void setWait(boolean wait) {
 		this.wait = wait;
+	}
+
+	public long getLastTrain() {
+		return this.lastTrain;
+	}
+
+	public void setLastTrain(long lastTrain) {
+		this.lastTrain = lastTrain;
 	}
 }
