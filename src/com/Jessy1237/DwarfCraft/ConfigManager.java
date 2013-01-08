@@ -48,6 +48,7 @@ public final class ConfigManager {
 	public boolean sendGreeting = false;
 	public boolean disableCacti = true;
 	public boolean worldBlacklist = false;
+	public boolean silkTouch = true;
 
 	protected ConfigManager(DwarfCraft plugin, String directory, String paramsFileName) {
 		this.plugin = plugin;
@@ -214,6 +215,8 @@ public final class ConfigManager {
 					worldBlacklist = Boolean.parseBoolean(theline[1].trim());
 				if (theline[0].equalsIgnoreCase("Train Delay"))
 					trainDelay = Integer.parseInt(theline[1].trim());
+				if(theline[0].equalsIgnoreCase("Silk Touch"))
+					silkTouch = Boolean.parseBoolean(theline[1].trim());
 				
 				line = br.readLine();
 			}

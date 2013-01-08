@@ -12,7 +12,7 @@ import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import net.minecraft.server.Entity;
+import net.minecraft.server.v1_4_5.Entity;
 
 public class DCPlayer {
 	private final DwarfCraft plugin;

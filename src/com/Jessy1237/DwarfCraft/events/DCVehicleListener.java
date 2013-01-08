@@ -4,20 +4,20 @@ package com.Jessy1237.DwarfCraft.events;
  * Original Authors: smartaleq, LexManos and RCarretta
  */
 
-import org.bukkit.craftbukkit.entity.CraftBoat;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftBoat;
+import org.bukkit.entity.Boat;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
-import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
-import org.bukkit.entity.Boat;
-import org.bukkit.entity.Player;
+import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
-import org.bukkit.Location;
-import org.bukkit.World;
 
 import com.Jessy1237.DwarfCraft.DCPlayer;
 import com.Jessy1237.DwarfCraft.DwarfCraft;

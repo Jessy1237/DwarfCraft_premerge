@@ -6,15 +6,15 @@ package com.Jessy1237.DwarfCraft;
 
 import java.util.List;
 
-import net.minecraft.server.EntityPlayer;
+import net.minecraft.server.v1_4_5.EntityPlayer;
 
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Entity;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import com.topcat.npclib.entity.HumanNPC;
 
@@ -46,7 +46,7 @@ public final class DwarfTrainer {
 		this.wait = wait;
 		this.lastTrain = lastTrain;
 		getEntity().getEntity().yaw = location.getYaw();
-		((EntityPlayer) getEntity().getEntity()).as = location.getYaw();
+		((EntityPlayer) getEntity().getEntity()).bT = location.getYaw();
 		getEntity().getEntity().pitch = location.getPitch();
 
 		if (mIsGreeter)
@@ -127,9 +127,9 @@ public final class DwarfTrainer {
 		if (p != null) {
 			Location l = p.getEyeLocation().clone();
 			d.getEntity().lookAtPoint(l);
-			d.getLocation().setYaw(((EntityPlayer) d.getEntity().getEntity()).as);
+			d.getLocation().setYaw((float)((EntityPlayer) d.getEntity().getEntity()).bS);
 			d.getLocation().setPitch(d.getEntity().getEntity().pitch);
-			plugin.getDataManager().updateTrainerLocation(d, ((EntityPlayer) d.getEntity().getEntity()).as, d.getEntity().getEntity().pitch);
+			plugin.getDataManager().updateTrainerLocation(d, (float)((EntityPlayer) d.getEntity().getEntity()).bS, d.getEntity().getEntity().pitch);
 		}
 		return;
 	}

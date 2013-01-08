@@ -5,21 +5,35 @@ package com.Jessy1237.DwarfCraft.events;
  */
 
 import java.util.HashMap;
-
 import java.util.List;
 
 import org.bukkit.World;
-import org.bukkit.craftbukkit.entity.*;
-import org.bukkit.entity.*;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftSheep;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import org.bukkit.inventory.ItemStack;
 
-import com.Jessy1237.DwarfCraft.*;
+import com.Jessy1237.DwarfCraft.DCPlayer;
+import com.Jessy1237.DwarfCraft.DwarfCraft;
+import com.Jessy1237.DwarfCraft.DwarfTrainer;
+import com.Jessy1237.DwarfCraft.Effect;
+import com.Jessy1237.DwarfCraft.EffectType;
+import com.Jessy1237.DwarfCraft.Skill;
+import com.Jessy1237.DwarfCraft.TrainSkillSchedule;
+import com.Jessy1237.DwarfCraft.Util;
 import com.topcat.npclib.nms.NPCNetHandler;
 import com.topcat.npclib.nms.NpcEntityTargetEvent;
 import com.topcat.npclib.nms.NpcEntityTargetEvent.NpcTargetReason;
@@ -131,7 +145,7 @@ public class DCEntityListener implements Listener {
 									trainer.setWait(true);
 									trainer.setLastTrain(currentTime);
 									trainer.getEntity().animateArmSwing();
-									trainer.trainSkill(dCPlayer);
+									plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new TrainSkillSchedule(trainer, dCPlayer), 2);
 								}
 							}
 						}
