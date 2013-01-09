@@ -4,13 +4,13 @@ package com.Jessy1237.DwarfCraft;
  * Original Authors: smartaleq, LexManos and RCarretta
  */
 
-import net.minecraft.server.v1_4_5.ContainerPlayer;
-import net.minecraft.server.v1_4_5.ContainerWorkbench;
-import net.minecraft.server.v1_4_5.CraftingManager;
-import net.minecraft.server.v1_4_5.EntityPlayer;
-import net.minecraft.server.v1_4_5.ItemStack;
+import net.minecraft.server.v1_4_6.ContainerPlayer;
+import net.minecraft.server.v1_4_6.ContainerWorkbench;
+import net.minecraft.server.v1_4_6.CraftingManager;
+import net.minecraft.server.v1_4_6.EntityPlayer;
+import net.minecraft.server.v1_4_6.ItemStack;
 
-import org.bukkit.craftbukkit.v1_4_5.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftPlayer;
 
 public class DCCraftSchedule implements Runnable {
 	private final DCPlayer dCPlayer;

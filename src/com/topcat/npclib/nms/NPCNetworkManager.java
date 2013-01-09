@@ -3,9 +3,9 @@ package com.topcat.npclib.nms;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
-import net.minecraft.server.v1_4_5.NetHandler;
-import net.minecraft.server.v1_4_5.NetworkManager;
-import net.minecraft.server.v1_4_5.Packet;
+import net.minecraft.server.v1_4_6.Connection;
+import net.minecraft.server.v1_4_6.NetworkManager;
+import net.minecraft.server.v1_4_6.Packet;
 
 /**
  *
@@ -13,36 +13,36 @@ import net.minecraft.server.v1_4_5.Packet;
  */
 public class NPCNetworkManager extends NetworkManager {
 
-	public NPCNetworkManager() throws IOException {
-		super(new NullSocket(), "NPC Manager", new NetHandler() {
-			@Override
-			public boolean a() {
-				return true;
-			}
-		}, null);
-		try {
-			Field f = NetworkManager.class.getDeclaredField("m");
-			f.setAccessible(true);
-			f.set(this, false);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    public NPCNetworkManager() throws IOException {
+        super(new NullSocket(), "NPC Manager", new Connection() {
+            @Override
+            public boolean a() {
+                return true;
+            }
+        }, null);
+        try {
+            Field f = NetworkManager.class.getDeclaredField("m");
+            f.setAccessible(true);
+            f.set(this, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	@Override
-	public void a(NetHandler nethandler) {
-	}
+    @Override
+    public void a(Connection connection) {
+    }
 
-	@Override
-	public void queue(Packet packet) {
-	}
+    @Override
+    public void queue(Packet packet) {
+    }
 
-	@Override
-	public void a(String s, Object... aobject) {
-	}
+    @Override
+    public void a(String s, Object... aobject) {
+    }
 
-	@Override
-	public void a() {
-	}
+    @Override
+    public void a() {
+    }
 
 }

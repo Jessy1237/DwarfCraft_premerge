@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_4_5.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_4_5.entity.CraftSheep;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftSheep;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
@@ -423,7 +423,7 @@ public class DCEntityListener implements Listener {
 		}
 		if (event.getReason() == TargetReason.CLOSEST_PLAYER) {
 			if (event.getTarget() instanceof CraftPlayer) {
-				if (((CraftPlayer) event.getTarget()).getHandle().netServerHandler instanceof NPCNetHandler) {
+				if (((CraftPlayer) event.getTarget()).getHandle().playerConnection instanceof NPCNetHandler) {
 					event.setCancelled(true);
 				}
 			}
