@@ -45,6 +45,7 @@ public class DwarfCraft extends JavaPlugin {
 	private final DCEntityListener entityListener = new DCEntityListener(this);
 	private final DCVehicleListener vehicleListener = new DCVehicleListener(this);
 	private final DCWorldListener worldListener = new DCWorldListener(this);
+	private final DCInventoryListener inventoryListener = new DCInventoryListener(this);
 	private ConfigManager cm;
 	private DataManager dm;
 	private Out out;
@@ -232,6 +233,8 @@ public class DwarfCraft extends JavaPlugin {
 		pm.registerEvents(vehicleListener, this);
 
 		pm.registerEvents(worldListener, this);
+		
+		pm.registerEvents(inventoryListener, this);
 
 		npcm = new NPCManager(this);
 		cm = new ConfigManager(this, getDataFolder().getAbsolutePath(), "DwarfCraft.config");

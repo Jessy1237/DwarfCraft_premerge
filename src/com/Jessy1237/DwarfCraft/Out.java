@@ -464,7 +464,7 @@ public class Out {
 	public void welcome(Server server, DCPlayer dCPlayer) {
 		try {
 			if (plugin.getConfigManager().sendGreeting)
-				sendBroadcast(server, "&fWelcome, &9" + dCPlayer.getRace().getName() + " &6" + dCPlayer.getPlayer().getName(), "&6[DC]         ");
+				sendBroadcast(server, "&fWelcome, &9" + dCPlayer.getRace() + " &6" + dCPlayer.getPlayer().getName(), "&6[DC]         ");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -474,20 +474,25 @@ public class Out {
 		sendMessage(sender, "You are a "+plugin.getDataManager().find(player).getRace());
 	}
 	
-	public void alreadyRace(CommandSender sender, DCPlayer dCPlayer, Race newRace) {
+	public void alreadyRace(CommandSender sender, DCPlayer dCPlayer, String newRace) {
 		sendMessage(sender, "You are already a "+newRace);		
 	}
 
-	public void resetRace(CommandSender sender, DCPlayer dCPlayer, Race newRace) {
+	public void resetRace(CommandSender sender, DCPlayer dCPlayer, String newRace) {
 		sendMessage(sender, "You are once again a fresh new "+newRace);
 	}
 
-	public void changedRace(CommandSender sender, DCPlayer dCPlayer, Race newRace) {
+	public void changedRace(CommandSender sender, DCPlayer dCPlayer, String newRace) {
 		sendMessage(sender, "You are now a "+newRace);
 	}
 
-	public void confirmRace(CommandSender sender, DCPlayer dCPlayer, Race newRace) {
-		sendMessage(sender, "You need to confirm this command with confirm at the end");
+	public void confirmRace(CommandSender sender, DCPlayer dCPlayer, String newRace) {
+		sendMessage(sender, "You need to confirm this command with confirm at the end. (Note: This will reset all your skills)");
+	}
+
+	public void dExistRace(CommandSender sender, DCPlayer dCPlayer, String newRace) {
+		sendMessage(sender, "The race " + newRace + " doesn't exist.");
+		
 	}
 
 }

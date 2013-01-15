@@ -63,7 +63,7 @@ public class Skill implements Cloneable {
 		return mID;
 	}
 
-	protected int getLevel() {
+	public int getLevel() {
 		return mLevel;
 	}
 

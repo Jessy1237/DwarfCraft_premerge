@@ -36,14 +36,15 @@ public final class ConfigManager {
 	private String configMessagesFileName;
 	private String configWorldFileName;
 	private String cfgGreeterFile;
+	private String cfgRaceFile;
 	private String dbpath;
 	private int trainDelay;
 
-	private HashMap<Race, HashMap<Integer, Skill>> skillsArray = new HashMap<Race, HashMap<Integer, Skill>>();
+	private HashMap<Integer, Skill> skillsArray = new HashMap<Integer, Skill>();
 	public ArrayList<World> worlds = new ArrayList<World>();
-	private Race defaultRace;
-	private Race optOutRace;
-	private HashMap<String, Race> raceMap = new HashMap<String, Race>();
+
+	private ArrayList<Race> raceList = new ArrayList<Race>();
+	private String defaultRace;
 
 	public boolean sendGreeting = false;
 	public boolean disableCacti = true;
@@ -59,7 +60,7 @@ public final class ConfigManager {
 		checkFiles(configDirectory);
 
 		try {
-			if (!readConfigFile() || !readSkillsFile() || !readEffectsFile() || !readMessagesFile() || !readWorldFile()) {
+			if (!readConfigFile() || !readSkillsFile() || !readEffectsFile() || !readMessagesFile() || !readWorldFile() || !readRacesFile()) {
 				System.out.println("[SEVERE] Failed to Enable DwarfCraft Skills and Effects)");
 				plugin.getServer().getPluginManager().disablePlugin(plugin);
 			}
@@ -73,31 +74,35 @@ public final class ConfigManager {
 
 	public HashMap<Integer, Skill> getAllSkills() {
 		HashMap<Integer, Skill> newSkillsArray = new HashMap<Integer, Skill>();
-		for (Race r : raceMap.values()) {
-			for (Skill s : skillsArray.get(r).values()) {
-				if (newSkillsArray.containsKey(s.getId()))
-					continue;
-				newSkillsArray.put(s.getId(), s.clone());
-			}
-		}
-		return newSkillsArray;
-	}
-
-	public HashMap<Integer, Skill> getAllSkills(Race race) {
-		HashMap<Integer, Skill> newSkillsArray = new HashMap<Integer, Skill>();
-		HashMap<Integer, Skill> raceList = skillsArray.get(race);
-		for (Skill s : raceList.values()) {
+		for (Skill s : skillsArray.values()) {
+			if (newSkillsArray.containsKey(s.getId()))
+				continue;
 			newSkillsArray.put(s.getId(), s.clone());
 		}
 		return newSkillsArray;
 	}
 
-	protected Skill getGenericSkill(int skillId) {
-		for (Race race : raceMap.values()) {
-			for (Skill s : skillsArray.get(race).values()) {
-				if (s.getId() == skillId)
-					return s.clone();
+	public Race getRace(String Race) {
+		for (Race r : raceList) {
+			if (r != null) {
+				if (r.getName().equalsIgnoreCase(Race)) {
+					return r;
+				}
 			}
+		}
+		return null;
+	}
+
+	public ArrayList<Integer> getAllSkills(String Race) {
+		return getRace(Race).getSkills();
+	}
+
+	protected Skill getGenericSkill(int skillId) {
+
+		for (Skill s : skillsArray.values()) {
+			if (s.getId() == skillId)
+				return s.clone();
+
 		}
 		return null;
 	}
@@ -127,6 +132,8 @@ public final class ConfigManager {
 			cfgGreeterFile = "greeters.config";
 		if (dbpath == null)
 			dbpath = "dwarfcraft.db";
+		if (cfgRaceFile == null)
+			cfgRaceFile = "races.config";
 	}
 
 	private void checkFiles(String path) {
@@ -143,7 +150,8 @@ public final class ConfigManager {
 			readConfigFile();
 			getDefaultValues();
 
-			String[][] mfiles = { { configSkillsFileName, "skills.csv" }, { configEffectsFileName, "effects.csv" }, { configMessagesFileName, "messages.config" }, { dbpath, "dwarfcraft.db" }, { cfgGreeterFile, "greeters.config" }, { configWorldFileName, "world-blacklist.config" } };
+			String[][] mfiles = { { configSkillsFileName, "skills.csv" }, { configEffectsFileName, "effects.csv" }, { configMessagesFileName, "messages.config" }, { dbpath, "dwarfcraft.db" }, { cfgGreeterFile, "greeters.config" }, { configWorldFileName, "world-blacklist.config" },
+					{ cfgRaceFile, "races.config" } };
 			for (String[] mfile : mfiles) {
 				file = new File(root, mfile[0]);
 				if (!file.exists()) {
@@ -203,6 +211,8 @@ public final class ConfigManager {
 					configWorldFileName = theline[1].trim();
 				if (theline[0].equalsIgnoreCase("Greeter Messages File Name"))
 					cfgGreeterFile = theline[1].trim();
+				if (theline[0].equalsIgnoreCase("Races File Name"))
+					cfgRaceFile = theline[1].trim();
 				if (theline[0].equalsIgnoreCase("Database File Name"))
 					dbpath = theline[1].trim();
 				if (theline[0].equalsIgnoreCase("Debug Level"))
@@ -215,14 +225,13 @@ public final class ConfigManager {
 					worldBlacklist = Boolean.parseBoolean(theline[1].trim());
 				if (theline[0].equalsIgnoreCase("Train Delay"))
 					trainDelay = Integer.parseInt(theline[1].trim());
-				if(theline[0].equalsIgnoreCase("Silk Touch"))
+				if (theline[0].equalsIgnoreCase("Silk Touch"))
 					silkTouch = Boolean.parseBoolean(theline[1].trim());
-				
+				if (theline[0].equalsIgnoreCase("Default Race"))
+					defaultRace = theline[1].trim();
+
 				line = br.readLine();
 			}
-			defaultRace = new Race("Dwarf");
-			raceMap.put(defaultRace.getName(), defaultRace);
-			skillsArray.put(defaultRace, new HashMap<Integer, Skill>());
 
 		} catch (FileNotFoundException fN) {
 			fN.printStackTrace();
@@ -234,7 +243,7 @@ public final class ConfigManager {
 
 	@SuppressWarnings("resource")
 	private boolean readWorldFile() {
-		System.out.println("DC Init: Reading effects file: " + configDirectory + configWorldFileName);
+		System.out.println("DC Init: Reading world blacklist file: " + configDirectory + configWorldFileName);
 
 		FileReader fr;
 		try {
@@ -255,10 +264,10 @@ public final class ConfigManager {
 					line = br.readLine();
 					continue;
 				}
-				
+
 				if (theline[0].equalsIgnoreCase(" "))
 					worlds.add(Bukkit.getServer().getWorld(theline[1].trim()));
-				
+
 				line = br.readLine();
 			}
 		} catch (FileNotFoundException e) {
@@ -279,11 +288,9 @@ public final class ConfigManager {
 			while (records.hasNext()) {
 				CSVRecord item = records.next();
 				Effect effect = new Effect(item);
-				for (Race race : raceMap.values()) {
-					Skill skill = skillsArray.get(race).get(effect.getId() / 10);
-					if (skill != null) {
-						skill.getEffects().add(effect);
-					}
+				Skill skill = skillsArray.get(effect.getId() / 10);
+				if (skill != null) {
+					skill.getEffects().add(effect);
 				}
 			}
 			return true;
@@ -294,6 +301,70 @@ public final class ConfigManager {
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	@SuppressWarnings("resource")
+	protected boolean readRacesFile() {
+		System.out.println("DC Init: Reading races file: " + configDirectory + cfgRaceFile);
+		try {
+			FileReader fr = new FileReader(configDirectory + cfgRaceFile);
+			BufferedReader br = new BufferedReader(fr);
+			String line = br.readLine();
+			boolean name = false;
+			boolean desc = false;
+			boolean skills = false;
+			Race race = null;
+			while (line != null) {
+				if (name && desc && skills) {
+					raceList.add(race);
+					name = false;
+					desc = false;
+					skills = false;
+					System.out.println("DC Init: Loaded race: " + race.getName());
+				}
+				if (line.length() == 0) {
+					line = br.readLine();
+					continue;
+				}
+				if (line.charAt(0) == '#') {
+					line = br.readLine();
+					continue;
+				}
+				String[] theline = line.split(":");
+				if (theline.length > 2) {
+					line = br.readLine();
+					continue;
+				}
+				if (theline[0].equalsIgnoreCase("Name")) {
+					race = new Race(theline[1].trim());
+					name = true;
+					line = br.readLine();
+					continue;
+				}
+				if (theline[0].equalsIgnoreCase("SkillIDs")) {
+					String ids[] = theline[1].trim().split(",");
+					race.setSkills(new ArrayList<Integer>());
+					for (int i = 0; i < ids.length; i++) {
+						race.getSkills().add(Integer.parseInt(ids[i].trim()));
+					}
+
+					skills = true;
+					line = br.readLine();
+					continue;
+				}
+				if (theline[0].equalsIgnoreCase("Description")) {
+					race.setDesc(theline[1].trim());
+
+					desc = true;
+					line = br.readLine();
+					continue;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return true;
 	}
 
 	@SuppressWarnings("resource")
@@ -379,11 +450,7 @@ public final class ConfigManager {
 				Skill skill = new Skill(item.getInt("ID"), item.getString("Name"), 0, new ArrayList<Effect>(), new TrainingItem(Material.getMaterial(item.getInt("Item1")), item.getDouble("Item1Base"), item.getInt("Item1Max")), new TrainingItem(Material.getMaterial(item.getInt("Item2")),
 						item.getDouble("Item2Base"), item.getInt("Item2Max")), new TrainingItem(Material.getMaterial(item.getInt("Item3")), item.getDouble("Item3Base"), item.getInt("Item3Max")), Material.getMaterial(item.getInt("Held")));
 
-				String[] races = item.getString("Races").split(" ");
-				for (String race : races) {
-					Race rc = findRace(race, true);
-					skillsArray.get(rc).put(skill.getId(), skill);
-				}
+				skillsArray.put(skill.getId(), skill);
 
 			}
 			return true;
@@ -395,40 +462,12 @@ public final class ConfigManager {
 		return false;
 	}
 
-	protected Race findRace(String string, boolean addNew) {
-		for (String s : raceMap.keySet())
-			if (s.equalsIgnoreCase(string))
-				return raceMap.get(s);
-		if (!addNew)
-			return null;
-		Race newRace = new Race(string);
-		raceMap.put(string, newRace);
-		skillsArray.put(newRace, new HashMap<Integer, Skill>());
-		return newRace;
-	}
-
-	public void setDefaultRace(Race defaultRace) {
-		this.defaultRace = defaultRace;
-	}
-
-	public Race getDefaultRace() {
+	public String getDefaultRace() {
 		return defaultRace;
 	}
 
-	public void setRaceMap(HashMap<String, Race> raceMap) {
-		this.raceMap = raceMap;
-	}
-
-	public HashMap<String, Race> getRaceMap() {
-		return raceMap;
-	}
-
-	public void setOptOutRace(Race optOutRace) {
-		this.optOutRace = optOutRace;
-	}
-
-	public Race getOptOutRace() {
-		return optOutRace;
+	public ArrayList<Race> getRaceList() {
+		return raceList;
 	}
 
 	public int getTrainDelay() {

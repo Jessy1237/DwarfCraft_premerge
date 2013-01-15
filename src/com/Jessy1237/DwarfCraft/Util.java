@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Coal;
 import org.bukkit.material.Crops;
 import org.bukkit.material.Dye;
+import org.bukkit.material.MaterialData;
 import org.bukkit.material.Step;
 import org.bukkit.material.Tree;
 import org.bukkit.material.Wool;
@@ -81,7 +82,9 @@ public class Util {
 			}
 			item = mat.getId();
 		}
-		return new ItemStack(item, 0, (short)0, (data == -1 ? (byte)-1 : (byte)(data & 0xFF)));
+		ItemStack item1 = new ItemStack(item, 0, (data == -1 ? (byte)-1 : (byte)(data & 0xFF)));
+		item1.setData(new MaterialData(item1.getTypeId(), (data == -1 ? (byte)-1 : (byte)(data & 0xFF))));
+		return item1;
 	}
 	
 	public static String getCleanName(ItemStack item){

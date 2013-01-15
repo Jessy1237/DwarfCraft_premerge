@@ -46,7 +46,7 @@ public final class DwarfTrainer {
 		this.wait = wait;
 		this.lastTrain = lastTrain;
 		getEntity().getEntity().yaw = location.getYaw();
-		((EntityPlayer) getEntity().getEntity()).bT = location.getYaw();
+		((EntityPlayer) getEntity().getEntity()).az = location.getYaw();
 		getEntity().getEntity().pitch = location.getPitch();
 
 		if (mIsGreeter)
@@ -127,9 +127,9 @@ public final class DwarfTrainer {
 		if (p != null) {
 			Location l = p.getEyeLocation().clone();
 			d.getEntity().lookAtPoint(l);
-			d.getLocation().setYaw((float)((EntityPlayer) d.getEntity().getEntity()).bT);
+			d.getLocation().setYaw((float)((EntityPlayer) d.getEntity().getEntity()).az);
 			d.getLocation().setPitch(d.getEntity().getEntity().pitch);
-			plugin.getDataManager().updateTrainerLocation(d, (float)((EntityPlayer) d.getEntity().getEntity()).bT, d.getEntity().getEntity().pitch);
+			plugin.getDataManager().updateTrainerLocation(d, (float)((EntityPlayer) d.getEntity().getEntity()).az, d.getEntity().getEntity().pitch);
 		}
 		return;
 	}
@@ -168,11 +168,13 @@ public final class DwarfTrainer {
 			setWait(false);
 			return;
 		}
-
-		List<List<ItemStack>> costs = dCPlayer.calculateTrainingCost(skill);
-		List<ItemStack> trainingCostsToLevel = costs.get(0);
-		// List<ItemStack> totalCostsToLevel = costs.get(1);
-
+		
+		if (skill.getLevel() >= 5 && !plugin.getConfigManager().getAllSkills(dCPlayer.getRace()).contains(skill.getId())) {
+			plugin.getOut().sendMessage(player, "&cYour race doesn't specialize in this skill! Max level is (5)!");
+			setWait(false);
+			return;
+		}
+		
 		if (skill.getLevel() >= 30) {
 			plugin.getOut().sendMessage(player, "&cYour skill is max level (30)!", tag);
 			setWait(false);
@@ -184,6 +186,10 @@ public final class DwarfTrainer {
 			setWait(false);
 			return;
 		}
+		
+		List<List<ItemStack>> costs = dCPlayer.calculateTrainingCost(skill);
+		List<ItemStack> trainingCostsToLevel = costs.get(0);
+		// List<ItemStack> totalCostsToLevel = costs.get(1);
 
 		boolean hasMats = true;
 		boolean deposited = false;

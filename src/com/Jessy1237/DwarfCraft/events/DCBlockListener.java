@@ -20,6 +20,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 
 import com.Jessy1237.DwarfCraft.DCPlayer;
 import com.Jessy1237.DwarfCraft.DwarfCraft;
@@ -37,7 +38,7 @@ public class DCBlockListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBreak(BlockBreakEvent event) {
-
+		
 		if (plugin.getConfigManager().worldBlacklist) {
 			for (World w : plugin.getConfigManager().worlds) {
 				if (w != null) {
@@ -86,7 +87,8 @@ public class DCBlockListener implements Listener {
 						// Makes sure logs drop the right logs
 						if (event.getBlock().getTypeId() == 17) {
 							final ItemStack old = item;
-							item = new ItemStack(Material.LOG, old.getAmount(), (short) 0, event.getBlock().getData());
+							item = new ItemStack(Material.LOG, old.getAmount(), event.getBlock().getData());
+							item.setData(new MaterialData(item.getTypeId(), event.getBlock().getData()));
 						}
 
 						// Checks for Silktouch & and allows for Silktouch items
@@ -153,7 +155,9 @@ public class DCBlockListener implements Listener {
 						 * ((ExperienceOrb)loc.getWorld().spawn(loc,
 						 * ExperienceOrb.class)).setExperience(value); }
 						 */
-						blockDropChange = true;
+
+							blockDropChange = true;
+						
 					}
 				}
 			}

@@ -2,6 +2,8 @@ package com.topcat.npclib.entity;
 
 import net.minecraft.server.v1_4_6.EntityPlayer;
 import net.minecraft.server.v1_4_6.Packet18ArmAnimation;
+import net.minecraft.server.v1_4_6.Packet38EntityStatus;
+import net.minecraft.server.v1_4_6.Packet5EntityEquipment;
 import net.minecraft.server.v1_4_6.WorldServer;
 
 import org.bukkit.Location;
@@ -11,88 +13,89 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import com.topcat.npclib.NPCUtils;
 import com.topcat.npclib.nms.NPCEntity;
 
 public class HumanNPC extends NPC {
-    // TODO: refactor to new DragonNPC class
-    private int _DroppedExp = 0;
 
-    public int getDroppedExp() {
-        return this._DroppedExp;
-    }
+	private final net.minecraft.server.v1_4_6.ItemStack[]	previousEquipment	= { null, null, null, null, null };
+	
+	public HumanNPC(final NPCEntity npcEntity) {
+		super(npcEntity);
+	}
 
-    public void setDroppedExp(int exp) {
-        this._DroppedExp = exp;
-    }
+	public void actAsHurt() {
+		((WorldServer) getEntity().world).tracker.a(getEntity(), new Packet38EntityStatus(getEntity().id, (byte)2));
+	}
+	
+	public void animateArmSwing() {
+		((WorldServer) getEntity().world).tracker.a(getEntity(), new Packet18ArmAnimation(getEntity(), 1));
+	}
 
-    // END refactor
+	public PlayerInventory getInventory() {
+		return ((HumanEntity) getEntity().getBukkitEntity()).getInventory();
+	}
 
-    public HumanNPC(NPCEntity npcEntity) {
-        super(npcEntity);
-    }
+	public String getName() {
+		return ((NPCEntity) getEntity()).name;
+	}
 
-    public void animateArmSwing() {
-        ((WorldServer) getEntity().world).tracker.a(getEntity(),
-                new Packet18ArmAnimation(getEntity(), 1));
-    }
+	public void getOutOfBed() {
+		((NPCEntity) getEntity()).a(true, true, true);
+	}
+	
+	public void lookAtPoint(final Location point) {
+		if (getEntity().getBukkitEntity().getWorld() != point.getWorld()) {
+			return;
+		}
+		final Location npcLoc = ((LivingEntity) getEntity().getBukkitEntity()).getEyeLocation();
+		final double xDiff = point.getX() - npcLoc.getX();
+		final double yDiff = point.getY() - npcLoc.getY();
+		final double zDiff = point.getZ() - npcLoc.getZ();
+		final double DistanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
+		final double DistanceY = Math.sqrt(DistanceXZ * DistanceXZ + yDiff * yDiff);
+		double newYaw = Math.acos(xDiff / DistanceXZ) * 180 / Math.PI;
+		final double newPitch = Math.acos(yDiff / DistanceY) * 180 / Math.PI - 90;
+		if (zDiff < 0.0) {
+			newYaw = newYaw + Math.abs(180 - newYaw) * 2;
+		}
+		getEntity().yaw = (float) (newYaw - 90);
+		getEntity().pitch = (float) newPitch;
+		((EntityPlayer) getEntity()).az = (float) (newYaw - 90);
+	}
 
-    public void actAsHurt() {
-        ((WorldServer) getEntity().world).tracker.a(getEntity(),
-                new Packet18ArmAnimation(getEntity(), 2));
-    }
+	public void putInBed(final Location bed) {
+		getEntity().setPosition(bed.getX(), bed.getY(), bed.getZ());
+		getEntity().a((int) bed.getX(), (int) bed.getY(), (int) bed.getZ());
+	}
 
-    public void setItemInHand(Material m) {
-        setItemInHand(m, (short) 0);
-    }
+	public void setItemInHand(final Material m) {
+		setItemInHand(m, (short) 0);
+		updateEquipment();
+	}
 
-    public void setItemInHand(Material m, short damage) {
-        ((HumanEntity) getEntity().getBukkitEntity())
-                .setItemInHand(new ItemStack(m, 1, damage));
-    }
+	public void setItemInHand(final Material m, final short damage) {
+		((HumanEntity) getEntity().getBukkitEntity()).setItemInHand(new ItemStack(m, 1, damage));
+		updateEquipment();
+	}
 
-    public void setName(String name) {
-        ((NPCEntity) getEntity()).name = name;
-    }
+	public void setName(final String name) {
+		((NPCEntity) getEntity()).name = name;
+	}
 
-    public String getName() {
-        return ((NPCEntity) getEntity()).name;
-    }
+	public void setSneaking() {
+		getEntity().setSneaking(true);
+	}
+	
+	public void updateEquipment() {
+		for (int i = 0; i < previousEquipment.length; i++) {
+			final net.minecraft.server.v1_4_6.ItemStack previous = previousEquipment[i];
+			final net.minecraft.server.v1_4_6.ItemStack current = ((EntityPlayer) getEntity()).getEquipment(i);
+			if (previous != current) {
+				NPCUtils.sendPacketNearby(getBukkitEntity().getLocation(), new Packet5EntityEquipment(getEntity().id, i, current), 20);
+				previousEquipment[i] = current;
+			}
+		}
+	}
 
-    public PlayerInventory getInventory() {
-        return ((HumanEntity) getEntity().getBukkitEntity()).getInventory();
-    }
-
-    public void putInBed(Location bed) {
-        getEntity().setPosition(bed.getX(), bed.getY(), bed.getZ());
-        getEntity().a((int) bed.getX(), (int) bed.getY(), (int) bed.getZ());
-    }
-
-    public void getOutOfBed() {
-        ((NPCEntity) getEntity()).a(true, true, true);
-    }
-
-    public void setSneaking() {
-        getEntity().setSneaking(true);
-    }
-
-    public void lookAtPoint(Location point) {
-        if (getEntity().getBukkitEntity().getWorld() != point.getWorld()) {
-            return;
-        }
-        Location npcLoc = ((LivingEntity) getEntity().getBukkitEntity())
-                .getEyeLocation();
-        double xDiff = point.getX() - npcLoc.getX();
-        double yDiff = point.getY() - npcLoc.getY();
-        double zDiff = point.getZ() - npcLoc.getZ();
-        double DistanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
-        double DistanceY = Math.sqrt(DistanceXZ * DistanceXZ + yDiff * yDiff);
-        double newYaw = Math.acos(xDiff / DistanceXZ) * 180 / Math.PI;
-        double newPitch = Math.acos(yDiff / DistanceY) * 180 / Math.PI - 90;
-        if (zDiff < 0.0) {
-            newYaw = newYaw + Math.abs(180 - newYaw) * 2;
-        }
-        getEntity().yaw = (float) (newYaw - 90);
-        getEntity().pitch = (float) newPitch;
-        ((EntityPlayer) getEntity()).bT = (float) (newYaw - 90);
-    }
 }

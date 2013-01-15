@@ -26,7 +26,8 @@ public enum EffectType {
 	VEHICLEMOVE,
 	SPECIAL,
 	FISH,
-	RODDURABILITY
+	RODDURABILITY,
+	SMELT
 	;
 	
 

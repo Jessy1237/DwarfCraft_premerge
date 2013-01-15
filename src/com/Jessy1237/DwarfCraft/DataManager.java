@@ -172,8 +172,8 @@ public class DataManager {
 
 	public DCPlayer createDwarf(Player player) {
 		DCPlayer newDwarf = new DCPlayer(plugin, player);
-		newDwarf.changeRace(plugin.getConfigManager().getDefaultRace());
-		newDwarf.setSkills(plugin.getConfigManager().getAllSkills(newDwarf.getRace()));
+		newDwarf.setRace(plugin.getConfigManager().getDefaultRace());
+		newDwarf.setSkills(plugin.getConfigManager().getAllSkills());
 		
 		for (Skill skill : newDwarf.getSkills().values()) {
 			skill.setLevel(0);
@@ -290,9 +290,10 @@ public class DataManager {
 			if (!rs.next())
 				return false;
 			
+			player.setRace(rs.getString("race"));
+			
 			//System.out.println("DC: PlayerJoin success for " + player.getPlayer().getName() + " id " + rs.getInt("id"));
 			
-			player.changeRace(plugin.getConfigManager().findRace(rs.getString("race"), false));
 			int id = rs.getInt("id");
 			rs.close();
 			
@@ -527,7 +528,7 @@ public class DataManager {
 	public boolean saveDwarfData(DCPlayer dCPlayer) {
 		try {
 			PreparedStatement prep = mDBCon.prepareStatement("UPDATE players SET race=? WHERE name=?;");
-			prep.setString(1, dCPlayer.getRace().getName());
+			prep.setString(1, dCPlayer.getRace());
 			prep.setString(2, dCPlayer.getPlayer().getName());
 			prep.execute();
 			prep.close();

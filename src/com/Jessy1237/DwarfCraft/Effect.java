@@ -6,11 +6,38 @@ package com.Jessy1237.DwarfCraft;
 
 import java.util.Random;
 
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Blaze;
+import org.bukkit.entity.CaveSpider;
+import org.bukkit.entity.Chicken;
+import org.bukkit.entity.Cow;
+import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.Enderman;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Ghast;
+import org.bukkit.entity.Giant;
+import org.bukkit.entity.MagmaCube;
+import org.bukkit.entity.MushroomCow;
+import org.bukkit.entity.Pig;
+import org.bukkit.entity.PigZombie;
+import org.bukkit.entity.Sheep;
+import org.bukkit.entity.Silverfish;
+import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Slime;
+import org.bukkit.entity.Snowman;
+import org.bukkit.entity.Spider;
+import org.bukkit.entity.Squid;
+import org.bukkit.entity.Villager;
+import org.bukkit.entity.Wolf;
+import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 import org.jbls.LexManos.CSV.CSVRecord;
 
+@SuppressWarnings("deprecation")
 public class Effect {
 	private int mID;
 	private double mBase;
@@ -30,10 +57,8 @@ public class Effect {
 	private int[] mTools;
 	private boolean mFloorResult;
 
-	@SuppressWarnings("deprecation")
 	private CreatureType mCreature;
 
-	@SuppressWarnings("deprecation")
 	public Effect(CSVRecord record) {
 		if (record == null)
 			return;
@@ -192,6 +217,14 @@ public class Effect {
 		case VEHICLEMOVE:
 			description = String.format("&6Your boat travels %s%d%% &6faster than normal", effectLevelColor, (int) (effectAmount * 100 - 100));
 			break;
+		case SMELT:
+			if (mInitator.getTypeId() == 265) {
+				initiator = Util.getCleanName(new ItemStack(Material.IRON_ORE));
+			} else if (mInitator.getTypeId() == 266) {
+				initiator = Util.getCleanName(new ItemStack(Material.GOLD_ORE));
+			}
+			description = String.format("&6Smelt a &2%s &6and %s%.2f &2%s&6 are created as well", initiator, effectLevelColor, effectAmount, output);
+			break;
 		case SPECIAL:
 		default:
 			description = "&6This Effect description is not yet implemented: " + mType.toString();
@@ -277,8 +310,9 @@ public class Effect {
 			data = oldData;
 
 		int count = Util.randomAmount(getEffectAmount(player));
-
-		return new ItemStack(mOutput.getTypeId(), count, (short) 0, data);
+		ItemStack item = new ItemStack(mOutput.getTypeId(), count, data);
+		item.setData(new MaterialData(item.getTypeId(), data));
+		return item;
 	}
 
 	public boolean getToolRequired() {
@@ -335,7 +369,6 @@ public class Effect {
 		return "any tool";
 	}
 
-	@SuppressWarnings("deprecation")
 	public boolean checkMob(Entity entity) {
 		if (mCreature == null)
 			return false;
@@ -423,14 +456,14 @@ public class Effect {
 
 		// Some code taken from net.minecraft.server.ItemStack line 165.
 		// Checks to see if damage should be skipped.
-		if(tool.containsEnchantment(Enchantment.DURABILITY)){
+		if (tool.containsEnchantment(Enchantment.DURABILITY)) {
 			int level = tool.getEnchantmentLevel(Enchantment.DURABILITY);
 			Random r = new Random();
-			if(level > 0 && r.nextInt(level + 1) > 0){
+			if (level > 0 && r.nextInt(level + 1) > 0) {
 				return;
 			}
 		}
-		
+
 		base = (negate ? base : 0);
 
 		if (wear == base)

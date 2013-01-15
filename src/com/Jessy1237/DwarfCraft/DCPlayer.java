@@ -19,7 +19,7 @@ public class DCPlayer {
 	private final DwarfCraft plugin;
 	private HashMap<Integer, Skill> skills;
 	private Player player;
-	private Race race;
+	private String race;
 
 	public void setPlayer(Player player) {
 		this.player = player;
@@ -27,8 +27,16 @@ public class DCPlayer {
 
 	public DCPlayer(final DwarfCraft plugin, Player whoami) {
 		this.plugin = plugin;
-		player = whoami;
-		race = plugin.getConfigManager().getDefaultRace();
+		this.player = whoami;
+		this.race = plugin.getConfigManager().getDefaultRace();
+		this.skills = plugin.getConfigManager().getAllSkills();
+	}
+	
+	public DCPlayer(final DwarfCraft plugin, Player whoami, String race) {
+		this.plugin = plugin;
+		this.player = whoami;
+		this.race = race;
+		this.skills = plugin.getConfigManager().getAllSkills();
 	}
 
 	protected List<List<ItemStack>> calculateTrainingCost(Skill skill) {
@@ -242,19 +250,21 @@ public class DCPlayer {
 		return 0;
 	}
 
-	public void changeRace(Race race) {
-		if (race == null)
-			race = plugin.getConfigManager().getDefaultRace();
+	public void changeRace(String race) {
 		this.race = race;
-		this.skills = plugin.getConfigManager().getAllSkills(race);
+		skills = plugin.getConfigManager().getAllSkills();
 	}
 
-	public Race getRace() {
+	public String getRace() {
 		return race;
 	}
 	
 	public static float getYaw(Player p){
 		Entity e = (Entity)p;
 		return e.yaw;
+	}
+	
+	public void setRace(String race) {
+		this.race = race;
 	}
 }

@@ -11,6 +11,7 @@ import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_4_6.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_4_6.entity.CraftSheep;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
@@ -278,6 +279,9 @@ public class DCEntityListener implements Listener {
 
 		Arrow arrow = (Arrow) event.getDamager();
 		LivingEntity attacker = arrow.getShooter();
+		if(event.getEntity() instanceof EnderCrystal) {
+			return;
+		}
 		LivingEntity hitThing = (LivingEntity) event.getEntity();
 
 		int hp = hitThing.getHealth();

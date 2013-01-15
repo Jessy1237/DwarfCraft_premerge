@@ -5,7 +5,6 @@ package com.Jessy1237.DwarfCraft;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
@@ -25,8 +24,7 @@ public final class CommandParser {
 		this.input = args;
 	}
 
-	public List<Object> parse(List<Object> desiredArguments,
-			boolean ignoreSize) throws DCCommandException {
+	public List<Object> parse(List<Object> desiredArguments, boolean ignoreSize) throws DCCommandException {
 		List<Object> output = new ArrayList<Object>();
 		int arrayIterator = 0;
 		try {
@@ -41,8 +39,6 @@ public final class CommandParser {
 					output.add(parseEffect(arrayIterator));
 				else if (o instanceof Boolean)
 					output.add(parseConfirm(arrayIterator));
-				else if (o instanceof Race && ((String) o).equalsIgnoreCase("newRace"))
-					output.add(parseRace(arrayIterator));
 				else if (o instanceof String && ((String) o).equalsIgnoreCase("SkillLevelInt"))
 					output.add(parseSkillLevel(arrayIterator));
 				else if (o instanceof String && ((String) o).equalsIgnoreCase("UniqueIdAdd"))
@@ -87,7 +83,7 @@ public final class CommandParser {
 			player = sender.getServer().getPlayer(dwarfName);
 			if (player != null && player.isOnline())
 				dCPlayer = plugin.getDataManager().find(player);
-			else if (player == null || !player.isOnline()){
+			else if (player == null || !player.isOnline()) {
 				System.out.println("looking for offline player");
 				dCPlayer = plugin.getDataManager().findOffline(dwarfName);
 			}
@@ -157,18 +153,11 @@ public final class CommandParser {
 		return null;
 	}
 
-	private Race parseRace(int arrayIterator) throws DCCommandException {
-		HashMap<String,Race> racemap = plugin.getConfigManager().getRaceMap();
-		for (String name:racemap.keySet()){
-			if(name.equalsIgnoreCase(input[arrayIterator])) return racemap.get(name);
-		}
-		throw new DCCommandException(plugin, Type.PARSERACEFAIL);
-	}
-
 	private Skill parseSkill(int argNumber) throws DCCommandException {
 		Skill skill = null;
 		String inputString = input[argNumber];
-		if (inputString.equalsIgnoreCase("all")) return null;
+		if (inputString.equalsIgnoreCase("all"))
+			return null;
 		int skillID;
 
 		if (target == null)
@@ -176,13 +165,14 @@ public final class CommandParser {
 		if (!(sender instanceof Player)) {
 			try {
 				skillID = Integer.parseInt(inputString);
-				return plugin.getConfigManager().getAllSkills(target.getRace()).get(skillID);
+				return plugin.getConfigManager().getAllSkills().get(skillID);
 			} catch (NumberFormatException nfe) {
 				if (inputString.length() < 5)
 					throw new DCCommandException(plugin, Type.PARSESKILLFAIL);
-				for (Skill s : plugin.getConfigManager().getAllSkills(target.getRace()).values()) {
+				for (int i : plugin.getConfigManager().getAllSkills(target.getRace())) {
+					Skill s = plugin.getConfigManager().getGenericSkill(i);
 					if (s.getDisplayName().regionMatches(0, inputString, 0, 5))
-					return s;
+						return s;
 				}
 			}
 			throw new DCCommandException(plugin, Type.PARSESKILLFAIL);
@@ -216,8 +206,7 @@ public final class CommandParser {
 		return level;
 	}
 
-	private Object parseUniqueId(int arrayIterator, boolean add)
-			throws DCCommandException {
+	private Object parseUniqueId(int arrayIterator, boolean add) throws DCCommandException {
 		String uniqueId = input[arrayIterator];
 		if (plugin.getDataManager().getTrainer(uniqueId) != null && add)
 			throw new DCCommandException(plugin, Type.NPCIDINUSE);
