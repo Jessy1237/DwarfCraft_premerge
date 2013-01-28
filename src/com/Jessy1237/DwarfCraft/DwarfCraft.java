@@ -11,13 +11,37 @@ import net.milkbowl.vault.permission.Permission;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.java.JavaPlugin;
 
-import com.Jessy1237.DwarfCraft.events.*;
-import com.Jessy1237.DwarfCraft.commands.*;
-
+import com.Jessy1237.DwarfCraft.commands.CommandCreateGreeter;
+import com.Jessy1237.DwarfCraft.commands.CommandCreateTrainer;
+import com.Jessy1237.DwarfCraft.commands.CommandDCCommands;
+import com.Jessy1237.DwarfCraft.commands.CommandDMem;
+import com.Jessy1237.DwarfCraft.commands.CommandDebug;
+import com.Jessy1237.DwarfCraft.commands.CommandEffectInfo;
+import com.Jessy1237.DwarfCraft.commands.CommandHelp;
+import com.Jessy1237.DwarfCraft.commands.CommandInfo;
+import com.Jessy1237.DwarfCraft.commands.CommandListTrainers;
+import com.Jessy1237.DwarfCraft.commands.CommandLookAtNext;
+import com.Jessy1237.DwarfCraft.commands.CommandRace;
+import com.Jessy1237.DwarfCraft.commands.CommandRaces;
+import com.Jessy1237.DwarfCraft.commands.CommandRemoveNext;
+import com.Jessy1237.DwarfCraft.commands.CommandRemoveTrainer;
+import com.Jessy1237.DwarfCraft.commands.CommandRenameNPC;
+import com.Jessy1237.DwarfCraft.commands.CommandRenameNext;
+import com.Jessy1237.DwarfCraft.commands.CommandRules;
+import com.Jessy1237.DwarfCraft.commands.CommandSetSkill;
+import com.Jessy1237.DwarfCraft.commands.CommandSkillInfo;
+import com.Jessy1237.DwarfCraft.commands.CommandSkillSheet;
+import com.Jessy1237.DwarfCraft.commands.CommandTutorial;
+import com.Jessy1237.DwarfCraft.events.DCBlockListener;
+import com.Jessy1237.DwarfCraft.events.DCEntityListener;
+import com.Jessy1237.DwarfCraft.events.DCInventoryListener;
+import com.Jessy1237.DwarfCraft.events.DCPlayerListener;
+import com.Jessy1237.DwarfCraft.events.DCVehicleListener;
+import com.Jessy1237.DwarfCraft.events.DCWorldListener;
 import com.topcat.npclib.NPCManager;
 import com.topcat.npclib.entity.HumanNPC;
 import com.topcat.npclib.entity.NPC;
@@ -184,6 +208,8 @@ public class DwarfCraft extends JavaPlugin {
 			if (hasOp || hasAll) {
 				cmd = new CommandDMem(this);
 			}
+		} else if (name.equalsIgnoreCase("Races")) {
+			cmd = new CommandRaces(this);
 		} else {
 			isCmd = false;
 		}

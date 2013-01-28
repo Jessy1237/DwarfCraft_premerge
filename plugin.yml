@@ -2,7 +2,7 @@ name: DwarfCraft
 description: A skills and progression plugin for character development in RPG worlds.
 author: Jessy1237 & Curtis1509
 main: com.Jessy1237.DwarfCraft.DwarfCraft
-version: 1.6
+version: 1.7
 commands: 
    renamenpc: 
       description: Renames the trainer/greeter.
@@ -105,6 +105,9 @@ commands:
    lookatnext: 
       description: 
       usage: 
+   races:
+      description:
+      usage:
    dmem: 
       description: Displays a list of what type, and how many entites are loaded on the server.
       usage: |

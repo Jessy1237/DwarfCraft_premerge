@@ -5,11 +5,13 @@ package com.Jessy1237.DwarfCraft.events;
  */
 
 import java.util.HashMap;
+import java.util.Random;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
@@ -38,7 +40,7 @@ public class DCBlockListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBreak(BlockBreakEvent event) {
-		
+
 		if (plugin.getConfigManager().worldBlacklist) {
 			for (World w : plugin.getConfigManager().worlds) {
 				if (w != null) {
@@ -59,6 +61,7 @@ public class DCBlockListener implements Listener {
 		HashMap<Integer, Skill> skills = player.getSkills();
 
 		ItemStack tool = player.getPlayer().getItemInHand();
+		Block block = event.getBlock();
 		Location loc = event.getBlock().getLocation();
 		int blockID = event.getBlock().getTypeId();
 		byte meta = event.getBlock().getData();
@@ -95,30 +98,59 @@ public class DCBlockListener implements Listener {
 						// to override default
 						if (plugin.getConfigManager().silkTouch) {
 							if (tool.containsEnchantment(Enchantment.SILK_TOUCH)) {
-								if (item.getType() == Material.COBBLESTONE) {
+								if (block.getType() == Material.STONE) {
 									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.STONE, 1);
-								} else if (item.getType() == Material.GOLD_INGOT) {
-									item.setAmount(item.getAmount() - 1);
-									item1 = new ItemStack(Material.GOLD_ORE, 1);
-								} else if (item.getType() == Material.DIAMOND) {
+								} else if (block.getType() == Material.DIAMOND_ORE) {
 									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.DIAMOND_ORE, 1);
-								} else if (item.getType() == Material.COAL) {
+								} else if (block.getType() == Material.COAL_ORE) {
 									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.COAL_ORE, 1);
-								} else if (item.getType() == Material.IRON_INGOT) {
-									item.setType(Material.IRON_ORE);
-									item1 = new ItemStack(Material.IRON_ORE, 1);
-								} else if (item.getType() == Material.REDSTONE) {
+								} else if (block.getType() == Material.REDSTONE_ORE) {
 									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.REDSTONE_ORE, 1);
-								} else if (event.getBlock().getType() == Material.GRASS) {
+								} else if (block.getType() == Material.GRASS) {
 									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.GRASS, 1);
-								} else if (event.getBlock().getType() == Material.LAPIS_ORE) {
+								} else if (block.getType() == Material.LAPIS_ORE) {
 									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.LAPIS_ORE, 1);
+								}
+							}
+						}
+						
+						//Checks for Fortune tools and adds it to the Dwarfcraft drops
+						Material type = block.getType();
+						if (type == Material.DIAMOND_ORE || type == Material.COAL_ORE || type == Material.REDSTONE_ORE || type == Material.GRASS || type == Material.STONE || type == Material.LAPIS_ORE) {
+							if (tool.containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
+								int lvl = tool.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
+								Random r = new Random();
+								int num = r.nextInt(99) + 1;
+								switch (lvl) {
+								case 1:
+									if (1 <= num && num <= 33) {
+										item.setAmount(item.getAmount() + 1);
+									}
+									break;
+								case 2:
+									if (1 <= num && num <= 25) {
+										item.setAmount(item.getAmount() + 1);
+									} else if (26 <= num && num <= 50) {
+										item.setAmount(item.getAmount() + 2);
+									}
+									break;
+								case 3:
+									if (1 <= num && num <= 20) {
+										item.setAmount(item.getAmount() + 1);
+									} else if (21 <= num && num <= 40) {
+										item.setAmount(item.getAmount() + 2);
+									} else if (41 <= num && num <= 60) {
+										item.setAmount(item.getAmount() + 2);
+									}
+									break;
+								default:
+									break;
 								}
 							}
 						}
@@ -133,31 +165,10 @@ public class DCBlockListener implements Listener {
 							loc.getWorld().dropItemNaturally(loc, item1);
 						}
 
-						if (blockID == 16) {
-							((ExperienceOrb) loc.getWorld().spawn(loc, ExperienceOrb.class)).setExperience(event.getExpToDrop());
-						} else if (blockID == 56) {
-							((ExperienceOrb) loc.getWorld().spawn(loc, ExperienceOrb.class)).setExperience(event.getExpToDrop());
-						} else if (blockID == 21) {
-							((ExperienceOrb) loc.getWorld().spawn(loc, ExperienceOrb.class)).setExperience(event.getExpToDrop());
-						}
+						((ExperienceOrb) loc.getWorld().spawn(loc, ExperienceOrb.class)).setExperience(event.getExpToDrop());
 
-						/*
-						 * if(blockID == 16){ Random rand = new Random(); int
-						 * value = MathHelper.a(rand, 0, 2);
-						 * ((ExperienceOrb)loc.getWorld().spawn(loc,
-						 * ExperienceOrb.class)).setExperience(value); } else
-						 * if(blockID == 56){ Random rand = new Random(); int
-						 * value = MathHelper.a(rand, 3, 7);
-						 * ((ExperienceOrb)loc.getWorld().spawn(loc,
-						 * ExperienceOrb.class)).setExperience(value); } else
-						 * if(blockID == 21){ Random rand = new Random(); int
-						 * value = MathHelper.a(rand, 2, 5);
-						 * ((ExperienceOrb)loc.getWorld().spawn(loc,
-						 * ExperienceOrb.class)).setExperience(value); }
-						 */
+						blockDropChange = true;
 
-							blockDropChange = true;
-						
 					}
 				}
 			}

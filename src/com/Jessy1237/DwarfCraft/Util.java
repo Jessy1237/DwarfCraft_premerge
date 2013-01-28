@@ -6,13 +6,7 @@ package com.Jessy1237.DwarfCraft;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Coal;
-import org.bukkit.material.Crops;
-import org.bukkit.material.Dye;
 import org.bukkit.material.MaterialData;
-import org.bukkit.material.Step;
-import org.bukkit.material.Tree;
-import org.bukkit.material.Wool;
 
 public class Util {
 
@@ -60,70 +54,185 @@ public class Util {
 	protected static String sanitize(String str) {
 		String retval = "";
 		for (int i = 0; i < str.length(); i++) {
-			if ("abcdefghijlmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_"
-					.indexOf(str.charAt(i)) != -1)
+			if ("abcdefghijlmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_".indexOf(str.charAt(i)) != -1)
 				retval = retval + str.charAt(i);
 		}
 		return retval;
 	}
-	
-	public static ItemStack parseItem(String info){
+
+	public static ItemStack parseItem(String info) {
 		String[] pts = info.split(":");
 		int data = (pts.length == 1 ? -1 : Integer.parseInt(pts[1]));
 		int item = -1;
-		
-		try{
+
+		try {
 			item = Integer.parseInt(pts[0]);
-		}catch(NumberFormatException e){
+		} catch (NumberFormatException e) {
 			Material mat = Material.getMaterial(pts[0]);
-			if (mat == null){
+			if (mat == null) {
 				System.out.println("DC ERROR: Could not parse material: " + info);
 				return null;
 			}
 			item = mat.getId();
 		}
-		ItemStack item1 = new ItemStack(item, 0, (data == -1 ? (byte)-1 : (byte)(data & 0xFF)));
-		item1.setData(new MaterialData(item1.getTypeId(), (data == -1 ? (byte)-1 : (byte)(data & 0xFF))));
+		ItemStack item1 = new ItemStack(item);
+		item1.setData(new MaterialData(item1.getTypeId(), (data == -1 ? (byte) -1 : (byte) (data & 0xFF))));
 		return item1;
 	}
-	
-	public static String getCleanName(ItemStack item){
+
+	public static String getCleanName(ItemStack item) {
 		if (item == null)
 			return "NULL";
 		if (item.getData() == null || item.getData().getData() == -1)
 			return item.getType().toString();
-		
-		switch(item.getType()){
-			case SAPLING:     return ((Tree)item.getData()).getSpecies()  + " Sapling";
-			case LOG:         return ((Tree)item.getData()).getSpecies()  + " Log";
-			case LEAVES:      return ((Tree)item.getData()).getSpecies()  + " Leaves";
-			case WOOL:        return ((Wool)item.getData()).getColor()    + " Wool";
-			case DOUBLE_STEP: return ((Step)item.getData()).getMaterial() + " Double Slab";
-			case STEP:        return ((Step)item.getData()).getMaterial() + " Slab";
-			case CROPS:       return ((Crops)item.getData()).getState()   + " Crops";
-			case COAL:        return ((Coal)item.getData()).getType().toString();
-			case INK_SACK:  
-				switch(((Dye)item.getData()).getColor()){
-					case WHITE:      return "Bone Meal";
-					case ORANGE:     return "Orange Dye";
-					case MAGENTA:    return "Magenta Dye";
-					case LIGHT_BLUE: return "Light Blue Dye";
-					case YELLOW:     return "Dandelion Yellow";
-					case LIME:       return "Lime Dye";
-					case PINK:       return "Pink Dye";
-					case GRAY:       return "Gray Dye";
-					case SILVER:     return "Light Gray Dye";
-					case CYAN:       return "Cyan Dye";
-					case PURPLE:     return "Purple Dye";
-					case BLUE:       return "Lapis Lazuli";
-					case BROWN:      return "Cocoa Beans";
-					case GREEN:      return "Cactus Green";
-					case RED:        return "Rose Red";
-					case BLACK:      return "Ink Sac";
-					default: return String.format("Unknown Dye(%d)", item.getData().getData());
-				}
-			default: return item.getType().toString();
+
+		switch (item.getType()) {
+		case INK_SACK:
+			switch (item.getData().getData()) {
+			case 15:
+				return "Bone Meal";
+			case 14:
+				return "Orange Dye";
+			case 13:
+				return "Magenta Dye";
+			case 12:
+				return "Light Blue Dye";
+			case 11:
+				return "Dandelion Yellow";
+			case 10:
+				return "Lime Dye";
+			case 9:
+				return "Pink Dye";
+			case 8:
+				return "Gray Dye";
+			case 7:
+				return "Light Gray Dye";
+			case 6:
+				return "Cyan Dye";
+			case 5:
+				return "Purple Dye";
+			case 4:
+				return "Lapis Lazuli";
+			case 3:
+				return "Cocoa Beans";
+			case 2:
+				return "Cactus Green";
+			case 1:
+				return "Rose Red";
+			case 0:
+				return "Ink Sac";
+			default:
+				return String.format("Unknown Dye(%d)", item.getData().getData());
+			}
+		case SAPLING:
+			switch (item.getData().getData()) {
+			case 0:
+				return "Oak Sapling";
+			case 1:
+				return "Spruce Sapling";
+			case 2:
+				return "Birch Sapling";
+			case 3:
+				return "Jungle Tree Sapling";
+			}
+		case LOG:
+			switch (item.getData().getData()) {
+			case 0:
+				return "Oak Log";
+			case 1:
+				return "Spruce Log";
+			case 2:
+				return "Birch Log";
+			case 3:
+				return "Jungle Tree Log";
+			}
+		case LEAVES:
+			switch (item.getData().getData()) {
+			case 0:
+				return "Oak Leaves";
+			case 1:
+				return "Spruce Leaves";
+			case 2:
+				return "Birch Leaves";
+			case 3:
+				return "Jungle Tree Leaves";
+			}
+		case WOOL:
+			switch (item.getData().getData()) {
+			case 0:
+				return "White Wool";
+			case 1:
+				return "Orange Wool";
+			case 2:
+				return "Magenta Wool";
+			case 3:
+				return "Light Blue Wool";
+			case 4:
+				return "Yellow Wool";
+			case 5:
+				return "Lime Wool";
+			case 6:
+				return "Pink Wool";
+			case 7:
+				return "Gray Wool";
+			case 8:
+				return "Light Gray Wool";
+			case 9:
+				return "Cyan Wool";
+			case 10:
+				return "Purple Wool";
+			case 11:
+				return "Blue Wool";
+			case 12:
+				return "Brown Wool";
+			case 13:
+				return "Green Wool";
+			case 14:
+				return "Red Wool";
+			case 15:
+				return "Black Wool";
+			}
+		case DOUBLE_STEP:
+			switch (item.getData().getData()) {
+			case 9:
+				return "Smooth Sandstone Double Slab";
+			case 8:
+				return "Smooth Stone Double Slab";
+			case 7:
+				return "Quarts Double Slab";
+			case 6:
+				return "Nether Brick Double Slab";
+			case 5:
+				return "Stone Brick Double Slab";
+			case 4:
+				return "Brick Double Slab";
+			case 3:
+				return "Cobblestone Double Slab";
+			case 2:
+				return "Wooden Double Slab";
+			case 1:
+				return "Sandstone Double Slab";
+			case 0:
+				return "Stone Double Slab";
+			default:
+				return String.format("Unknown Dye(%d)", item.getData().getData());
+			}
+		case CROPS:
+			switch (item.getData().getData()) {
+			case 7:
+				return "Fully Grown Crops";
+			default:
+				return String.format("Unknown Dye(%d)", item.getData().getData());
+			}
+		case COAL:
+			switch (item.getData().getData()) {
+			case 0:
+				return "Coal";
+			case 1:
+				return "Charcoal";
+			}
+		default:
+			return item.getType().toString();
 		}
 	}
-
 }

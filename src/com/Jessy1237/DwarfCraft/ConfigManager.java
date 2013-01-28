@@ -39,6 +39,7 @@ public final class ConfigManager {
 	private String cfgRaceFile;
 	private String dbpath;
 	private int trainDelay;
+	private String vanillaRace;
 
 	private HashMap<Integer, Skill> skillsArray = new HashMap<Integer, Skill>();
 	public ArrayList<World> worlds = new ArrayList<World>();
@@ -50,6 +51,7 @@ public final class ConfigManager {
 	public boolean disableCacti = true;
 	public boolean worldBlacklist = false;
 	public boolean silkTouch = true;
+	public boolean vanilla = true;
 
 	protected ConfigManager(DwarfCraft plugin, String directory, String paramsFileName) {
 		this.plugin = plugin;
@@ -229,10 +231,20 @@ public final class ConfigManager {
 					silkTouch = Boolean.parseBoolean(theline[1].trim());
 				if (theline[0].equalsIgnoreCase("Default Race"))
 					defaultRace = theline[1].trim();
+				if (theline[0].equalsIgnoreCase("Vanilla Race Enabled"))
+					vanilla = Boolean.parseBoolean(theline[1].trim());
+				if (theline[0].equalsIgnoreCase("Vanilla Race"))
+					vanillaRace = theline[1].trim();
 
 				line = br.readLine();
 			}
 
+			if (vanilla) {
+				if (getRace(vanillaRace) == null) {
+					raceList.add(new Race(vanillaRace, new ArrayList<Integer>(), "The all round balanced race (vanilla)."));
+					System.out.println("[DwarfCraft] Loaded vanilla race: " + vanillaRace);
+				}
+			}
 		} catch (FileNotFoundException fN) {
 			fN.printStackTrace();
 		} catch (Exception e) {

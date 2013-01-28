@@ -27,6 +27,7 @@ public class CommandInformation {
 		LISTTRAINERS("Displays a list of trainers and greeters on the server."),
 		REMOVENEXT("Removes the next trainer you hit."),
 		LOOKATNEXT("The next trainer you hit will look at you."),
+		RACES("Displays a list of the races with descriptions"),
 		DMEM("Displays a list of what type, and how many entites are loaded on the server.");
 		
 		private String Desc;
@@ -60,6 +61,7 @@ public class CommandInformation {
 		LISTTRAINERS("/<command> [PageNumber]"),
 		REMOVENEXT("/removenext"),
 		LOOKATNEXT("/lookatnext"),
+		RACES("/races"),
 		DMEM("/dmem");
 		
 		private String Usage;
