@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_4_6.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_4_6.entity.CraftSheep;
+import org.bukkit.craftbukkit.v1_4_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_4_R1.entity.CraftSheep;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;

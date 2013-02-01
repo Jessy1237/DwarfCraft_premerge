@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import net.minecraft.server.v1_4_6.Entity;
+import net.minecraft.server.v1_4_R1.Entity;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

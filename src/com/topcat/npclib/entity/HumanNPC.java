@@ -1,10 +1,10 @@
 package com.topcat.npclib.entity;
 
-import net.minecraft.server.v1_4_6.EntityPlayer;
-import net.minecraft.server.v1_4_6.Packet18ArmAnimation;
-import net.minecraft.server.v1_4_6.Packet38EntityStatus;
-import net.minecraft.server.v1_4_6.Packet5EntityEquipment;
-import net.minecraft.server.v1_4_6.WorldServer;
+import net.minecraft.server.v1_4_R1.EntityPlayer;
+import net.minecraft.server.v1_4_R1.Packet18ArmAnimation;
+import net.minecraft.server.v1_4_R1.Packet38EntityStatus;
+import net.minecraft.server.v1_4_R1.Packet5EntityEquipment;
+import net.minecraft.server.v1_4_R1.WorldServer;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,7 +18,7 @@ import com.topcat.npclib.nms.NPCEntity;
 
 public class HumanNPC extends NPC {
 
-	private final net.minecraft.server.v1_4_6.ItemStack[]	previousEquipment	= { null, null, null, null, null };
+	private final net.minecraft.server.v1_4_R1.ItemStack[]	previousEquipment	= { null, null, null, null, null };
 	
 	public HumanNPC(final NPCEntity npcEntity) {
 		super(npcEntity);
@@ -89,8 +89,8 @@ public class HumanNPC extends NPC {
 	
 	public void updateEquipment() {
 		for (int i = 0; i < previousEquipment.length; i++) {
-			final net.minecraft.server.v1_4_6.ItemStack previous = previousEquipment[i];
-			final net.minecraft.server.v1_4_6.ItemStack current = ((EntityPlayer) getEntity()).getEquipment(i);
+			final net.minecraft.server.v1_4_R1.ItemStack previous = previousEquipment[i];
+			final net.minecraft.server.v1_4_R1.ItemStack current = ((EntityPlayer) getEntity()).getEquipment(i);
 			if (previous != current) {
 				NPCUtils.sendPacketNearby(getBukkitEntity().getLocation(), new Packet5EntityEquipment(getEntity().id, i, current), 20);
 				previousEquipment[i] = current;
