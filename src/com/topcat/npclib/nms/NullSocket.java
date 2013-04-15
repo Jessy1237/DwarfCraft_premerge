@@ -7,14 +7,14 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 /**
- * 
+ *
  * @author martin
  */
 public class NullSocket extends Socket {
 
 	@Override
 	public InputStream getInputStream() {
-		final byte[] buf = new byte[5];
+		byte[] buf = new byte[5];
 		return new ByteArrayInputStream(buf);
 	}
 

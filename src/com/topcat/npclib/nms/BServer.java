@@ -5,46 +5,36 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.minecraft.server.v1_4_R1.DedicatedPlayerList;
-import net.minecraft.server.v1_4_R1.DedicatedServer;
-import net.minecraft.server.v1_4_R1.MinecraftServer;
-import net.minecraft.server.v1_4_R1.PropertyManager;
-import net.minecraft.server.v1_4_R1.WorldServer;
-
+import net.minecraft.server.v1_5_R2.DedicatedPlayerList;
+import net.minecraft.server.v1_5_R2.DedicatedServer;
+import net.minecraft.server.v1_5_R2.MinecraftServer;
+import net.minecraft.server.v1_5_R2.PropertyManager;
+import net.minecraft.server.v1_5_R2.WorldServer;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.libs.jline.console.ConsoleReader;
-import org.bukkit.craftbukkit.v1_4_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_5_R2.CraftServer;
 
 /**
  * Server hacks for Bukkit
- * 
+ *
  * @author Kekec852
  */
 public class BServer {
 
-	private static BServer	ins;
-
-	public static BServer getInstance() {
-		if (ins == null) {
-			ins = new BServer();
-		}
-		return ins;
-	}
-
-	private MinecraftServer					mcServer;
-	private CraftServer						cServer;
-	private final Server					server;
-
-	private final HashMap<String, BWorld>	worlds	= new HashMap<String, BWorld>();
+	private static BServer ins;
+	private MinecraftServer mcServer;
+	private CraftServer cServer;
+	private Server server;
+	private HashMap<String, BWorld> worlds = new HashMap<String, BWorld>();
 
 	private BServer() {
 		server = Bukkit.getServer();
 		try {
 			cServer = (CraftServer) server;
 			mcServer = cServer.getServer();
-		} catch (final Exception ex) {
+		} catch (Exception ex) {
 			Logger.getLogger("Minecraft").log(Level.SEVERE, null, ex);
 		}
 	}
@@ -53,7 +43,7 @@ public class BServer {
 		cServer.disablePlugins();
 	}
 
-	public void dispatchCommand(final CommandSender sender, final String msg) {
+	public void dispatchCommand(CommandSender sender, String msg) {
 		cServer.dispatchCommand(sender, msg);
 	}
 
@@ -61,55 +51,62 @@ public class BServer {
 		return cServer.getHandle();
 	}
 
-	public Logger getLogger() {
-		return cServer.getLogger();
-	}
-
-	public MinecraftServer getMCServer() {
-		return mcServer;
-	}
-
-	public PropertyManager getPropertyManager() {
-		return mcServer.getPropertyManager();
-	}
-
 	public ConsoleReader getReader() {
 		return cServer.getReader();
-	}
-
-	public Server getServer() {
-		return server;
-	}
-
-	public int getSpawnProtationRadius() {
-		return mcServer.server.getSpawnRadius();
-	}
-
-	public BWorld getWorld(final String worldName) {
-		if (worlds.containsKey(worldName)) {
-			return worlds.get(worldName);
-		}
-		final BWorld w = new BWorld(this, worldName);
-		worlds.put(worldName, w);
-		return w;
-	}
-
-	public List<WorldServer> getWorldServers() {
-		return mcServer.worlds;
 	}
 
 	public void loadPlugins() {
 		cServer.loadPlugins();
 	}
 
-	public void sendConsoleCommand(final String cmd) {
+	public void stop() {
+		mcServer.safeShutdown();
+	}
+
+	public void sendConsoleCommand(String cmd) {
 		if (mcServer.isRunning()) {
 			((DedicatedServer) mcServer).issueCommand(cmd, mcServer);
 		}
 	}
 
-	public void stop() {
-		mcServer.safeShutdown();
+	public Logger getLogger() {
+		return cServer.getLogger();
+	}
+
+	public List<WorldServer> getWorldServers() {
+		return mcServer.worlds;
+	}
+
+	public int getSpawnProtationRadius() {
+		return mcServer.server.getSpawnRadius();
+	}
+
+	public PropertyManager getPropertyManager() {
+		return mcServer.getPropertyManager();
+	}
+
+	public Server getServer() {
+		return server;
+	}
+
+	public BWorld getWorld(String worldName) {
+		if (worlds.containsKey(worldName)) {
+			return worlds.get(worldName);
+		}
+		BWorld w = new BWorld(this, worldName);
+		worlds.put(worldName, w);
+		return w;
+	}
+
+	public static BServer getInstance() {
+		if (ins == null) {
+			ins = new BServer();
+		}
+		return ins;
+	}
+
+	public MinecraftServer getMCServer() {
+		return mcServer;
 	}
 
 }

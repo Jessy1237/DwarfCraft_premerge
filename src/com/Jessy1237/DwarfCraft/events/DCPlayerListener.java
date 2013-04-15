@@ -16,11 +16,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerFishEvent.State;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -142,31 +142,24 @@ public class DCPlayerListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onFoodLevelChange(FoodLevelChangeEvent event) {
-		Player player = (Player) event.getEntity();
-		int lvl = event.getFoodLevel() - player.getFoodLevel();
-		ItemStack item = null;
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
+		Player player = event.getPlayer();
+		ItemStack item = event.getItem();
+		int id = item.getTypeId();
 		DCPlayer dcPlayer = plugin.getDataManager().find(player);
 		HashMap<Integer, Skill> skills = dcPlayer.getSkills();
-
-		if (lvl == 2) {
-			item = new ItemStack(349);
-		} else if (lvl == 8) {
-			item = new ItemStack(282);
-		} else if (lvl == 3) {
-			item = new ItemStack(319);
-		} else if (lvl == 9) {
-			item = new ItemStack(320);
+		int lvl = FoodLevel.getLvl(id);
+		
+		if(lvl == 0) {
+			return;
 		}
-
+		
 		for (Skill s : skills.values()) {
 			for (Effect e : s.getEffects()) {
 				if (e.getEffectType() == EffectType.EAT && e.checkInitiator(item)) {
-
 					int foodLevel = Util.randomAmount((e.getEffectAmount(dcPlayer)));
-
-					event.setFoodLevel((event.getFoodLevel() - lvl) + foodLevel);
+					player.setFoodLevel((player.getFoodLevel() - lvl) + foodLevel);
 				}
 			}
 		}
@@ -241,5 +234,59 @@ public class DCPlayerListener implements Listener {
 			}
 		}
 
+	}
+	
+	public enum FoodLevel {
+
+		APPLE(260,4),
+		BAKED_POTATO(393,6),
+		BREAD(297,5),
+		CAKE(92,2),
+		CARROT(391,4),
+		COOKED_CHICKEN(366,6),
+		COOKED_FISH(350,5),
+		COOKED_PORKCHOP(320,8),
+		COOKIE(357,2),
+		GOLDEN_APPLE(322,4),
+		GOLDEN_CARROT(396,6),
+		MELON(360,2),
+		MUSHROOM_STEW(282,6),
+		POISONOUS_POTATO(394,2),
+		POTATO(392,1),
+		PUMPKIN_PIE(400,8),
+		RAW_BEEF(363,3),
+		RAW_CHICKEN(365,2),
+		RAW_FISH(349,2),
+		RAW_PORKCHOP(319,3),
+		ROTTEN_FLESH(367,4),
+		SPIDER_EYE(375,2),
+		STEAK(364,8);
+		
+		private int lvl;
+		private int id;
+
+		private FoodLevel(int id, int lvl) {
+			this.lvl = lvl;
+		}
+
+		public int getId() {
+			return id;
+		}
+		
+		public int getLevel() {
+			return this.lvl;
+		}
+		
+		public static int getLvl(int id) {
+			for(FoodLevel f : FoodLevel.values()) {
+				if(f != null) {
+					if(f.getId() == id) {
+						return f.getLevel();
+					}
+				}
+			}
+			return 0;
+		}
+		
 	}
 }

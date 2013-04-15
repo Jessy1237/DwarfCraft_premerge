@@ -8,8 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_4_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_4_R1.entity.CraftSheep;
+import org.bukkit.craftbukkit.v1_5_R2.entity.CraftSheep;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
@@ -23,8 +22,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.Jessy1237.DwarfCraft.DCPlayer;
@@ -35,9 +33,6 @@ import com.Jessy1237.DwarfCraft.EffectType;
 import com.Jessy1237.DwarfCraft.Skill;
 import com.Jessy1237.DwarfCraft.TrainSkillSchedule;
 import com.Jessy1237.DwarfCraft.Util;
-import com.topcat.npclib.nms.NPCNetHandler;
-import com.topcat.npclib.nms.NpcEntityTargetEvent;
-import com.topcat.npclib.nms.NpcEntityTargetEvent.NpcTargetReason;
 
 public class DCEntityListener implements Listener {
 	private final DwarfCraft plugin;
@@ -124,35 +119,27 @@ public class DCEntityListener implements Listener {
 		return false;
 	}
 
-	private boolean checkDwarfTrainer(NpcEntityTargetEvent event) {
+	private boolean checkDwarfTrainer(PlayerInteractEntityEvent event) {
 		try {
-			DCPlayer dCPlayer = plugin.getDataManager().find(((Player) event.getTarget()));
-			DwarfTrainer trainer = plugin.getDataManager().getTrainer(event.getEntity());
+			DCPlayer dCPlayer = plugin.getDataManager().find(event.getPlayer());
+			DwarfTrainer trainer = plugin.getDataManager().getTrainer(event.getRightClicked());
 			if (trainer != null) {
-				if (event.getTarget() instanceof Player) {
-					if (event.getNpcReason() == NpcTargetReason.CLOSEST_PLAYER) {
-					} else if (event.getNpcReason() == NpcTargetReason.NPC_RIGHTCLICKED) {
-						if (trainer.isGreeter()) {
-							trainer.printRightClick((Player) (event.getTarget()));
+				if (trainer.isGreeter()) {
+					trainer.printRightClick(event.getPlayer());
+				} else {
+					if (trainer.isWaiting()) {
+						plugin.getOut().sendMessage(dCPlayer.getPlayer(), "&6Please wait, Currently training a skill.");
+					} else {
+						long currentTime = System.currentTimeMillis();
+						if ((currentTime - trainer.getLastTrain()) < (long) (plugin.getConfigManager().getTrainDelay() * 1000)) {
+							plugin.getOut().sendMessage(dCPlayer.getPlayer(), "&6Sorry, i need time to recuperate.");
+							return true;
 						} else {
-							if (trainer.isWaiting()) {
-								plugin.getOut().sendMessage(dCPlayer.getPlayer(), "&6Please wait, Currently training a skill.");
-							} else {
-								long currentTime = System.currentTimeMillis();
-								if ((currentTime - trainer.getLastTrain()) < (long)(plugin.getConfigManager().getTrainDelay() * 1000)) {
-									plugin.getOut().sendMessage(dCPlayer.getPlayer(), "&6Sorry, i need time to recuperate.");
-									return true;
-								} else {
-									trainer.setWait(true);
-									trainer.setLastTrain(currentTime);
-									trainer.getEntity().animateArmSwing();
-									plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new TrainSkillSchedule(trainer, dCPlayer), 2);
-								}
-							}
+							trainer.setWait(true);
+							trainer.setLastTrain(currentTime);
+							trainer.getEntity().animateArmSwing();
+							plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new TrainSkillSchedule(trainer, dCPlayer), 2);
 						}
-					} else if (event.getNpcReason() == NpcTargetReason.NPC_BOUNCED) {
-						// player collided with mob
-						// doesn't seem to work
 					}
 				}
 				return true;
@@ -279,7 +266,7 @@ public class DCEntityListener implements Listener {
 
 		Arrow arrow = (Arrow) event.getDamager();
 		LivingEntity attacker = arrow.getShooter();
-		if(event.getEntity() instanceof EnderCrystal) {
+		if (event.getEntity() instanceof EnderCrystal) {
 			return;
 		}
 		LivingEntity hitThing = (LivingEntity) event.getEntity();
@@ -419,18 +406,9 @@ public class DCEntityListener implements Listener {
 
 	}
 
+	// Replaced EntityTarget Event since 1.5.1
 	@EventHandler(priority = EventPriority.HIGH)
-	public void onEntityTarget(EntityTargetEvent event) {
-		if (event instanceof NpcEntityTargetEvent) {
-			checkDwarfTrainer((NpcEntityTargetEvent) event);
-			event.setCancelled(true);
-		}
-		if (event.getReason() == TargetReason.CLOSEST_PLAYER) {
-			if (event.getTarget() instanceof CraftPlayer) {
-				if (((CraftPlayer) event.getTarget()).getHandle().playerConnection instanceof NPCNetHandler) {
-					event.setCancelled(true);
-				}
-			}
-		}
+	public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+		checkDwarfTrainer(event);
 	}
 }

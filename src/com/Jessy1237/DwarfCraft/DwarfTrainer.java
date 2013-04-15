@@ -6,7 +6,7 @@ package com.Jessy1237.DwarfCraft;
 
 import java.util.List;
 
-import net.minecraft.server.v1_4_R1.EntityPlayer;
+import net.minecraft.server.v1_5_R2.EntityPlayer;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
