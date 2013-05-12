@@ -3,12 +3,12 @@ package com.topcat.npclib.nms;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_5_R2.CraftServer;
+import net.minecraft.server.v1_5_R3.Connection;
+import net.minecraft.server.v1_5_R3.NetworkManager;
+import net.minecraft.server.v1_5_R3.Packet;
 
-import net.minecraft.server.v1_5_R2.Connection;
-import net.minecraft.server.v1_5_R2.NetworkManager;
-import net.minecraft.server.v1_5_R2.Packet;
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_5_R3.CraftServer;
 
 /**
  *

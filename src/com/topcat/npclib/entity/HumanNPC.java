@@ -1,8 +1,8 @@
 package com.topcat.npclib.entity;
 
-import net.minecraft.server.v1_5_R2.EntityPlayer;
-import net.minecraft.server.v1_5_R2.Packet18ArmAnimation;
-import net.minecraft.server.v1_5_R2.WorldServer;
+import net.minecraft.server.v1_5_R3.EntityPlayer;
+import net.minecraft.server.v1_5_R3.Packet18ArmAnimation;
+import net.minecraft.server.v1_5_R3.WorldServer;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -77,7 +77,7 @@ public class HumanNPC extends NPC {
 		}
 		getEntity().yaw = (float) (newYaw - 90);
 		getEntity().pitch = (float) newPitch;
-		((EntityPlayer)getEntity()).az = (float)(newYaw - 90);
+		((EntityPlayer)getEntity()).aA = (float)(newYaw - 90);
 	}
 
 }

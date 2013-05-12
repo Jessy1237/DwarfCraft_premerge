@@ -9,11 +9,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import net.minecraft.server.v1_5_R2.Entity;
+import net.minecraft.server.v1_5_R3.Entity;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
 public class DCPlayer {
 	private final DwarfCraft plugin;
 	private HashMap<Integer, Skill> skills;
