@@ -1,4 +1,4 @@
-package com.topcat.npclib.nms;
+package com.sharesc.caliog.npclib;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -7,12 +7,12 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 /**
- *
+ * 
  * @author martin
  */
 public class NullSocket extends Socket {
 
-	@Override
+  @Override
 	public InputStream getInputStream() {
 		byte[] buf = new byte[5];
 		return new ByteArrayInputStream(buf);

@@ -6,6 +6,7 @@ package com.Jessy1237.DwarfCraft;
 
 import java.util.List;
 
+import net.minecraft.server.v1_5_R3.EntityLiving;
 import net.minecraft.server.v1_5_R3.EntityPlayer;
 
 import org.bukkit.Location;
@@ -16,7 +17,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.topcat.npclib.entity.HumanNPC;
+import com.sharesc.caliog.npclib.HumanNPC;
 
 public final class DwarfTrainer {
 	private HumanNPC mEntity;
@@ -129,7 +130,7 @@ public final class DwarfTrainer {
 			d.getEntity().lookAtPoint(l);
 			d.getLocation().setYaw((float)((EntityPlayer) d.getEntity().getEntity()).aA);
 			d.getLocation().setPitch(d.getEntity().getEntity().pitch);
-			plugin.getDataManager().updateTrainerLocation(d, (float)((EntityPlayer) d.getEntity().getEntity()).aA, d.getEntity().getEntity().pitch);
+			plugin.getDataManager().updateTrainerLocation(d, (float)((EntityLiving) d.getEntity().getEntity()).aA, d.getEntity().getEntity().pitch);
 		}
 		return;
 	}

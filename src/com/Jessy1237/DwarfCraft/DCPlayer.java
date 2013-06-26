@@ -253,6 +253,14 @@ public class DCPlayer {
 	public void changeRace(String race) {
 		this.race = race;
 		skills = plugin.getConfigManager().getAllSkills();
+		
+		for (Skill skill : skills.values()) {
+			skill.setLevel(0);
+			skill.setDeposit1(0);
+			skill.setDeposit2(0);
+			skill.setDeposit3(0);
+		}
+		plugin.getDataManager().saveDwarfData(this);
 	}
 
 	public String getRace() {

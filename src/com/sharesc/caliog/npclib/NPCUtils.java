@@ -1,4 +1,4 @@
-package com.topcat.npclib;
+package com.sharesc.caliog.npclib;
 
 import net.minecraft.server.v1_5_R3.Packet;
 
@@ -10,21 +10,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class NPCUtils {
-	public static ItemStack[] combineItemStackArrays(final Object[] a, final Object[] b) {
-		final ItemStack[] c = new ItemStack[a.length + b.length];
-		System.arraycopy(a, 0, c, 0, a.length);
-		System.arraycopy(b, 0, c, a.length, b.length);
-		return c;
-	}
-
-	public static void sendPacketNearby(final Location location, final Packet packet) {
+  public static void sendPacketNearby(Location location, Packet packet) {
 		sendPacketNearby(location, packet, 64);
 	}
 
-	public static void sendPacketNearby(final Location location, final Packet packet, double radius) {
+	public static void sendPacketNearby(Location location, Packet packet,
+			double radius) {
 		radius *= radius;
 		final World world = location.getWorld();
-		for (final Player p : Bukkit.getServer().getOnlinePlayers()) {
+		for (Player p : Bukkit.getServer().getOnlinePlayers()) {
 			if (p == null || world != p.getWorld()) {
 				continue;
 			}
@@ -34,5 +28,12 @@ public class NPCUtils {
 
 			((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
 		}
+	}
+
+	public static ItemStack[] combineItemStackArrays(Object[] a, Object[] b) {
+		ItemStack[] c = new ItemStack[a.length + b.length];
+		System.arraycopy(a, 0, c, 0, a.length);
+		System.arraycopy(b, 0, c, a.length, b.length);
+		return c;
 	}
 }

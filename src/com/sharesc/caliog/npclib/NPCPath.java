@@ -1,4 +1,4 @@
-package com.topcat.npclib.pathing;
+package com.sharesc.caliog.npclib;
 
 import java.util.ArrayList;
 
@@ -6,11 +6,12 @@ import org.bukkit.Location;
 
 public class NPCPath {
 
-	private ArrayList<Node> path;
+  private ArrayList<Node> path;
 	private NPCPathFinder pathFinder;
 	private Location end;
 
-	public NPCPath(NPCPathFinder npcPathFinder, ArrayList<Node> path, Location end) {
+	public NPCPath(NPCPathFinder npcPathFinder, ArrayList<Node> path,
+			Location end) {
 		this.path = path;
 		this.end = end;
 		pathFinder = npcPathFinder;

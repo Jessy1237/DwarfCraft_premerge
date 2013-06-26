@@ -1,4 +1,4 @@
-package com.topcat.npclib.nms;
+package com.sharesc.caliog.npclib;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,12 +19,12 @@ import org.bukkit.craftbukkit.v1_5_R3.CraftServer;
 
 /**
  * Server hacks for Bukkit
- *
+ * 
  * @author Kekec852
  */
 public class BServer {
 
-	private static BServer ins;
+  private static BServer ins;
 	private MinecraftServer mcServer;
 	private CraftServer cServer;
 	private Server server;

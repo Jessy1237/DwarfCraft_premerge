@@ -1,4 +1,4 @@
-package com.topcat.npclib.nms;
+package com.sharesc.caliog.npclib;
 
 import net.minecraft.server.v1_5_R3.EntityPlayer;
 import net.minecraft.server.v1_5_R3.Packet;
@@ -22,21 +22,26 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_5_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_5_R3.entity.CraftPlayer;
 
-import com.topcat.npclib.NPCManager;
+//import net.minecraft.server.v1_4_R1.MinecraftServer;
 
 /**
  * 
  * @author martin
  */
-public class NPCPlayerConnection extends PlayerConnection {
+public class NPCNetHandler extends PlayerConnection {
 
-	public NPCPlayerConnection(NPCManager npcManager, EntityPlayer entityplayer) {
-		super(npcManager.getServer().getMCServer(), npcManager.getNPCNetworkManager(), entityplayer);
+  public NPCNetHandler(NPCManager npcManager, EntityPlayer entityplayer) {
+		super(npcManager.getServer().getMCServer(), npcManager
+				.getNPCNetworkManager(), entityplayer);
 	}
 
 	@Override
 	public CraftPlayer getPlayer() {
-		return new CraftPlayer((CraftServer) Bukkit.getServer(), player); //Fake player prevents spout NPEs
+		return new CraftPlayer((CraftServer) Bukkit.getServer(), player); // Fake
+																			// player
+																			// prevents
+																			// spout
+																			// NPEs
 	}
 
 	@Override

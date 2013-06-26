@@ -42,9 +42,9 @@ import com.Jessy1237.DwarfCraft.events.DCInventoryListener;
 import com.Jessy1237.DwarfCraft.events.DCPlayerListener;
 import com.Jessy1237.DwarfCraft.events.DCVehicleListener;
 import com.Jessy1237.DwarfCraft.events.DCWorldListener;
-import com.topcat.npclib.NPCManager;
-import com.topcat.npclib.entity.HumanNPC;
-import com.topcat.npclib.entity.NPC;
+import com.sharesc.caliog.npclib.HumanNPC;
+import com.sharesc.caliog.npclib.NPC;
+import com.sharesc.caliog.npclib.NPCManager;
 
 /**
  * 

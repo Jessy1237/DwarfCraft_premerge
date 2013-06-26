@@ -119,8 +119,9 @@ public class DCBlockListener implements Listener {
 								}
 							}
 						}
-						
-						//Checks for Fortune tools and adds it to the Dwarfcraft drops
+
+						// Checks for Fortune tools and adds it to the
+						// Dwarfcraft drops
 						Material type = block.getType();
 						if (type == Material.DIAMOND_ORE || type == Material.COAL_ORE || type == Material.REDSTONE_ORE || type == Material.GRASS || type == Material.STONE || type == Material.LAPIS_ORE) {
 							if (tool.containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
@@ -164,9 +165,9 @@ public class DCBlockListener implements Listener {
 						if (item1 != null) {
 							loc.getWorld().dropItemNaturally(loc, item1);
 						}
-
-						((ExperienceOrb) loc.getWorld().spawn(loc, ExperienceOrb.class)).setExperience(event.getExpToDrop());
-
+						if (event.getExpToDrop() != 0) {
+							((ExperienceOrb) loc.getWorld().spawn(loc, ExperienceOrb.class)).setExperience(event.getExpToDrop());
+						}
 						blockDropChange = true;
 
 					}

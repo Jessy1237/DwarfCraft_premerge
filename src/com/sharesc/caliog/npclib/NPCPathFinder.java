@@ -1,4 +1,4 @@
-package com.topcat.npclib.pathing;
+package com.sharesc.caliog.npclib;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,12 +11,12 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 /**
- *
+ * 
  * @author Top_Cat
  */
 public class NPCPathFinder extends Thread {
 
-	HashMap<Block, Node> nodes = new HashMap<Block, Node>();
+  HashMap<Block, Node> nodes = new HashMap<Block, Node>();
 	ArrayList<Node> path = new ArrayList<Node>();
 	ArrayList<Node> open = new ArrayList<Node>();
 	ArrayList<Node> closed = new ArrayList<Node>();
@@ -27,7 +27,8 @@ public class NPCPathFinder extends Thread {
 	private int maxIterations;
 	private PathReturn callback;
 
-	public NPCPathFinder(Location start, Location end, int maxIterations, PathReturn callback) {
+	public NPCPathFinder(Location start, Location end, int maxIterations,
+			PathReturn callback) {
 		this.start = start;
 		this.end = end;
 		this.maxIterations = maxIterations;
@@ -55,7 +56,9 @@ public class NPCPathFinder extends Thread {
 	private void look(Node c, int max) {
 		Node adjacentBlock;
 		int rep = 0;
-		while (c != endNode && rep < max) { // Repetition variable prevents infinite loop when destination is unreachable
+		while (c != endNode && rep < max) { // Repetition variable prevents
+											// infinite loop when destination is
+											// unreachable
 			if (cancel) {
 				return;
 			}
@@ -67,7 +70,9 @@ public class NPCPathFinder extends Thread {
 				for (int j = -1; j <= 1; j++) {
 					for (int k = -1; k <= 1; k++) {
 						adjacentBlock = getNode(c.b.getRelative(i, j, k));
-						if (adjacentBlock != c && !(j == 1 && adjacentBlock.b.getRelative(0, -1, 0).getType() == Material.FENCE)) {
+						if (adjacentBlock != c
+								&& !(j == 1 && adjacentBlock.b.getRelative(0,
+										-1, 0).getType() == Material.FENCE)) {
 							scoreBlock(adjacentBlock, c);
 						}
 					}
@@ -119,8 +124,12 @@ public class NPCPathFinder extends Thread {
 			boolean xZCor2 = !getNode(parent.b.getRelative(xDir, 0, 0)).notsolid;
 
 			corner = xZCor1 || xZCor2;
-		} else if (node.xPos != parent.xPos && node.yPos != parent.yPos || node.yPos != parent.yPos && node.zPos != parent.zPos) {
-			corner = node.yPos > parent.yPos ? !getNode(parent.b.getRelative(0, 2, 0)).notsolid : !getNode(node.b.getRelative(0, 2, 0)).notsolid;;
+		} else if (node.xPos != parent.xPos && node.yPos != parent.yPos
+				|| node.yPos != parent.yPos && node.zPos != parent.zPos) {
+			corner = node.yPos > parent.yPos ? !getNode(parent.b.getRelative(0,
+					2, 0)).notsolid
+					: !getNode(node.b.getRelative(0, 2, 0)).notsolid;
+			;
 		}
 
 		Node nodeBelow = getNode(node.b.getRelative(0, -1, 0));
@@ -132,11 +141,17 @@ public class NPCPathFinder extends Thread {
 			node.update();
 		}
 
-		return !corner && (node.notsolid && (!nodeBelow.notsolid || nodeBelow.liquid && node.liquid) && nodeAbove.notsolid || node == endNode);
+		return !corner
+				&& (node.notsolid
+						&& (!nodeBelow.notsolid || nodeBelow.liquid
+								&& node.liquid) && nodeAbove.notsolid || node == endNode);
 	}
 
 	private void scoreBlock(Node node, Node parent) {
-		int diagonal = node.xPos != parent.xPos && node.zPos != parent.zPos || node.xPos != parent.xPos && node.yPos != parent.yPos || node.yPos != parent.yPos && node.zPos != parent.zPos ? 14 : 10;
+		int diagonal = node.xPos != parent.xPos && node.zPos != parent.zPos
+				|| node.xPos != parent.xPos && node.yPos != parent.yPos
+				|| node.yPos != parent.yPos && node.zPos != parent.zPos ? 14
+				: 10;
 
 		if (checkPath(node, parent)) {
 			if (!open.contains(node) && !closed.contains(node)) {
