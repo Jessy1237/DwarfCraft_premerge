@@ -2,10 +2,10 @@ package com.sharesc.caliog.npclib;
 
 //import java.util.Arrays;
 
-import net.minecraft.server.v1_5_R3.EntityPlayer;
-import net.minecraft.server.v1_5_R3.Packet18ArmAnimation;
-import net.minecraft.server.v1_5_R3.Packet5EntityEquipment;
-import net.minecraft.server.v1_5_R3.WorldServer;
+import net.minecraft.server.v1_6_R2.EntityPlayer;
+import net.minecraft.server.v1_6_R2.Packet18ArmAnimation;
+import net.minecraft.server.v1_6_R2.Packet5EntityEquipment;
+import net.minecraft.server.v1_6_R2.WorldServer;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 public class HumanNPC extends NPC {
-  private net.minecraft.server.v1_5_R3.ItemStack[] previousEquipment = {
+  private net.minecraft.server.v1_6_R2.ItemStack[] previousEquipment = {
 			null, null, null, null, null };
 
 	public HumanNPC(NPCEntity npcEntity) {
@@ -40,13 +40,13 @@ public class HumanNPC extends NPC {
 		((HumanEntity) getEntity().getBukkitEntity())
 				.setItemInHand(new ItemStack(m, 1, damage));
 	}
-
-	public void setName(String name) {
-		((NPCEntity) getEntity()).name = name;
-	}
+	//name is a protcted final String in EntityHuman.java ; not sure if rename is still possible
+	//public void setName(String name) {
+	//	((NPCEntity) getEntity()).name = name;
+	//}
 
 	public String getName() {
-		return ((NPCEntity) getEntity()).name;
+		return ((NPCEntity) getEntity()).getName();
 	}
 
 	public PlayerInventory getInventory() {
@@ -67,10 +67,10 @@ public class HumanNPC extends NPC {
 
 		/**/
 		int changes = 0;
-		net.minecraft.server.v1_5_R3.ItemStack[] newI = new net.minecraft.server.v1_5_R3.ItemStack[previousEquipment.length];
+		net.minecraft.server.v1_6_R2.ItemStack[] newI = new net.minecraft.server.v1_6_R2.ItemStack[previousEquipment.length];
 		for (int i = 0; i < previousEquipment.length; i++) {
-			net.minecraft.server.v1_5_R3.ItemStack previous = previousEquipment[i];
-			net.minecraft.server.v1_5_R3.ItemStack current = ((EntityPlayer) getEntity())
+			net.minecraft.server.v1_6_R2.ItemStack previous = previousEquipment[i];
+			net.minecraft.server.v1_6_R2.ItemStack current = ((EntityPlayer) getEntity())
 					.getEquipment(i);
 			newI[i] = current;
 			if (current == null) {
@@ -81,7 +81,7 @@ public class HumanNPC extends NPC {
 					++changes;
 				}
 			} else {
-				if (!net.minecraft.server.v1_5_R3.ItemStack.equals(previous,
+				if (!net.minecraft.server.v1_6_R2.ItemStack.equals(previous,
 						current)
 						|| (previous != null && !previous.equals(current))) {
 					NPCUtils.sendPacketNearby(getBukkitEntity().getLocation(),
@@ -129,7 +129,7 @@ public class HumanNPC extends NPC {
 		}
 		getEntity().yaw = (float) (newYaw - 90);
 		getEntity().pitch = (float) newPitch;
-		((EntityPlayer) getEntity()).aA = (float) (newYaw - 90);
+		((EntityPlayer) getEntity()).aP = (float) (newYaw - 90);//aA --> aP /tested by caliog
 	}
 
 }

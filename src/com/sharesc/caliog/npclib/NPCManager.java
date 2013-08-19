@@ -1,7 +1,6 @@
 package com.sharesc.caliog.npclib;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -10,14 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import net.minecraft.server.v1_5_R3.Entity;
-import net.minecraft.server.v1_5_R3.PlayerInteractManager;
-import net.minecraft.server.v1_5_R3.WorldServer;
+import net.minecraft.server.v1_6_R2.Entity;
+import net.minecraft.server.v1_6_R2.PlayerInteractManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -215,7 +213,8 @@ public class NPCManager {
 		}
 		return null;
 	}
-
+	
+	/* This method is not usuable !! EntityHuman.name is protected and final ! Method has to be rewritten
 	public void rename(String id, String name) {
 		if (name.length() > 16) { // Check and nag if name is too long, spawn
 									// NPC anyway with shortened name.
@@ -244,6 +243,7 @@ public class NPCManager {
 		}
 		s.everyoneSleeping();
 	}
+	*/
 
 	public BServer getServer() {
 		return server;

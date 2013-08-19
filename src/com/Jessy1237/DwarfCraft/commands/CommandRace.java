@@ -51,7 +51,7 @@ public class CommandRace extends Command {
 		} else {
 			if (confirm) {
 				if (plugin.getConfigManager().getRace(newRace) != null) {
-					plugin.getOut().changedRace(sender, dCPlayer, newRace);
+					plugin.getOut().changedRace(sender, dCPlayer, plugin.getConfigManager().getRace(newRace).getName());
 					dCPlayer.changeRace(newRace);
 				} else {
 					plugin.getOut().dExistRace(sender, dCPlayer, newRace);

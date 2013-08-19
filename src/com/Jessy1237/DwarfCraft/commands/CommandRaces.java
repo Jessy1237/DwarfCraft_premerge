@@ -21,13 +21,13 @@ public class CommandRaces extends Command {
 
 	@Override
 	public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-		String msg = "Races:";
+		String msg = "&7Races:&f";
 		for(Race r : plugin.getConfigManager().getRaceList()) {
 			if (r != null) {
 				msg = msg + "\n" + r.getName() + ": " + r.getDesc();
 			}
 		}
-		sender.sendMessage(msg);
+		plugin.getOut().sendMessage(sender, msg);
 		return true;
 	}
 

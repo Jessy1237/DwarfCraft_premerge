@@ -327,13 +327,6 @@ public final class ConfigManager {
 			boolean skills = false;
 			Race race = null;
 			while (line != null) {
-				if (name && desc && skills) {
-					raceList.add(race);
-					name = false;
-					desc = false;
-					skills = false;
-					System.out.println("DC Init: Loaded race: " + race.getName());
-				}
 				if (line.length() == 0) {
 					line = br.readLine();
 					continue;
@@ -351,7 +344,6 @@ public final class ConfigManager {
 					race = new Race(theline[1].trim());
 					name = true;
 					line = br.readLine();
-					continue;
 				}
 				if (theline[0].equalsIgnoreCase("SkillIDs")) {
 					String ids[] = theline[1].trim().split(",");
@@ -362,13 +354,19 @@ public final class ConfigManager {
 
 					skills = true;
 					line = br.readLine();
-					continue;
 				}
 				if (theline[0].equalsIgnoreCase("Description")) {
 					race.setDesc(theline[1].trim());
 
 					desc = true;
 					line = br.readLine();
+				}
+				if (name && desc && skills) {
+					raceList.add(race);
+					name = false;
+					desc = false;
+					skills = false;
+					System.out.println("DC Init: Loaded race: " + race.getName());
 					continue;
 				}
 			}

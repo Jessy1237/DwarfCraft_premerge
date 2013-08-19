@@ -4,13 +4,13 @@ package com.Jessy1237.DwarfCraft;
  * Original Authors: smartaleq, LexManos and RCarretta
  */
 
-import net.minecraft.server.v1_5_R3.ContainerPlayer;
-import net.minecraft.server.v1_5_R3.ContainerWorkbench;
-import net.minecraft.server.v1_5_R3.CraftingManager;
-import net.minecraft.server.v1_5_R3.EntityPlayer;
-import net.minecraft.server.v1_5_R3.ItemStack;
+import net.minecraft.server.v1_6_R2.ContainerPlayer;
+import net.minecraft.server.v1_6_R2.ContainerWorkbench;
+import net.minecraft.server.v1_6_R2.CraftingManager;
+import net.minecraft.server.v1_6_R2.EntityPlayer;
+import net.minecraft.server.v1_6_R2.ItemStack;
 
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
 
 public class DCCraftSchedule implements Runnable {
 	private final DCPlayer dCPlayer;
@@ -50,7 +50,7 @@ public class DCCraftSchedule implements Runnable {
 		}
 		if (outputStack != null) {
 			int materialId = outputStack.id;
-			int damage = outputStack.b;
+			int damage = outputStack.c;
 			for (Skill s : dCPlayer.getSkills().values()) {
 				for (Effect e : s.getEffects()) {
 					if (e.getEffectType() == EffectType.CRAFT && e.checkInitiator(materialId, (byte)damage)){
@@ -62,7 +62,7 @@ public class DCCraftSchedule implements Runnable {
 						else{
 							outputStack.count = output.getAmount();
 							if (output.getData() != null)
-								outputStack.b = output.getData().getData();
+								outputStack.c = output.getData().getData();
 						}
 						// TODO: need code to check max stack size and if amount
 						// created > max stack size drop all count above 1 to

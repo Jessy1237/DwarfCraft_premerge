@@ -13,19 +13,8 @@ import org.bukkit.inventory.ItemStack;
 public class Out {
 
 	public enum Color {
-		DC          (FixedColor.Gold), 
-		COMMAND     (FixedColor.DarkRed), 
-		HELP        (FixedColor.Pink), 
-		BADAMOUNT   (FixedColor.Red), 
-		GOODAMOUNT  (FixedColor.Green), 
-		NORMALAMOUNT(FixedColor.Yellow),
-		ITEM        (FixedColor.DarkGreen),
-		SKILLID     (FixedColor.DarkTeal), 
-		SKILLLEVEL  (FixedColor.Teal), 
-		EFFECT      (FixedColor.Purple),
-		DWARF       (FixedColor.Blue), 
-		ELF         (FixedColor.White),
-		TRAINER     (FixedColor.Gray);
+		DC(FixedColor.Gold), COMMAND(FixedColor.DarkRed), HELP(FixedColor.Pink), BADAMOUNT(FixedColor.Red), GOODAMOUNT(FixedColor.Green), NORMALAMOUNT(FixedColor.Yellow), ITEM(FixedColor.DarkGreen), SKILLID(FixedColor.DarkTeal), SKILLLEVEL(FixedColor.Teal), EFFECT(FixedColor.Purple), DWARF(
+				FixedColor.Blue), ELF(FixedColor.White), TRAINER(FixedColor.Gray);
 		FixedColor fcolor;
 
 		Color(FixedColor fixedcolor) {
@@ -36,25 +25,12 @@ public class Out {
 			return fcolor.toString();
 		}
 	}
-	public enum FixedColor { 
-		Black    ("§0"), 
-		DarkBlue ("§1"),
-		DarkGreen("§2"), 
-		DarkTeal ("§3"),
-		DarkRed  ("§4"),  
-		Purple   ("§5"), 
-		Gold     ("§6"), 
-		Gray     ("§7"),  
-		DarkGray ("§8"),
-		Blue     ("§9"), 
-		Green    ("§a"), 
-		Teal     ("§b"), 
-		Red      ("§c"), 
-		Pink     ("§d"), 
-		Yellow   ("§e"), 
-		White    ("§f");
-		
+
+	public enum FixedColor {
+		Black("§0"), DarkBlue("§1"), DarkGreen("§2"), DarkTeal("§3"), DarkRed("§4"), Purple("§5"), Gold("§6"), Gray("§7"), DarkGray("§8"), Blue("§9"), Green("§a"), Teal("§b"), Red("§c"), Pink("§d"), Yellow("§e"), White("§f");
+
 		String color;
+
 		FixedColor(String color) {
 			this.color = color;
 		}
@@ -63,6 +39,7 @@ public class Out {
 			return color;
 		}
 	}
+
 	/*
 	 * Messaging Statics
 	 */
@@ -76,25 +53,21 @@ public class Out {
 		this.plugin = plugin;
 	}
 
-	private String consoleLinePrinter(CommandSender sender, String line,
-			String prefix) {
+	private String consoleLinePrinter(CommandSender sender, String line, String prefix) {
 		System.out.print(prefix.concat(line));
 		return null;
 	}
 
-	public boolean effectInfo(CommandSender sender, DCPlayer dCPlayer,
-			Effect effect) {
-		sendMessage(sender, effect.describeLevel(dCPlayer),
-				"&6[&5" + effect.getId() + "&6] ");
-		sendMessage(sender, effect.describeGeneral(), "&6[&5" + effect.getId()
-				+ "&6] ");
+	public boolean effectInfo(CommandSender sender, DCPlayer dCPlayer, Effect effect) {
+		sendMessage(sender, effect.describeLevel(dCPlayer), "&6[&5" + effect.getId() + "&6] ");
+		sendMessage(sender, effect.describeGeneral(), "&6[&5" + effect.getId() + "&6] ");
 		return true;
 	}
 
 	protected void generalInfo(CommandSender sender) {
 		sendMessage(sender, "&d" + Messages.GeneralInfo, "&6[&d?&6] ");
 	}
-	
+
 	public void help(CommandSender sender) {
 		sendMessage(sender, Messages.GeneralInfo, "&6[&dHelp&6] ");
 	}
@@ -122,13 +95,11 @@ public class Out {
 	 * @param message
 	 * @param prefix
 	 */
-	private void messagePrinter(CommandSender sender, String message,
-			String prefix) {
+	private void messagePrinter(CommandSender sender, String message, String prefix) {
 		String[] lines = message.split("/n");
 		String lastColor = "";
 		for (String line : lines)
-			lastColor = consoleLinePrinter(sender, lastColor.concat(line),
-					prefix);
+			lastColor = consoleLinePrinter(sender, lastColor.concat(line), prefix);
 	}
 
 	/**
@@ -142,8 +113,7 @@ public class Out {
 		String[] lines = message.split("/n");
 		String lastColor = "";
 		for (String line : lines)
-			lastColor = playerLinePrinter(player, lastColor.concat(line),
-					prefix);
+			lastColor = playerLinePrinter(player, lastColor.concat(line), prefix);
 	}
 
 	/**
@@ -203,14 +173,13 @@ public class Out {
 	 * Used to parse and send multiple line messages Sends actual output
 	 * commands
 	 */
-	private String playerLinePrinter(Player player, String message,
-			String prefix) {
+	private String playerLinePrinter(Player player, String message, String prefix) {
 		int messageSectionLength = lineLength - Util.msgLength(prefix);
 		String currentLine = "";
 		String words[] = message.split(" ");
 		String lastColor = "";
 		int lineTotal = 0;
-		
+
 		for (String word : words) {
 			if (Util.msgLength(currentLine) + Util.msgLength(word) <= messageSectionLength) {
 				currentLine = currentLine.concat(word + " ");
@@ -230,40 +199,39 @@ public class Out {
 
 	public boolean printSkillInfo(CommandSender sender, Skill skill, DCPlayer dCPlayer, int maxTrainLevel) {
 		// general line
-		sendMessage(sender, String.format("&6  Skillinfo for &b%s&6 [&b%d&6] || Your level &3%d/%d", 
-						skill.getDisplayName(), skill.getId(), skill.getLevel(), maxTrainLevel));
-		
+		sendMessage(sender, String.format("&6  Skillinfo for &b%s&6 [&b%d&6] || Your level &3%d/%d", skill.getDisplayName(), skill.getId(), skill.getLevel(), maxTrainLevel));
+
 		// effects lines
 		sendMessage(sender, "&6[&5EffectID&6]&f------&6[Effect]&f------");
 		for (Effect effect : skill.getEffects()) {
 			if (effect != null)
 				sendMessage(sender, effect.describeLevel(dCPlayer), String.format("&6[&5%d&6] ", effect.getId()));
 		}
-		
+
 		// training lines
 		if (skill.getLevel() == 30) {
 			sendMessage(sender, "&6---This skill is maximum level, no training available---");
 			return true;
 		}
-		
+
 		if (skill.getLevel() > maxTrainLevel) {
 			sendMessage(sender, "&6---You're as skilled as me, you need a more advanced trainer!--");
 			return true;
 		}
-		
-		sendMessage(sender, String.format("&6---Train costs for level &3%d", (skill.getLevel() + 1)));		
-		List<List<ItemStack>> costsTurnins = dCPlayer.calculateTrainingCost(skill); 
+
+		sendMessage(sender, String.format("&6---Train costs for level &3%d", (skill.getLevel() + 1)));
+		List<List<ItemStack>> costsTurnins = dCPlayer.calculateTrainingCost(skill);
 		List<ItemStack> remaining = costsTurnins.get(0);
 		List<ItemStack> total = costsTurnins.get(1);
-		for(int i = 0; i < remaining.size(); i++) {
+		for (int i = 0; i < remaining.size(); i++) {
 			ItemStack r = remaining.get(i);
 			ItemStack t = total.get(i);
-			if(r != null && t != null) {
+			if (r != null && t != null) {
 				int totalCost = t.getAmount();
 				int deposited = t.getAmount() - r.getAmount();
-				sendMessage(sender, String.format(" &2%d of %d %s&6  --", deposited, totalCost, r.getType()), " &6-- ");				
+				sendMessage(sender, String.format(" &2%d of %d %s&6  --", deposited, totalCost, r.getType()), " &6-- ");
 			}
-			
+
 		}
 		return true;
 	}
@@ -274,8 +242,7 @@ public class Out {
 		String prefix1 = "&6[&dSS&6] ";
 
 		String prefix2 = "&6[&dSS&6] ";
-		message1 = ("&6Printing Skill Sheet for &9" + (displayName == null ? dCPlayer.getPlayer().getName()
-						: displayName) + " Dwarf &6Level is &3" + dCPlayer.getDwarfLevel());
+		message1 = ("&6Printing Skill Sheet for &9" + (displayName == null ? dCPlayer.getPlayer().getName() : displayName) + " " + dCPlayer.getRace() + " &6Level is &3" + dCPlayer.getDwarfLevel());
 		sendMessage(sender, message1, prefix1);
 
 		if (dCPlayer.isElf()) {
@@ -287,8 +254,7 @@ public class Out {
 		String untrainedSkills = "&6Untrained Skills: ";
 		for (Skill s : dCPlayer.getSkills().values()) {
 			if (s.getLevel() == 0) {
-				untrainedSkills = untrainedSkills.concat("|&7"
-						+ s.getDisplayName() + "&6| ");
+				untrainedSkills = untrainedSkills.concat("|&7" + s.getDisplayName() + "&6| ");
 				continue;
 			}
 			odd = !odd;
@@ -387,8 +353,7 @@ public class Out {
 	/**
 	 * Used to send messages to many players with a prefix
 	 */
-	protected void sendMessage(Player[] playerArray, String message,
-			String prefix) {
+	protected void sendMessage(Player[] playerArray, String message, String prefix) {
 		for (Player p : playerArray)
 			sendMessage(p, message, prefix);
 	}
@@ -444,13 +409,25 @@ public class Out {
 	}
 
 	public void tutorial(CommandSender sender, int i) {
-		switch(i) {
-			case 1: sendMessage(sender, Messages.Fixed.TUTORIAL1.getMessage(), "&6[&dDC&6] "); break;
-			case 2: sendMessage(sender, Messages.Fixed.TUTORIAL2.getMessage(), "&6[&dDC&6] "); break;
-			case 3: sendMessage(sender, Messages.Fixed.TUTORIAL3.getMessage(), "&6[&dDC&6] "); break;
-			case 4: sendMessage(sender, Messages.Fixed.TUTORIAL4.getMessage(), "&6[&dDC&6] "); break;
-			case 5: sendMessage(sender, Messages.Fixed.TUTORIAL5.getMessage(), "&6[&dDC&6] "); break;
-			case 6: sendMessage(sender, Messages.Fixed.TUTORIAL6.getMessage(), "&6[&dDC&6] "); break;
+		switch (i) {
+		case 1:
+			sendMessage(sender, Messages.Fixed.TUTORIAL1.getMessage(), "&6[&dDC&6] ");
+			break;
+		case 2:
+			sendMessage(sender, Messages.Fixed.TUTORIAL2.getMessage(), "&6[&dDC&6] ");
+			break;
+		case 3:
+			sendMessage(sender, Messages.Fixed.TUTORIAL3.getMessage(), "&6[&dDC&6] ");
+			break;
+		case 4:
+			sendMessage(sender, Messages.Fixed.TUTORIAL4.getMessage(), "&6[&dDC&6] ");
+			break;
+		case 5:
+			sendMessage(sender, Messages.Fixed.TUTORIAL5.getMessage(), "&6[&dDC&6] ");
+			break;
+		case 6:
+			sendMessage(sender, Messages.Fixed.TUTORIAL6.getMessage(), "&6[&dDC&6] ");
+			break;
 		}
 	}
 
@@ -471,19 +448,19 @@ public class Out {
 	}
 
 	public void race(CommandSender sender, Player player) {
-		sendMessage(sender, "You are a "+plugin.getDataManager().find(player).getRace());
+		sendMessage(sender, "You are a " + plugin.getDataManager().find(player).getRace());
 	}
-	
+
 	public void alreadyRace(CommandSender sender, DCPlayer dCPlayer, String newRace) {
-		sendMessage(sender, "You are already a "+newRace);		
+		sendMessage(sender, "You are already a " + newRace);
 	}
 
 	public void resetRace(CommandSender sender, DCPlayer dCPlayer, String newRace) {
-		sendMessage(sender, "You are once again a fresh new "+newRace);
+		sendMessage(sender, "You are once again a fresh new " + newRace);
 	}
 
 	public void changedRace(CommandSender sender, DCPlayer dCPlayer, String newRace) {
-		sendMessage(sender, "You are now a "+newRace);
+		sendMessage(sender, "You are now a " + newRace);
 	}
 
 	public void confirmRace(CommandSender sender, DCPlayer dCPlayer, String newRace) {
@@ -492,7 +469,7 @@ public class Out {
 
 	public void dExistRace(CommandSender sender, DCPlayer dCPlayer, String newRace) {
 		sendMessage(sender, "The race " + newRace + " doesn't exist.");
-		
+
 	}
 
 }

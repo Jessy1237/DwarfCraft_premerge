@@ -6,8 +6,8 @@ package com.Jessy1237.DwarfCraft;
 
 import java.util.List;
 
-import net.minecraft.server.v1_5_R3.EntityLiving;
-import net.minecraft.server.v1_5_R3.EntityPlayer;
+import net.minecraft.server.v1_6_R2.EntityLiving;
+import net.minecraft.server.v1_6_R2.EntityPlayer;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -47,7 +47,7 @@ public final class DwarfTrainer {
 		this.wait = wait;
 		this.lastTrain = lastTrain;
 		getEntity().getEntity().yaw = location.getYaw();
-		((EntityPlayer) getEntity().getEntity()).aA = location.getYaw();
+		((EntityPlayer) getEntity().getEntity()).aP = location.getYaw();
 		getEntity().getEntity().pitch = location.getPitch();
 
 		if (mIsGreeter)

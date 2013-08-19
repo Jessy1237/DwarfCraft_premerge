@@ -132,7 +132,7 @@ public class DwarfCraft extends JavaPlugin {
 			if (hasNorm || hasAll) {
 				cmd = new CommandHelp(this);
 			}
-		} else if (name.equalsIgnoreCase("SkillSheet")) {
+		} else if (name.equalsIgnoreCase("SkillSheet") || name.equalsIgnoreCase("SS")) {
 			if (hasNorm || hasAll) {
 				cmd = new CommandSkillSheet(this);
 			}

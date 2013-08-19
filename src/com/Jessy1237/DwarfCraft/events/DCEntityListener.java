@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftSheep;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftSheep;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
@@ -170,7 +170,7 @@ public class DCEntityListener implements Listener {
 			return;
 		}
 
-		int Origdamage = event.getDamage();
+		double Origdamage = event.getDamage();
 		Entity damager = event.getDamager();
 		LivingEntity victim;
 
@@ -193,8 +193,8 @@ public class DCEntityListener implements Listener {
 				System.out.println("DC1: EDBE is PVP");
 		}
 
-		int damage = event.getDamage();
-		int hp = victim.getHealth();
+		double damage = event.getDamage();
+		double hp = victim.getHealth();
 		if (damager instanceof Player) {
 			attacker = plugin.getDataManager().find((Player) damager);
 			assert ((Player) event.getDamager() == attacker.getPlayer());
@@ -271,7 +271,7 @@ public class DCEntityListener implements Listener {
 		}
 		LivingEntity hitThing = (LivingEntity) event.getEntity();
 
-		int hp = hitThing.getHealth();
+		double hp = hitThing.getHealth();
 		if (hp <= 0) {
 			event.setCancelled(true);
 			return;

@@ -50,3 +50,4 @@ ID,Name,Item1,Item1Base,Item1Max,Item2,Item2Base,Item2Max,Item3,Item3Base,Item3M
 91,Citizen,297,1,36,0,0,0,0,0,0,260
 92,Leader,354,1,36,0,0,0,0,0,0,322
 99,Noble,344,16,576,0,0,0,0,0,0,344
+101,Axe Swinger,367,1.5,1152,287,1.5,1152,0,0,0,279
