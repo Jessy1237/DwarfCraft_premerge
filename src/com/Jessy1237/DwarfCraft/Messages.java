@@ -64,7 +64,7 @@ public final class Messages {
 			+ "has multiple effects. You can find out more about "
 			+ "training a skill and its effects with &4/skill "
 			+ "<skillname or id>&d."
-			+ " Original Authors: smartaleq, LexManos and RCarretta."
-			+ " Authors: Jessy1237 and Curtis111.";
+			+ " Original Authors: smartaleq, LexManos and RCarretta"
+			+ " Authors: Jessy1237";
 	public static String ServerRules = null;
 }
