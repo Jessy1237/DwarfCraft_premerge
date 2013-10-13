@@ -47,10 +47,12 @@ public class CommandCreateTrainer extends Command {
 				String name = "Name";
 				Skill skill = new Skill(0, null, 0, null, null, null, null, null);
 				Integer maxSkill = 1;
+				Integer minSkill = 1;
 				desiredArguments.add(uniqueId);
 				desiredArguments.add(name);
 				desiredArguments.add(skill);
 				desiredArguments.add(maxSkill);
+				desiredArguments.add(minSkill);
 				try {
 					if (!(sender instanceof Player))
 							throw new DCCommandException(plugin, Type.CONSOLECANNOTUSE);
@@ -59,6 +61,7 @@ public class CommandCreateTrainer extends Command {
 					name       = (String)outputList.get(1);
 					skill      = (Skill)outputList.get(2);
 					maxSkill   = (Integer)outputList.get(3);
+					minSkill   = (Integer)outputList.get(4);
 				} catch (DCCommandException e) {
 					if (e.getType() == Type.TOOFEWARGS) {
 						outputList = parser.parse(desiredArguments, true);
@@ -66,13 +69,19 @@ public class CommandCreateTrainer extends Command {
 						name       = (String)outputList.get(1);
 						skill      = (Skill)outputList.get(2);
 						maxSkill   = (Integer)outputList.get(3);
+						minSkill   = (Integer)outputList.get(4);
 					} else
 						throw e;
 				}
+				
+				if(minSkill == 0) {
+					minSkill = -1;
+				}
+				
 				Player p = (Player)sender;
 				Location location = new Location(p.getWorld(),p.getLocation().getX() , p.getLocation().getY(), p.getLocation().getZ(), p.getLocation().getYaw() - 180, p.getLocation().getPitch());
 				DwarfTrainer d = new DwarfTrainer(plugin, location,
-						uniqueId, name, skill.getId(), maxSkill, null, false, false, 0);
+						uniqueId, name, skill.getId(), maxSkill, minSkill, null, false, false, 0);
 				plugin.getDataManager().insertTrainer(d);
 			} catch (DCCommandException e) {
 				e.describe(sender);

@@ -2,7 +2,7 @@ name: DwarfCraft
 description: A skills and progression plugin for character development in RPG worlds.
 author: Jessy1237
 main: com.Jessy1237.DwarfCraft.DwarfCraft
-version: 1.8.4
+version: 1.9
 commands: 
    renamenpc: 
       description: Renames the trainer/greeter.
@@ -88,7 +88,7 @@ commands:
    createtrainer: 
       description: Creates a new trainer where you are standing.
       usage: |
-             /<command> <UniqueID> <DisplayName> <Skill ID or Skill Name> <Max Skill Level>
+             /<command> <UniqueID> <DisplayName> <Skill ID or Skill Name> <Max Skill Level> <Min Skill Level>
       aliases: [ct]
    removetrainer: 
       description: 

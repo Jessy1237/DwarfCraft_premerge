@@ -64,7 +64,7 @@ public class DataManager {
 				statement.executeUpdate(
 						"create table trainers " +
 						"  (" +
-						"    world, uniqueId, name, skill, maxSkill, material, isGreeter, messageId, " +
+						"    world, uniqueId, name, skill, maxSkill, minSkill, material, isGreeter, messageId, " +
 						"    x, y, z, yaw, pitch" +
 						"  );");
 			}
@@ -220,6 +220,82 @@ public class DataManager {
 				statement.executeUpdate("ALTER TABLE skills ADD COLUMN deposit2 NUMERIC DEFAULT 0;");
 				statement.executeUpdate("ALTER TABLE skills ADD COLUMN deposit3 NUMERIC DEFAULT 0;");
 			}	
+			
+			rs = statement.executeQuery("select * from sqlite_master WHERE name = 'trainers';");
+			try {
+				rs.getInt("minSkill");
+			} catch (SQLException e) {
+				System.out.println("DC Init: Converting Trainer DB (may lag a little wait for complete message).");
+				mDBCon.setAutoCommit(false);
+				ArrayList<DwarfTrainer> trainers = new ArrayList<DwarfTrainer>();
+				
+				for (Iterator<World> i = plugin.getServer().getWorlds().iterator(); i.hasNext();) {
+					try {
+						final World world = i.next();
+						PreparedStatement prep = mDBCon.prepareStatement("SELECT * FROM trainers WHERE world = ?;");
+						prep.setString(1, world.getName());
+						rs = prep.executeQuery();
+						
+						while (rs.next()) {
+							if (world.getName().equals(rs.getString("world"))) {
+								if (DwarfCraft.debugMessagesThreshold < 5)
+									System.out.println("DC5: trainer: " + rs.getString("name") + " in world: " + world.getName());
+								
+								DwarfTrainer trainer = 
+									new DwarfTrainer(plugin,
+										new Location(world, rs.getDouble("x"), rs.getDouble("y"), rs.getDouble("z"), rs.getFloat("yaw"), rs.getFloat("pitch")),
+										rs.getString("uniqueId"), 
+										rs.getString("name"),
+										rs.getInt("skill"), 
+										rs.getInt("maxSkill"),
+										-1,
+										rs.getString("messageId"),
+										rs.getBoolean("isGreeter"),
+										false,
+										0
+									);
+								
+								trainers.add(trainer);
+							}
+						}
+						rs.close();
+						prep.close();
+					} catch (Exception e1) {
+						e.printStackTrace();
+					}
+				}
+				statement.execute("DROP TABLE trainers");
+				statement.executeUpdate(
+						"create table trainers " +
+						"  (" +
+						"    world, uniqueId, name, skill, maxSkill, minSkill, material, isGreeter, messageId, " +
+						"    x, y, z, yaw, pitch" +
+						"  );");
+				for(DwarfTrainer d : trainers) {
+					if (d != null) {
+						PreparedStatement prep = mDBCon.prepareStatement("insert into trainers values (?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+						prep.setString(1, d.getWorld().getName());
+						prep.setString(2, d.getUniqueId());
+						prep.setString(3, d.getName());
+						prep.setInt(4, d.getSkillTrained());
+						prep.setInt(5, d.getMaxSkill());
+						prep.setInt(6, d.getMinSkill());
+						prep.setInt    (7,  d.getMaterial());
+						prep.setBoolean(8,  d.isGreeter());
+						prep.setString (9,  d.getMessage());
+						prep.setDouble (10,  d.getLocation().getX());
+						prep.setDouble (11, d.getLocation().getY());
+						prep.setDouble (12, d.getLocation().getZ());
+						prep.setFloat  (13, d.getLocation().getYaw());
+						prep.setFloat  (14, d.getLocation().getPitch());
+						prep.execute();
+						prep.close();
+					}
+				}
+				trainers.clear();
+				mDBCon.setAutoCommit(true);
+				System.out.println("DC Init: Finished converting Trainer table!");
+			}
 			
 			rs.close();
 			mDBCon.setAutoCommit(true);
@@ -385,7 +461,7 @@ public class DataManager {
 		assert (trainer != null);
 		trainerList.put(trainer.getUniqueId(), trainer);
 		try {
-			PreparedStatement prep = mDBCon.prepareStatement("insert into trainers values (?,?,?,?,?,?,?,?,?,?,?,?,?);");
+			PreparedStatement prep = mDBCon.prepareStatement("insert into trainers values (?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
 			prep.setString(1, trainer.getWorld().getName());
 			prep.setString(2, trainer.getUniqueId());
 			prep.setString(3, trainer.getName());
@@ -393,19 +469,21 @@ public class DataManager {
 			if (!trainer.isGreeter()) {
 				prep.setInt(4, trainer.getSkillTrained());
 				prep.setInt(5, trainer.getMaxSkill());
+				prep.setInt(6, trainer.getMinSkill());
 			} else {
 				prep.setInt(4, 0);
 				prep.setInt(5, 0);
+				prep.setInt(6, -1);
 			}
 			
-			prep.setInt    (6,  trainer.getMaterial());
-			prep.setBoolean(7,  trainer.isGreeter());
-			prep.setString (8,  trainer.getMessage());
-			prep.setDouble (9,  trainer.getLocation().getX());
-			prep.setDouble (10, trainer.getLocation().getY());
-			prep.setDouble (11, trainer.getLocation().getZ());
-			prep.setFloat  (12, trainer.getLocation().getYaw());
-			prep.setFloat  (13, trainer.getLocation().getPitch());
+			prep.setInt    (7,  trainer.getMaterial());
+			prep.setBoolean(8,  trainer.isGreeter());
+			prep.setString (9,  trainer.getMessage());
+			prep.setDouble (10,  trainer.getLocation().getX());
+			prep.setDouble (11, trainer.getLocation().getY());
+			prep.setDouble (12, trainer.getLocation().getZ());
+			prep.setFloat  (13, trainer.getLocation().getYaw());
+			prep.setFloat  (14, trainer.getLocation().getPitch());
 			
 			if (DwarfCraft.debugMessagesThreshold < 7)
 				System.out.println(String.format("DC7: Added trainer %s in world: %s", trainer.getUniqueId(), trainer.getWorld().getName()));
@@ -464,6 +542,7 @@ public class DataManager {
 							rs.getString("name"),
 							rs.getInt("skill"), 
 							rs.getInt("maxSkill"),
+							rs.getInt("minSkill"),
 							rs.getString("messageId"),
 							rs.getBoolean("isGreeter"),
 							false,

@@ -23,6 +23,7 @@ public final class DwarfTrainer {
 	private HumanNPC mEntity;
 	private Integer mSkillID;
 	private Integer mMaxLevel;
+	private Integer mMinLevel;
 	private boolean mIsGreeter;
 	private String mMsgID;
 	private World mWorld;
@@ -33,11 +34,12 @@ public final class DwarfTrainer {
 	private boolean wait;
 	private long lastTrain;
 
-	public DwarfTrainer(final DwarfCraft plugin, Location location, String uniqueId, String name, Integer skillId, Integer maxSkill, String greeterMessage, boolean isGreeter, boolean wait, long lastTrain) {
+	public DwarfTrainer(final DwarfCraft plugin, Location location, String uniqueId, String name, Integer skillId, Integer maxSkill, Integer minSkill, String greeterMessage, boolean isGreeter, boolean wait, long lastTrain) {
 
 		this.plugin = plugin;
 		this.mSkillID = skillId;
 		this.mMaxLevel = maxSkill;
+		this.mMinLevel = minSkill;
 		this.mMsgID = greeterMessage;
 		this.mIsGreeter = isGreeter;
 		this.mWorld = location.getWorld();
@@ -46,9 +48,9 @@ public final class DwarfTrainer {
 		this.mEntity = (HumanNPC) plugin.getNPCManager().spawnHumanNPC(mName, location, uniqueId);
 		this.wait = wait;
 		this.lastTrain = lastTrain;
-		getEntity().getEntity().yaw = location.getYaw();
-		((EntityPlayer) getEntity().getEntity()).aP = location.getYaw();
-		getEntity().getEntity().pitch = location.getPitch();
+		this.getEntity().getEntity().yaw = location.getYaw();
+		((EntityPlayer) this.getEntity().getEntity()).aP = location.getYaw();
+		this.getEntity().getEntity().pitch = location.getPitch();
 
 		if (mIsGreeter)
 			mHeldItem = Material.AIR;
@@ -87,6 +89,10 @@ public final class DwarfTrainer {
 
 	public Integer getMaxSkill() {
 		return mMaxLevel;
+	}
+	
+	public Integer getMinSkill() {
+		return mMinLevel;
 	}
 
 	protected String getMessage() {
@@ -128,9 +134,9 @@ public final class DwarfTrainer {
 		if (p != null) {
 			Location l = p.getEyeLocation().clone();
 			d.getEntity().lookAtPoint(l);
-			d.getLocation().setYaw((float)((EntityPlayer) d.getEntity().getEntity()).aA);
+			d.getLocation().setYaw((float)((EntityPlayer) d.getEntity().getEntity()).aP);
 			d.getLocation().setPitch(d.getEntity().getEntity().pitch);
-			plugin.getDataManager().updateTrainerLocation(d, (float)((EntityLiving) d.getEntity().getEntity()).aA, d.getEntity().getEntity().pitch);
+			plugin.getDataManager().updateTrainerLocation(d, (float)((EntityLiving) d.getEntity().getEntity()).aP, d.getEntity().getEntity().pitch);
 		}
 		return;
 	}
@@ -184,6 +190,12 @@ public final class DwarfTrainer {
 
 		if (skill.getLevel() >= mMaxLevel) {
 			plugin.getOut().sendMessage(player, "&cI can't teach you any more, find a higher level trainer", tag);
+			setWait(false);
+			return;
+		}
+		
+		if (skill.getLevel() < mMinLevel) {
+			plugin.getOut().sendMessage(player, "&cI can't teach a low level like you, find a lower level trainer", tag);
 			setWait(false);
 			return;
 		}

@@ -55,7 +55,7 @@ public class CommandCreateGreeter extends Command {
 			
 				Location location = ((Player)sender).getLocation();
 				DwarfTrainer d = new DwarfTrainer(plugin, location,
-						uniqueId, name, null, null, greeterMessage, true, false, 0);
+						uniqueId, name, null, null, null, greeterMessage, true, false, 0);
 				plugin.getDataManager().insertTrainer(d);
 			} catch (DCCommandException e) {
 				e.describe(sender);

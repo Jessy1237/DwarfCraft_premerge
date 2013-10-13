@@ -56,7 +56,7 @@ public class CommandInformation {
 		RACE("/race <Race name> <confirm>\nExample: /race - Displays the player's current race information.\nExample: /race elf - Displays information about the elf race.\nExample: /race elf confirm - Changes the player's race to elf and resets their skills.\nAdmin: /race <Player> <Racename> <confirm> - Alters another player's race, use confirm."),
 		SETSKILL("/<command> <player name> [Skill ID or Skill Name or All] [new skill level]"),
 		CREATEGREETER("/<command> <UniqueID> <DisplayName> <MessageId>"),
-		CREATETRAINER("/<command> <UniqueID> <DisplayName> <Skill ID or Skill Name> <Max Skill Level>"),
+		CREATETRAINER("/<command> <UniqueID> <DisplayName> <Skill ID or Skill Name> <Max Skill Level> <Min Skill Level>"),
 		REMOVETRAINER("/<command> <UniqueID>"),
 		LISTTRAINERS("/<command> [PageNumber]"),
 		REMOVENEXT("/removenext"),
