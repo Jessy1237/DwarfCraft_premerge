@@ -221,8 +221,9 @@ public class DataManager {
 				statement.executeUpdate("ALTER TABLE skills ADD COLUMN deposit3 NUMERIC DEFAULT 0;");
 			}	
 			
-			rs = statement.executeQuery("select * from sqlite_master WHERE name = 'trainers';");
+
 			try {
+				rs = statement.executeQuery("select minSkill from trainers");
 				rs.getInt("minSkill");
 			} catch (SQLException e) {
 				System.out.println("DC Init: Converting Trainer DB (may lag a little wait for complete message).");
@@ -266,7 +267,7 @@ public class DataManager {
 				}
 				statement.execute("DROP TABLE trainers");
 				statement.executeUpdate(
-						"create table trainers " +
+						"CREATE TABLE 'trainers' " +
 						"  (" +
 						"    world, uniqueId, name, skill, maxSkill, minSkill, material, isGreeter, messageId, " +
 						"    x, y, z, yaw, pitch" +
@@ -293,7 +294,7 @@ public class DataManager {
 					}
 				}
 				trainers.clear();
-				mDBCon.setAutoCommit(true);
+				mDBCon.commit();
 				System.out.println("DC Init: Finished converting Trainer table!");
 			}
 			

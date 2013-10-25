@@ -25,12 +25,23 @@ public class CommandRace extends Command {
 		if (DwarfCraft.debugMessagesThreshold < 1)
 			System.out.println("DC1: started command 'race'");
 
-		if (args.length == 0 && sender instanceof Player) {
+		if (args.length == 0) {
 			plugin.getOut().race(sender, (Player) sender);
 		} else if (args.length < 2) {
 			plugin.getOut().sendMessage(sender, CommandInformation.Usage.RACE.getUsage());
 		} else if (args[0].equalsIgnoreCase("?")) {
 			plugin.getOut().sendMessage(sender, CommandInformation.Desc.RACE.getDesc());
+		} else if (args.length == 3) {
+			String newRace = args[1];
+			String name = args[0];
+			DCPlayer dCPlayer = plugin.getDataManager().find(plugin.getServer().getPlayer(name));
+			boolean confirmed = false;
+			if (args[2] != null) {
+				if (args[2].equalsIgnoreCase("confirm")) {
+					confirmed = true;
+				}
+			}
+			race(newRace, confirmed, dCPlayer, (CommandSender)plugin.getServer().getPlayer(name));
 		} else {
 			String newRace = args[0];
 			DCPlayer dCPlayer = plugin.getDataManager().find((Player) sender);
@@ -51,13 +62,16 @@ public class CommandRace extends Command {
 		} else {
 			if (confirm) {
 				if (plugin.getConfigManager().getRace(newRace) != null) {
-					plugin.getOut().changedRace(sender, dCPlayer, plugin.getConfigManager().getRace(newRace).getName());
+					if (sender instanceof Player)
+						plugin.getOut().changedRace(sender, dCPlayer, plugin.getConfigManager().getRace(newRace).getName());
 					dCPlayer.changeRace(newRace);
 				} else {
-					plugin.getOut().dExistRace(sender, dCPlayer, newRace);
+					if (sender instanceof Player)
+						plugin.getOut().dExistRace(sender, dCPlayer, newRace);
 				}
 			} else {
-				plugin.getOut().confirmRace(sender, dCPlayer, newRace);
+				if (sender instanceof Player)
+					plugin.getOut().confirmRace(sender, dCPlayer, newRace);
 			}
 		}
 	}

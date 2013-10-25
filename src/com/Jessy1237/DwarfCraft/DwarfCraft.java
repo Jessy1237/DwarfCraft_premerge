@@ -116,7 +116,7 @@ public class DwarfCraft extends JavaPlugin {
 			}
 		}
 
-		return false;
+		return true;
 	}
 
 	@Override
