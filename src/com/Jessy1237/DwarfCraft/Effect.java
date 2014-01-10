@@ -205,6 +205,9 @@ public class Effect {
 		case FISH:
 			description = String.format("&6You catch %s%.2f &6fish instead of &e%.2f &6when you fish", effectLevelColor, effectAmount, elfAmount);
 			break;
+		case BREW:
+			description = String.format("&6You brew %s%.2f &6potion(s) instead of &e%.2f &6when you're brewing potions", effectLevelColor, effectAmount, elfAmount);
+			break;
 		case DIGTIME:
 			description = String.format("&a%.0f%%&6 of the time &2%s &6break &2%s &6instantly ", effectAmount * 100, toolType, initiator);
 			break;

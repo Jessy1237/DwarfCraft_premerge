@@ -4,13 +4,16 @@ package com.Jessy1237.DwarfCraft;
  * Original Authors: smartaleq, LexManos and RCarretta
  */
 
-import net.minecraft.server.v1_6_R3.ContainerPlayer;
-import net.minecraft.server.v1_6_R3.ContainerWorkbench;
-import net.minecraft.server.v1_6_R3.CraftingManager;
-import net.minecraft.server.v1_6_R3.EntityPlayer;
-import net.minecraft.server.v1_6_R3.ItemStack;
+import net.minecraft.server.v1_7_R1.ContainerPlayer;
+import net.minecraft.server.v1_7_R1.ContainerWorkbench;
+import net.minecraft.server.v1_7_R1.CraftingManager;
+import net.minecraft.server.v1_7_R1.EntityPlayer;
+import net.minecraft.server.v1_7_R1.ItemStack;
+import net.minecraft.server.v1_7_R1.PacketPlayOutSetSlot;
 
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_7_R1.inventory.CraftItemStack;
+
 public class DCCraftSchedule implements Runnable {
 	private final DCPlayer dCPlayer;
 	private final DwarfCraft plugin;
@@ -48,7 +51,7 @@ public class DCCraftSchedule implements Runnable {
 			return;
 		}
 		if (outputStack != null) {
-			int materialId = outputStack.id;
+			int materialId = CraftItemStack.asCraftMirror(outputStack).getTypeId();
 			int damage = outputStack.c;
 			for (Skill s : dCPlayer.getSkills().values()) {
 				for (Effect e : s.getEffects()) {
@@ -77,6 +80,8 @@ public class DCCraftSchedule implements Runnable {
 					ContainerWorkbench workBench = (ContainerWorkbench)(entityPlayer.activeContainer);
 					workBench.resultInventory.setItem(0, outputStack); //and finally here
 				}
+				PacketPlayOutSetSlot packet = new PacketPlayOutSetSlot(entityPlayer.activeContainer.windowId, 0, outputStack);
+				entityPlayer.playerConnection.sendPacket(packet);
 			}
 		}
 		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new DCCraftSchedule(plugin, dCPlayer), 2);

@@ -38,6 +38,7 @@ public class DCBlockListener implements Listener {
 		this.plugin = plugin;
 	}
 
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBreak(BlockBreakEvent event) {
 
@@ -87,11 +88,22 @@ public class DCBlockListener implements Listener {
 							item.setData(i.getData());
 						}
 
-						// Makes sure logs drop the right logs
+						// Makes sure logs drop the right logs and vertically
 						if (event.getBlock().getTypeId() == 17) {
 							final ItemStack old = item;
 							item = new ItemStack(Material.LOG, old.getAmount(), event.getBlock().getData());
-							item.setData(new MaterialData(item.getTypeId(), event.getBlock().getData()));
+							if(block.getData() == 0 || block.getData() == 4 || block.getData() == 8 || block.getData() == 12) {
+								item.setData(new MaterialData(item.getTypeId(), (byte)0));
+							}
+							if(block.getData() == 1 || block.getData() == 5 || block.getData() ==9 || block.getData() == 13) {
+								item.setData(new MaterialData(item.getTypeId(), (byte)1));
+							}
+							if(block.getData() == 2 || block.getData() == 6 || block.getData() == 10 || block.getData() == 14) {
+								item.setData(new MaterialData(item.getTypeId(), (byte)2));
+							}
+							if(block.getData() == 3 || block.getData() == 7 || block.getData() == 11 || block.getData() == 15) {
+								item.setData(new MaterialData(item.getTypeId(), (byte)3));
+							}
 						}
 
 						// Checks for Silktouch & and allows for Silktouch items
@@ -168,6 +180,9 @@ public class DCBlockListener implements Listener {
 						if (event.getExpToDrop() != 0) {
 							((ExperienceOrb) loc.getWorld().spawn(loc, ExperienceOrb.class)).setExperience(event.getExpToDrop());
 						}
+						if(plugin.getConsumer() != null) {
+							plugin.getConsumer().queueBlockBreak(event.getPlayer().getName(), event.getBlock().getState());
+						}
 						blockDropChange = true;
 
 					}
@@ -198,6 +213,7 @@ public class DCBlockListener implements Listener {
 	 * setDamage() not implemented yet
 	 */
 
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockDamage(BlockDamageEvent event) {
 
@@ -244,6 +260,7 @@ public class DCBlockListener implements Listener {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockPhysics(BlockPhysicsEvent event) {
 		if (event.getBlock().getType() == Material.CACTUS && plugin.getConfigManager().disableCacti) {

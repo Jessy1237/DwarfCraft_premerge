@@ -46,6 +46,9 @@ import com.sharesc.caliog.npclib.HumanNPC;
 import com.sharesc.caliog.npclib.NPC;
 import com.sharesc.caliog.npclib.NPCManager;
 
+import de.diddiz.LogBlock.Consumer;
+import de.diddiz.LogBlock.LogBlock;
+
 /**
  * 
  * DwarfCraft is a RPG-like plugin for minecraft (via Bukkit) that allows
@@ -74,6 +77,7 @@ public class DwarfCraft extends JavaPlugin {
 	private DataManager dm;
 	private Out out;
 	private NPCManager npcm;
+	private Consumer consumer = null;
 
 	public static int debugMessagesThreshold = 10;
 
@@ -91,6 +95,10 @@ public class DwarfCraft extends JavaPlugin {
 
 	public Out getOut() {
 		return out;
+	}
+	
+	public Consumer getConsumer() {
+		return consumer;
 	}
 
 	public Permission perms = null;
@@ -280,6 +288,13 @@ public class DwarfCraft extends JavaPlugin {
 				dCPlayer = getDataManager().createDwarf(player);
 			if (!getDataManager().getDwarfData(dCPlayer))
 				getDataManager().createDwarfData(dCPlayer);
+		}
+		
+		if(pm.getPlugin("LogBlock") != null) {
+			consumer = ((LogBlock)pm.getPlugin("LogBlock")).getConsumer();
+			System.out.println("DC Init: Hooked into LogBlock!");
+		} else {
+			System.out.println("DC Init: Couldn't find LogBlock!");
 		}
 
 		System.out.println(getDescription().getName() + " version " + getDescription().getVersion() + " is enabled!");

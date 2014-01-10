@@ -41,7 +41,7 @@ public class CommandRace extends Command {
 					confirmed = true;
 				}
 			}
-			race(newRace, confirmed, dCPlayer, (CommandSender)plugin.getServer().getPlayer(name));
+			race(newRace, confirmed, dCPlayer, (CommandSender) plugin.getServer().getPlayer(name));
 		} else {
 			String newRace = args[0];
 			DCPlayer dCPlayer = plugin.getDataManager().find((Player) sender);
@@ -62,12 +62,14 @@ public class CommandRace extends Command {
 		} else {
 			if (confirm) {
 				if (plugin.getConfigManager().getRace(newRace) != null) {
-					if (sender instanceof Player)
-						plugin.getOut().changedRace(sender, dCPlayer, plugin.getConfigManager().getRace(newRace).getName());
-					dCPlayer.changeRace(newRace);
-				} else {
-					if (sender instanceof Player)
-						plugin.getOut().dExistRace(sender, dCPlayer, newRace);
+					if (plugin.perms.has(sender, "dwarcraft.norm.race." + newRace.toLowerCase())) {
+						if (sender instanceof Player)
+							plugin.getOut().changedRace(sender, dCPlayer, plugin.getConfigManager().getRace(newRace).getName());
+						dCPlayer.changeRace(newRace);
+					} else {
+						if (sender instanceof Player)
+							plugin.getOut().dExistRace(sender, dCPlayer, newRace);
+					}
 				}
 			} else {
 				if (sender instanceof Player)

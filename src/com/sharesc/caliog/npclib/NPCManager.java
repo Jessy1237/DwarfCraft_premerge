@@ -1,6 +1,8 @@
 package com.sharesc.caliog.npclib;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,13 +11,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import net.minecraft.server.v1_6_R3.Entity;
-import net.minecraft.server.v1_6_R3.PlayerInteractManager;
+import net.minecraft.server.v1_7_R1.Entity;
+import net.minecraft.server.v1_7_R1.NetworkManager;
+import net.minecraft.server.v1_7_R1.PlayerInteractManager;
+import net.minecraft.util.com.mojang.authlib.GameProfile;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,7 +33,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class NPCManager {
 
-  private HashMap<String, NPC> npcs = new HashMap<String, NPC>();
+	private HashMap<String, NPC> npcs = new HashMap<String, NPC>();
 	private BServer server;
 	private int taskid;
 	private Map<World, BWorld> bworlds = new HashMap<World, BWorld>();
@@ -40,29 +44,42 @@ public class NPCManager {
 		server = BServer.getInstance();
 
 		try {
-			npcNetworkManager = new NPCNetworkManager();
+			npcNetworkManager = new NPCNetworkManager(false);
+			Field NETWORK_CHANNEL = getField(NetworkManager.class, "k");
+			Field NETWORK_ADDRESS = getField(NetworkManager.class, "l");
+			if (NETWORK_CHANNEL == null || NETWORK_ADDRESS == null)
+				return;
+			try {
+				NETWORK_CHANNEL.set(this, new NullChannel(null));
+				NETWORK_ADDRESS.set(this, new SocketAddress() {
+					private static final long serialVersionUID = 8207338859896320185L;
+				});
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		NPCManager.plugin = plugin;
-		taskid = Bukkit.getServer().getScheduler()
-				.scheduleSyncRepeatingTask(plugin, new Runnable() {
-					@Override
-					public void run() {
-						HashSet<String> toRemove = new HashSet<String>();
-						for (String i : npcs.keySet()) {
-							Entity j = npcs.get(i).getEntity();
-							j.y();
-							if (j.dead) {
-								toRemove.add(i);
-							}
-						}
-						for (String n : toRemove) {
-							npcs.remove(n);
-						}
+		taskid = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+			@Override
+			public void run() {
+				HashSet<String> toRemove = new HashSet<String>();
+				for (String i : npcs.keySet()) {
+					Entity j = npcs.get(i).getEntity();
+					j.C();
+					if (j.dead) {
+						toRemove.add(i);
 					}
-				}, 1L, 1L);
+				}
+				for (String n : toRemove) {
+					npcs.remove(n);
+				}
+			}
+		}, 1L, 1L);
 		Bukkit.getServer().getPluginManager().registerEvents(new SL(), plugin);
 		Bukkit.getServer().getPluginManager().registerEvents(new WL(), plugin);
 	}
@@ -93,11 +110,11 @@ public class NPCManager {
 		@EventHandler
 		public void onChunkLoad(ChunkLoadEvent event) {
 			for (NPC npc : npcs.values()) {
-				if (npc != null
-						&& event.getChunk() == npc.getBukkitEntity()
-								.getLocation().getBlock().getChunk()) {
+				if (npc != null && event.getChunk() == npc.getBukkitEntity().getLocation().getBlock().getChunk()) {
 					BWorld world = getBWorld(event.getWorld());
-					world.getWorldServer().addEntity(npc.getEntity());
+					if (!world.getWorldServer().entityList.contains(npc.getEntity())) {
+						world.getWorldServer().addEntity(npc.getEntity());
+					}
 				}
 			}
 		}
@@ -116,24 +133,19 @@ public class NPCManager {
 	public NPC spawnHumanNPC(String name, Location l, String id) {
 
 		if (npcs.containsKey(id)) {
-			server.getLogger().log(Level.WARNING,
-					"NPC with that id already exists, existing NPC returned");
+			server.getLogger().log(Level.WARNING, "NPC with that id already exists, existing NPC returned");
 			return npcs.get(id);
 		} else {
 			if (name.length() > 16) { // Check and nag if name is too long,
 										// spawn NPC anyway with shortened name.
 				String tmp = name.substring(0, 16);
-				server.getLogger().log(Level.WARNING,
-						"NPCs can't have names longer than 16 characters,");
-				server.getLogger().log(Level.WARNING,
-						name + " has been shortened to " + tmp);
+				server.getLogger().log(Level.WARNING, "NPCs can't have names longer than 16 characters,");
+				server.getLogger().log(Level.WARNING, name + " has been shortened to " + tmp);
 				name = tmp;
 			}
 			BWorld world = getBWorld(l.getWorld());
-			NPCEntity npcEntity = new NPCEntity(this, world, name,
-					new PlayerInteractManager(world.getWorldServer()));
-			npcEntity.setPositionRotation(l.getX(), l.getY(), l.getZ(),
-					l.getYaw(), l.getPitch());
+			NPCEntity npcEntity = new NPCEntity(this, world, new GameProfile(id, name), new PlayerInteractManager(world.getWorldServer()));
+			npcEntity.setPositionRotation(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
 			world.getWorldServer().addEntity(npcEntity); // the right way
 			NPC npc = new HumanNPC(npcEntity);
 			npcs.put(id, npc);
@@ -205,46 +217,46 @@ public class NPCManager {
 	public String getNPCIdFromEntity(org.bukkit.entity.Entity e) {
 		if (e instanceof HumanEntity) {
 			for (String i : npcs.keySet()) {
-				if (npcs.get(i).getBukkitEntity().getEntityId() == ((HumanEntity) e)
-						.getEntityId()) {
+				if (npcs.get(i).getBukkitEntity().getEntityId() == ((HumanEntity) e).getEntityId()) {
 					return i;
 				}
 			}
 		}
 		return null;
 	}
-	
-	/* This method is not usuable !! EntityHuman.name is protected and final ! Method has to be rewritten
-	public void rename(String id, String name) {
-		if (name.length() > 16) { // Check and nag if name is too long, spawn
-									// NPC anyway with shortened name.
-			String tmp = name.substring(0, 16);
-			server.getLogger().log(Level.WARNING,
-					"NPCs can't have names longer than 16 characters,");
-			server.getLogger().log(Level.WARNING,
-					name + " has been shortened to " + tmp);
-			name = tmp;
-		}
-		HumanNPC npc = (HumanNPC) getNPC(id);
-		npc.setName(name);
-		BWorld b = getBWorld(npc.getBukkitEntity().getLocation().getWorld());
-		WorldServer s = b.getWorldServer();
-		try {
-			Method m = s.getClass().getDeclaredMethod("b",
-					new Class[] { Entity.class }); // jeremytrains: d -> b
-			m.setAccessible(true);
-			m.invoke(s, npc.getEntity());
-			m = s.getClass().getDeclaredMethod("a",
-					new Class[] { Entity.class }); // jeremytrains: c -> a
-			m.setAccessible(true);
-			m.invoke(s, npc.getEntity());
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		s.everyoneSleeping();
-	}
-	*/
 
+	/*
+	 * This method is not usuable !! EntityHuman.name is protected and final !
+	 * Method has to be rewritten public void rename(String id, String name) {
+	 * if (name.length() > 16) { // Check and nag if name is too long, spawn //
+	 * NPC anyway with shortened name. String tmp = name.substring(0, 16);
+	 * server.getLogger().log(Level.WARNING,
+	 * "NPCs can't have names longer than 16 characters,");
+	 * server.getLogger().log(Level.WARNING, name + " has been shortened to " +
+	 * tmp); name = tmp; } HumanNPC npc = (HumanNPC) getNPC(id);
+	 * npc.setName(name); BWorld b =
+	 * getBWorld(npc.getBukkitEntity().getLocation().getWorld()); WorldServer s
+	 * = b.getWorldServer(); try { Method m =
+	 * s.getClass().getDeclaredMethod("b", new Class[] { Entity.class }); //
+	 * jeremytrains: d -> b m.setAccessible(true); m.invoke(s, npc.getEntity());
+	 * m = s.getClass().getDeclaredMethod("a", new Class[] { Entity.class }); //
+	 * jeremytrains: c -> a m.setAccessible(true); m.invoke(s, npc.getEntity());
+	 * } catch (Exception ex) { ex.printStackTrace(); } s.everyoneSleeping(); }
+	 */
+
+	public static Field getField(Class<?> clazz, String field) {
+	      if (clazz == null)
+	          return null;
+	      Field f = null;
+	      try {
+	          f = clazz.getDeclaredField(field);
+	          f.setAccessible(true);
+	      } catch (Exception e) {
+	    	  e.printStackTrace();
+	      }
+	      return f;
+	  }
+	
 	public BServer getServer() {
 		return server;
 	}
