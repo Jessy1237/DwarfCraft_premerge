@@ -48,17 +48,17 @@ public class NPCManager {
 			Field NETWORK_CHANNEL = getField(NetworkManager.class, "k");
 			Field NETWORK_ADDRESS = getField(NetworkManager.class, "l");
 			if (NETWORK_CHANNEL == null || NETWORK_ADDRESS == null)
-				return;
-			try {
-				NETWORK_CHANNEL.set(this, new NullChannel(null));
-				NETWORK_ADDRESS.set(this, new SocketAddress() {
-					private static final long serialVersionUID = 8207338859896320185L;
-				});
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
+	            return;
+	        try {
+	            NETWORK_CHANNEL.set(npcNetworkManager, new NullChannel(null));
+	            NETWORK_ADDRESS.set(npcNetworkManager, new SocketAddress() {
+	                private static final long serialVersionUID = 8207338859896320185L;
+	            });
+	        } catch (IllegalArgumentException e) {
+	            e.printStackTrace();
+	        } catch (IllegalAccessException e) {
+	            e.printStackTrace();
+	        }
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
