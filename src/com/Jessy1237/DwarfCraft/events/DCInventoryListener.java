@@ -11,10 +11,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.BrewEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
-import org.bukkit.inventory.BeaconInventory;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
@@ -67,6 +68,29 @@ public class DCInventoryListener implements Listener {
 							i = i + 64;
 						}
 						player.getPlayer().getWorld().dropItemNaturally(player.getPlayer().getLocation(), itemstack);
+					}
+				}
+			}
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onCraftItemEvent(CraftItemEvent event) {
+		DCPlayer dCPlayer = plugin.getDataManager().find((Player)event.getWhoClicked());
+		ItemStack outputStack = event.getCurrentItem();
+		
+		for (Skill s : dCPlayer.getSkills().values()) {
+			for (Effect e : s.getEffects()) {
+				if (e.getEffectType() == EffectType.CRAFT && e.checkInitiator(outputStack.getTypeId(), (byte)outputStack.getData().getData())){
+
+					org.bukkit.inventory.ItemStack output = e.getOutput(dCPlayer, (byte)outputStack.getData().getData());
+
+					if (output.getAmount() == 0)
+						outputStack = null;
+					else{
+						outputStack.setAmount(output.getAmount());
+						if (output.getData() != null)
+							outputStack.getData().setData(output.getData().getData());
 					}
 				}
 			}

@@ -25,7 +25,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.Jessy1237.DwarfCraft.DCCraftSchedule;
 import com.Jessy1237.DwarfCraft.DCPlayer;
 import com.Jessy1237.DwarfCraft.DataManager;
 import com.Jessy1237.DwarfCraft.DwarfCraft;
@@ -84,13 +83,6 @@ public class DCPlayerListener implements Listener {
 					}
 				}
 			}
-		}
-
-		// Crafting changes
-		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == Material.WORKBENCH) {
-			DCCraftSchedule sched = new DCCraftSchedule(plugin, plugin.getDataManager().find(event.getPlayer()));
-			int id = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, sched, 0, 2);
-			sched.setID(id);
 		}
 
 		Player player = event.getPlayer();
@@ -184,10 +176,6 @@ public class DCPlayerListener implements Listener {
 				}
 			}
 		}
-
-		DCCraftSchedule sched = new DCCraftSchedule(plugin, plugin.getDataManager().find((Player) event.getPlayer()));
-		int id = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, sched, 0, 2);
-		sched.setID(id);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)

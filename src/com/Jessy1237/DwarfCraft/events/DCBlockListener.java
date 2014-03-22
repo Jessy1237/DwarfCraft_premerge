@@ -89,7 +89,7 @@ public class DCBlockListener implements Listener {
 						}
 
 						// Makes sure logs drop the right logs and vertically
-						if (event.getBlock().getTypeId() == 17) {
+						if (event.getBlock().getTypeId() == 17 || event.getBlock().getTypeId() == 162) {
 							final ItemStack old = item;
 							item = new ItemStack(Material.LOG, old.getAmount(), event.getBlock().getData());
 							if(block.getData() == 0 || block.getData() == 4 || block.getData() == 8 || block.getData() == 12) {

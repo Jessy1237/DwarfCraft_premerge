@@ -224,7 +224,7 @@ public final class DwarfTrainer {
 				if (invStack == null)
 					continue;
 
-				if (invStack.getTypeId() == costStack.getTypeId()) {
+				if (invStack.getTypeId() == costStack.getTypeId() || (invStack.getTypeId() == 162 && costStack.getTypeId() == 17) || (invStack.getTypeId() == 17 && costStack.getTypeId() == 162)) {
 					deposited = true;
 					int inv = invStack.getAmount();
 					int cost = costStack.getAmount();
