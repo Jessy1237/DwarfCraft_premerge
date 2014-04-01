@@ -605,7 +605,7 @@ public class DataManager {
 		return -1;
 	}
 
-	public boolean saveDwarfData(DCPlayer dCPlayer) {
+	public boolean saveDwarfData(DCPlayer dCPlayer, Skill[] skills) {
 		try {
 			PreparedStatement prep = mDBCon.prepareStatement("UPDATE players SET race=? WHERE name=?;");
 			prep.setString(1, dCPlayer.getRace());
@@ -618,7 +618,7 @@ public class DataManager {
 																"values(?,?,?,?,?,?);");
 			
 			int id = getPlayerID(dCPlayer.getPlayer().getName());
-			for (Skill skill : dCPlayer.getSkills().values()){
+			for (Skill skill : skills){
 				prep.setInt(1, id);
 				prep.setInt(2, skill.getId());
 				prep.setInt(3, skill.getLevel());

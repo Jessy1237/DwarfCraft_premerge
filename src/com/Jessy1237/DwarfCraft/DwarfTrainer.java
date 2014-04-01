@@ -266,8 +266,12 @@ public final class DwarfTrainer {
 			plugin.getOut().sendMessage(player, "&6Training Successful!", tag);
 		}
 		if (deposited || hasMats) {
-			plugin.getDataManager().saveDwarfData(dCPlayer);
+			Skill[] dCSkills = new Skill[1];
+			dCSkills[0] = skill;
+			plugin.getDataManager().saveDwarfData(dCPlayer, dCSkills);
 		}
+
+
 		setWait(false);
 	}
 

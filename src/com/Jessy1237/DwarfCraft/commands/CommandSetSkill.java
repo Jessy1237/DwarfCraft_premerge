@@ -72,18 +72,24 @@ public class CommandSetSkill extends Command {
 					else throw e;
 				}
 				if(skill == null){
+					Skill[] skills = new Skill[dCPlayer.getSkills().values().size()];
+					int i = 0;
 					for(Skill s : dCPlayer.getSkills().values()){
 						s.setLevel(level);
 						s.setDeposit1(0);
 						s.setDeposit2(0);
 						s.setDeposit3(0);
+						skills[i] = s;
+						i++;
 					}
 					plugin.getOut().sendMessage(sender, "&aAdmin: &eset all skills for player &9" + name + "&e to &3" + level);
-					plugin.getDataManager().saveDwarfData(dCPlayer);
+					plugin.getDataManager().saveDwarfData(dCPlayer, skills);
 				} else { 
 					skill.setLevel(level);
+					Skill[] skills = new Skill[1];
+					skills[0] = skill;
 					plugin.getOut().sendMessage(sender, "&aAdmin: &eset skill &b" + skill.getDisplayName() + "&e for player &9" + name + "&e to &3" + level);
-					plugin.getDataManager().saveDwarfData(dCPlayer);
+					plugin.getDataManager().saveDwarfData(dCPlayer, skills);
 				}
 			} catch (DCCommandException e) {
 				e.describe(sender);

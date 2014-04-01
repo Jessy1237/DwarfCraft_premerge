@@ -41,7 +41,13 @@ public class CommandRace extends Command {
 					confirmed = true;
 				}
 			}
-			race(newRace, confirmed, dCPlayer, (CommandSender) plugin.getServer().getPlayer(name));
+			if(sender instanceof Player) {
+				if(plugin.perms.has(sender, "dwarfcraft.op.race")) {
+					race(newRace, confirmed, dCPlayer, (CommandSender) plugin.getServer().getPlayer(name));
+				}
+			} else {
+				race(newRace, confirmed, dCPlayer, sender);
+			}
 		} else {
 			String newRace = args[0];
 			DCPlayer dCPlayer = plugin.getDataManager().find((Player) sender);
@@ -62,14 +68,21 @@ public class CommandRace extends Command {
 		} else {
 			if (confirm) {
 				if (plugin.getConfigManager().getRace(newRace) != null) {
-					if (plugin.perms.has(sender, "dwarcraft.norm.race." + newRace.toLowerCase())) {
-						if (sender instanceof Player)
-							plugin.getOut().changedRace(sender, dCPlayer, plugin.getConfigManager().getRace(newRace).getName());
-						dCPlayer.changeRace(newRace);
+					if (sender instanceof Player) {
+						if (plugin.perms.has((Player) sender, "dwarfcraft.norm.race." + newRace.toLowerCase())) {
+							if (sender instanceof Player)
+								plugin.getOut().changedRace(sender, dCPlayer, plugin.getConfigManager().getRace(newRace).getName());
+							dCPlayer.changeRace(newRace);
+						} else {
+							sender.sendMessage("§4You do not have permission to do that.");
+						}
 					} else {
-						if (sender instanceof Player)
-							plugin.getOut().dExistRace(sender, dCPlayer, newRace);
+						plugin.getOut().changedRace(dCPlayer.getPlayer(), dCPlayer, plugin.getConfigManager().getRace(newRace).getName());
+						dCPlayer.changeRace(newRace);
 					}
+				} else {
+					if (sender instanceof Player)
+						plugin.getOut().dExistRace(sender, dCPlayer, newRace);
 				}
 			} else {
 				if (sender instanceof Player)

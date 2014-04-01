@@ -2,11 +2,16 @@ package com.Jessy1237.DwarfCraft.events;
 
 import java.util.HashMap;
 
+import net.minecraft.util.com.google.common.base.Objects;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BrewingStand;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -73,28 +78,75 @@ public class DCInventoryListener implements Listener {
 			}
 		}
 	}
-	
-	@EventHandler(priority = EventPriority.HIGH)
-	public void onCraftItemEvent(CraftItemEvent event) {
-		DCPlayer dCPlayer = plugin.getDataManager().find((Player)event.getWhoClicked());
-		ItemStack outputStack = event.getCurrentItem();
-		
-		for (Skill s : dCPlayer.getSkills().values()) {
-			for (Effect e : s.getEffects()) {
-				if (e.getEffectType() == EffectType.CRAFT && e.checkInitiator(outputStack.getTypeId(), (byte)outputStack.getData().getData())){
 
-					org.bukkit.inventory.ItemStack output = e.getOutput(dCPlayer, (byte)outputStack.getData().getData());
+	private boolean hasItems(ItemStack stack) {
+		return stack != null && stack.getAmount() > 0;
+	}
 
-					if (output.getAmount() == 0)
-						outputStack = null;
-					else{
-						outputStack.setAmount(output.getAmount());
-						if (output.getData() != null)
-							outputStack.getData().setData(output.getData().getData());
+	private void handleCrafting(InventoryClickEvent event) {
+
+		HumanEntity player = event.getWhoClicked();
+		ItemStack toCraft = event.getCurrentItem();
+		ItemStack toStore = event.getCursor();
+		final int origAmount = toCraft.getAmount();
+
+		// Make sure we are actually crafting anything
+		if (player != null && hasItems(toCraft)) {
+
+			if (event.isShiftClick()) {
+				DCPlayer dCPlayer = plugin.getDataManager().find((Player) player);
+				for (Skill s : dCPlayer.getSkills().values()) {
+					for (Effect e : s.getEffects()) {
+						if (e.getEffectType() == EffectType.CRAFT && e.checkInitiator(toCraft.getTypeId(), (byte) toCraft.getData().getData())) {
+							event.setCancelled(true);
+						}
+					}
+				}
+			} else {
+				// The items are stored in the cursor. Make sure there's enough
+				// space.
+				if (isStackSumLegal(toCraft, toStore)) {
+
+					DCPlayer dCPlayer = plugin.getDataManager().find((Player) event.getWhoClicked());
+
+					for (Skill s : dCPlayer.getSkills().values()) {
+						for (Effect e : s.getEffects()) {
+							if (e.getEffectType() == EffectType.CRAFT && e.checkInitiator(toCraft.getTypeId(), (byte) toCraft.getData().getData())) {
+
+								org.bukkit.inventory.ItemStack output = e.getOutput(dCPlayer, (byte) toCraft.getData().getData());
+
+								if (output.getAmount() == 0)
+									toCraft = null;
+								else {
+									toCraft.setAmount(output.getAmount());
+									if (output.getData() != null)
+										toCraft.getData().setData(output.getData().getData());
+								}
+							}
+						}
 					}
 				}
 			}
 		}
+	}
+
+	@SuppressWarnings("deprecation")
+	private boolean hasSameItem(ItemStack a, ItemStack b) {
+		if (a == null)
+			return b == null;
+		else if (b == null)
+			return a == null;
+
+		return a.getTypeId() == b.getTypeId() && a.getDurability() == b.getDurability() && Objects.equal(a.getData(), b.getData()) && Objects.equal(a.getEnchantments(), b.getEnchantments());
+	}
+
+	private boolean isStackSumLegal(ItemStack a, ItemStack b) {
+		// See if we can create a new item stack with the combined elements of a
+		// and b
+		if (a == null || b == null)
+			return true; // Treat null as an empty stack
+		else
+			return a.getAmount() + b.getAmount() <= a.getType().getMaxStackSize();
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -107,7 +159,7 @@ public class DCInventoryListener implements Listener {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({ "deprecation", "incomplete-switch" })
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onInventoryClickEvent(InventoryClickEvent event) {
 		if (plugin.getConfigManager().worldBlacklist) {
@@ -119,6 +171,19 @@ public class DCInventoryListener implements Listener {
 				}
 			}
 		}
+
+		if (event.getInventory() != null && event.getSlotType() == SlotType.RESULT) {
+
+			switch (event.getInventory().getType()) {
+			case CRAFTING:
+				handleCrafting(event);
+				break;
+			case WORKBENCH:
+				handleCrafting(event);
+				break;
+			}
+		}
+
 		if (event.getSlotType() == SlotType.CRAFTING && (event.isLeftClick() || event.isShiftClick()) && event.getInventory().getHolder() instanceof BrewingStand) {
 			DCPlayer player = plugin.getDataManager().find((Player) event.getWhoClicked());
 			HashMap<Integer, Skill> skills = player.getSkills();
