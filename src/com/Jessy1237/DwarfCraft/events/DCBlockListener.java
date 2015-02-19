@@ -37,6 +37,35 @@ public class DCBlockListener implements Listener {
 	public DCBlockListener(final DwarfCraft plugin) {
 		this.plugin = plugin;
 	}
+	
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onBlockFromTo(BlockFromToEvent event) {
+		
+		//Code to prevent water from normally breaking crops
+		//Added due to players being able to bypass DC skill restrictions
+		if(event.getToBlock().getType() == Material.CROPS) {
+			//Might have to add checks for carrots, reeds, potatoes and cacti at some point...
+			
+			Block toBlock = event.getToBlock();					//Get the crop block
+			Crops crops = (Crops)toBlock.getState().getData();	//Get the crop block material data
+			
+			
+			//Cheap way to break block without causing drops
+			toBlock.setType(Material.AIR);
+			
+			ItemStack itemDrops;
+			
+			if(crops.getState() == CropState.RIPE) {		//If the wheat is fully grown, drop one wheat
+				itemDrops = new ItemStack(Material.WHEAT);
+				itemDrops.setAmount(1);						//I'm keeping the drop amount here in case I wish to alter it at a later stage, setting?
+			} else {										//If the wheat is no fully grown, drop a seed
+				itemDrops = new ItemStack(Material.SEEDS);
+				itemDrops.setAmount(1);						
+			}
+			
+			toBlock.getLocation().getWorld().dropItemNaturally(toBlock.getLocation(), itemDrops);
+		}
+	}
 
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGHEST)
