@@ -1,15 +1,16 @@
 package com.sharesc.caliog.npclib;
 
-import net.minecraft.server.v1_7_R1.Entity;
-import net.minecraft.server.v1_7_R1.EntityHuman;
-import net.minecraft.server.v1_7_R1.EntityPlayer;
-import net.minecraft.server.v1_7_R1.EnumGamemode;
-import net.minecraft.server.v1_7_R1.PlayerInteractManager;
-import net.minecraft.util.com.mojang.authlib.GameProfile;
+import net.minecraft.server.v1_8_R1.Entity;
+import net.minecraft.server.v1_8_R1.EntityHuman;
+import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.EnumGamemode;
+import net.minecraft.server.v1_8_R1.PlayerInteractManager;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
 import org.bukkit.event.entity.EntityTargetEvent;
+
+import com.mojang.authlib.GameProfile;
 
 public class NPCEntity extends EntityPlayer {
 
@@ -36,19 +37,19 @@ public class NPCEntity extends EntityPlayer {
 
     @Override
     public boolean a(EntityHuman entity) {
-	final EntityTargetEvent event = new NPCEntityTargetEvent(getBukkitEntity(), entity.getBukkitEntity(),
-		NPCEntityTargetEvent.NpcTargetReason.NPC_RIGHTCLICKED);
+	final EntityTargetEvent event = new NpcEntityTargetEvent(getBukkitEntity(), entity.getBukkitEntity(),
+		NpcEntityTargetEvent.NpcTargetReason.NPC_RIGHTCLICKED);
 	Bukkit.getPluginManager().callEvent(event);
 
 	return super.a(entity);
     }
 
     @Override
-    public void b_(EntityHuman entity) {
+    public void d(EntityHuman entity) {
 	if ((lastBounceId != entity.getId() || System.currentTimeMillis() - lastBounceTick > 1000)
 		&& entity.getBukkitEntity().getLocation().distanceSquared(getBukkitEntity().getLocation()) <= 1) {
-	    final EntityTargetEvent event = new NPCEntityTargetEvent(getBukkitEntity(), entity.getBukkitEntity(),
-		    NPCEntityTargetEvent.NpcTargetReason.NPC_BOUNCED);
+	    final EntityTargetEvent event = new NpcEntityTargetEvent(getBukkitEntity(), entity.getBukkitEntity(),
+		    NpcEntityTargetEvent.NpcTargetReason.NPC_BOUNCED);
 	    Bukkit.getPluginManager().callEvent(event);
 
 	    lastBounceTick = System.currentTimeMillis();
@@ -56,20 +57,20 @@ public class NPCEntity extends EntityPlayer {
 	}
 
 	if (lastTargetId == -1 || lastTargetId != entity.getId()) {
-	    final EntityTargetEvent event = new NPCEntityTargetEvent(getBukkitEntity(), entity.getBukkitEntity(),
-		    NPCEntityTargetEvent.NpcTargetReason.CLOSEST_PLAYER);
+	    final EntityTargetEvent event = new NpcEntityTargetEvent(getBukkitEntity(), entity.getBukkitEntity(),
+		    NpcEntityTargetEvent.NpcTargetReason.CLOSEST_PLAYER);
 	    Bukkit.getPluginManager().callEvent(event);
 	    lastTargetId = entity.getId();
 	}
 
-	super.b_(entity);
+	super.d(entity);
     }
 
     @Override
     public void c(Entity entity) {
 	if (lastBounceId != entity.getId() || System.currentTimeMillis() - lastBounceTick > 1000) {
-	    final EntityTargetEvent event = new NPCEntityTargetEvent(getBukkitEntity(), entity.getBukkitEntity(),
-		    NPCEntityTargetEvent.NpcTargetReason.NPC_BOUNCED);
+	    final EntityTargetEvent event = new NpcEntityTargetEvent(getBukkitEntity(), entity.getBukkitEntity(),
+		    NpcEntityTargetEvent.NpcTargetReason.NPC_BOUNCED);
 	    Bukkit.getPluginManager().callEvent(event);
 
 	    lastBounceTick = System.currentTimeMillis();

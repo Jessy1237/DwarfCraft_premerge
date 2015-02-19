@@ -6,17 +6,17 @@ import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.minecraft.server.v1_7_R1.AxisAlignedBB;
-import net.minecraft.server.v1_7_R1.Entity;
-import net.minecraft.server.v1_7_R1.EntityPlayer;
-import net.minecraft.server.v1_7_R1.PlayerChunkMap;
-import net.minecraft.server.v1_7_R1.WorldProvider;
-import net.minecraft.server.v1_7_R1.WorldServer;
+import net.minecraft.server.v1_8_R1.AxisAlignedBB;
+import net.minecraft.server.v1_8_R1.Entity;
+import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.PlayerChunkMap;
+import net.minecraft.server.v1_8_R1.WorldProvider;
+import net.minecraft.server.v1_8_R1.WorldServer;
 
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_7_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_7_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -89,7 +89,7 @@ public class BWorld {
 		final double z = loc.getZ() + 0.5;
 		final double radius = 10;
 
-		List<Entity> entities = new ArrayList<Entity>();
+		List<Entity> entities = new ArrayList<>();
 		final AxisAlignedBB bb = AxisAlignedBB.a(x - radius, y - radius, z - radius, x + radius, y + radius, z
 			+ radius);
 		entities = craftWorld.getHandle().getEntities(craftPlayer.getHandle(), bb);

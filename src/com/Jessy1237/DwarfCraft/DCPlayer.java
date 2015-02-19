@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import net.minecraft.server.v1_7_R1.Entity;
+import net.minecraft.server.v1_8_R1.Entity;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -31,7 +31,7 @@ public class DCPlayer {
 		this.race = plugin.getConfigManager().getDefaultRace();
 		this.skills = plugin.getConfigManager().getAllSkills();
 	}
-	
+
 	public DCPlayer(final DwarfCraft plugin, Player whoami, String race) {
 		this.plugin = plugin;
 		this.player = whoami;
@@ -254,7 +254,7 @@ public class DCPlayer {
 		this.race = race;
 		skills = plugin.getConfigManager().getAllSkills();
 		Skill[] dCSkills = new Skill[skills.size()];
-		
+
 		int I = 0;
 		for (Skill skill : skills.values()) {
 			skill.setLevel(0);
@@ -270,12 +270,12 @@ public class DCPlayer {
 	public String getRace() {
 		return race;
 	}
-	
-	public static float getYaw(Player p){
-		Entity e = (Entity)p;
+
+	public static float getYaw(Player p) {
+		Entity e = (Entity) p;
 		return e.yaw;
 	}
-	
+
 	public void setRace(String race) {
 		this.race = race;
 	}

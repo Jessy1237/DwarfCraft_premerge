@@ -2,11 +2,11 @@ package com.sharesc.caliog.npclib;
 
 import java.lang.reflect.Field;
 
-import net.minecraft.server.v1_7_R1.EntityHuman;
-import net.minecraft.server.v1_7_R1.EntityPlayer;
-import net.minecraft.server.v1_7_R1.PacketPlayOutAnimation;
-import net.minecraft.server.v1_7_R1.PacketPlayOutEntityEquipment;
-import net.minecraft.server.v1_7_R1.WorldServer;
+import net.minecraft.server.v1_8_R1.EntityHuman;
+import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.PacketPlayOutAnimation;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_8_R1.WorldServer;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 public class HumanNPC extends NPC {
-    private net.minecraft.server.v1_7_R1.ItemStack[] previousEquipment = { null, null, null, null, null };
+    private net.minecraft.server.v1_8_R1.ItemStack[] previousEquipment = { null, null, null, null, null };
 
     public HumanNPC(NPCEntity npcEntity) {
 	super(npcEntity);
@@ -111,10 +111,10 @@ public class HumanNPC extends NPC {
 
 	/**/
 	int changes = 0;
-	net.minecraft.server.v1_7_R1.ItemStack[] newI = new net.minecraft.server.v1_7_R1.ItemStack[previousEquipment.length];
+	net.minecraft.server.v1_8_R1.ItemStack[] newI = new net.minecraft.server.v1_8_R1.ItemStack[previousEquipment.length];
 	for (int i = 0; i < previousEquipment.length; i++) {
-	    net.minecraft.server.v1_7_R1.ItemStack previous = previousEquipment[i];
-	    net.minecraft.server.v1_7_R1.ItemStack current = ((EntityPlayer) getEntity()).getEquipment(i);
+	    net.minecraft.server.v1_8_R1.ItemStack previous = previousEquipment[i];
+	    net.minecraft.server.v1_8_R1.ItemStack current = ((EntityPlayer) getEntity()).getEquipment(i);
 	    newI[i] = current;
 	    if (current == null) {
 		if (previous != null) {
@@ -123,7 +123,7 @@ public class HumanNPC extends NPC {
 		    ++changes;
 		}
 	    } else {
-		if (!net.minecraft.server.v1_7_R1.ItemStack.equals(previous, current)
+		if (!net.minecraft.server.v1_8_R1.ItemStack.equals(previous, current)
 			|| (previous != null && !previous.equals(current))) {
 		    NPCUtils.sendPacketNearby(getBukkitEntity().getLocation(), new PacketPlayOutEntityEquipment(
 			    getEntity().getId(), i, current));

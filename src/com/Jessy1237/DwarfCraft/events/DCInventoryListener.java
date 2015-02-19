@@ -2,25 +2,19 @@ package com.Jessy1237.DwarfCraft.events;
 
 import java.util.HashMap;
 
-import net.minecraft.util.com.google.common.base.Objects;
-
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.BrewEvent;
-import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
-import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
@@ -83,12 +77,12 @@ public class DCInventoryListener implements Listener {
 		return stack != null && stack.getAmount() > 0;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void handleCrafting(InventoryClickEvent event) {
 
 		HumanEntity player = event.getWhoClicked();
 		ItemStack toCraft = event.getCurrentItem();
 		ItemStack toStore = event.getCursor();
-		final int origAmount = toCraft.getAmount();
 
 		// Make sure we are actually crafting anything
 		if (player != null && hasItems(toCraft)) {
@@ -128,16 +122,6 @@ public class DCInventoryListener implements Listener {
 				}
 			}
 		}
-	}
-
-	@SuppressWarnings("deprecation")
-	private boolean hasSameItem(ItemStack a, ItemStack b) {
-		if (a == null)
-			return b == null;
-		else if (b == null)
-			return a == null;
-
-		return a.getTypeId() == b.getTypeId() && a.getDurability() == b.getDurability() && Objects.equal(a.getData(), b.getData()) && Objects.equal(a.getEnchantments(), b.getEnchantments());
 	}
 
 	private boolean isStackSumLegal(ItemStack a, ItemStack b) {

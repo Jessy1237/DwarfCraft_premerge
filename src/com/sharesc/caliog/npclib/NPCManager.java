@@ -8,28 +8,34 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
-import net.minecraft.server.v1_7_R1.Entity;
-import net.minecraft.server.v1_7_R1.PlayerInteractManager;
-import net.minecraft.server.v1_7_R1.WorldServer;
-import net.minecraft.util.com.mojang.authlib.GameProfile;
+import net.minecraft.server.v1_8_R1.Entity;
+import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.EnumPlayerInfoAction;
+import net.minecraft.server.v1_8_R1.PacketPlayOutNamedEntitySpawn;
+import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_8_R1.PlayerInteractManager;
+import net.minecraft.server.v1_8_R1.WorldServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.mojang.authlib.GameProfile;
+
 public class NPCManager {
 
-    private final HashMap<String, NPC> npcs = new HashMap<String, NPC>();
+    private final HashMap<String, NPC> npcs = new HashMap<>();
     private final BServer server;
-    private final Map<World, BWorld> bworlds = new HashMap<World, BWorld>();
+    private final Map<World, BWorld> bworlds = new HashMap<>();
     private NPCNetworkManager npcNetworkManager;
     public static JavaPlugin plugin;
 
@@ -93,13 +99,15 @@ public class NPCManager {
 	    name = tmp;
 	}
 	final BWorld world = getBWorld(l.getWorld());
-	final NPCEntity npcEntity = new NPCEntity(this, world, new GameProfile(id, name), new PlayerInteractManager(
+	final NPCEntity npcEntity = new NPCEntity(this, world, new GameProfile(UUID.fromString(id), name), new PlayerInteractManager(
 		world.getWorldServer()));
 	npcEntity.setPositionRotation(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
 	final HumanNPC npc = new HumanNPC(npcEntity);
 	npc.setYaw(l.getYaw());
 	world.getWorldServer().addEntity(npcEntity); // the right way
 	world.getWorldServer().players.remove(npcEntity);
+	NPCUtils.sendPacketNearby(l, new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, (EntityPlayer)npc.getEntity()));
+	NPCUtils.sendPacketNearby(l, new PacketPlayOutNamedEntitySpawn((EntityPlayer)npc.getEntity()));
 	npcs.put(id, npc);
 	return npc;
     }
@@ -116,7 +124,7 @@ public class NPCManager {
 	if (npcName.length() > 16) {
 	    npcName = npcName.substring(0, 16); // Ensure you can still despawn
 	}
-	final HashSet<String> toRemove = new HashSet<String>();
+	final HashSet<String> toRemove = new HashSet<>();
 	for (final String n : npcs.keySet()) {
 	    final NPC npc = npcs.get(n);
 	    if (npc != null && npc instanceof HumanNPC) {
@@ -149,7 +157,7 @@ public class NPCManager {
     }
 
     public List<NPC> getHumanNPCByName(String name) {
-	final List<NPC> ret = new ArrayList<NPC>();
+	final List<NPC> ret = new ArrayList<>();
 	final Collection<NPC> i = npcs.values();
 	for (final NPC e : i) {
 	    if (e instanceof HumanNPC) {
@@ -162,7 +170,7 @@ public class NPCManager {
     }
 
     public List<NPC> getNPCs() {
-	return new ArrayList<NPC>(npcs.values());
+	return new ArrayList<>(npcs.values());
     }
 
     public String getNPCIdFromEntity(org.bukkit.entity.Entity e) {

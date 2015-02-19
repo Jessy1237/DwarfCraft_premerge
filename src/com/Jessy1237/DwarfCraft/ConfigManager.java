@@ -457,6 +457,7 @@ public final class ConfigManager {
 			while (records.hasNext()) {
 				CSVRecord item = records.next();
 
+				@SuppressWarnings("deprecation")
 				Skill skill = new Skill(item.getInt("ID"), item.getString("Name"), 0, new ArrayList<Effect>(), new TrainingItem(Material.getMaterial(item.getInt("Item1")), item.getDouble("Item1Base"), item.getInt("Item1Max")), new TrainingItem(Material.getMaterial(item.getInt("Item2")),
 						item.getDouble("Item2Base"), item.getInt("Item2Max")), new TrainingItem(Material.getMaterial(item.getInt("Item3")), item.getDouble("Item3Base"), item.getInt("Item3Max")), Material.getMaterial(item.getInt("Held")));
 

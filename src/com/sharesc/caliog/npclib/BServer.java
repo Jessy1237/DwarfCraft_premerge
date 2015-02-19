@@ -5,17 +5,17 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.minecraft.server.v1_7_R1.DedicatedPlayerList;
-import net.minecraft.server.v1_7_R1.DedicatedServer;
-import net.minecraft.server.v1_7_R1.MinecraftServer;
-import net.minecraft.server.v1_7_R1.PropertyManager;
-import net.minecraft.server.v1_7_R1.WorldServer;
+import net.minecraft.server.v1_8_R1.DedicatedPlayerList;
+import net.minecraft.server.v1_8_R1.DedicatedServer;
+import net.minecraft.server.v1_8_R1.MinecraftServer;
+import net.minecraft.server.v1_8_R1.PropertyManager;
+import net.minecraft.server.v1_8_R1.WorldServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.libs.jline.console.ConsoleReader;
-import org.bukkit.craftbukkit.v1_7_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
 
 /**
  * Server hacks for Bukkit
@@ -28,7 +28,7 @@ public class BServer {
     private MinecraftServer mcServer;
     private CraftServer cServer;
     private final Server server;
-    private final HashMap<String, BWorld> worlds = new HashMap<String, BWorld>();
+    private final HashMap<String, BWorld> worlds = new HashMap<>();
 
     private BServer() {
 	server = Bukkit.getServer();

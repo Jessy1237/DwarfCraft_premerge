@@ -21,7 +21,7 @@ public class CommandRenameNPC extends Command {
 		} else if (args[0].equalsIgnoreCase("?")) {
 			plugin.getOut().sendMessage(sender, CommandInformation.Desc.RENAMENPC.getDesc());
 		} else {
-			plugin.getDataManager().getTrainerById(args[0]).setDisplayName(args[1]);
+			plugin.getDataManager().getTrainerByName(args[0]).setDisplayName(args[1]);
 		}
 		return true;
 	}

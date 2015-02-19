@@ -38,7 +38,7 @@ public class CommandRemoveTrainer extends Command {
 				List<Object> desiredArguments = new ArrayList<Object>();
 				List<Object> outputList = null;
 				
-				desiredArguments.add("UniqueIDRmv");
+				desiredArguments.add("Name");
 				outputList = parser.parse(desiredArguments, false);
 				plugin.getDataManager().removeTrainer((String)outputList.get(0));
 				

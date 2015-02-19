@@ -5,6 +5,7 @@ package com.Jessy1237.DwarfCraft;
  */
 
 import java.util.List;
+import java.util.UUID;
 
 import net.milkbowl.vault.permission.Permission;
 
@@ -298,5 +299,23 @@ public class DwarfCraft extends JavaPlugin {
 		}
 
 		System.out.println(getDescription().getName() + " version " + getDescription().getVersion() + " is enabled!");
+	}
+	
+	public void despawnNPCByName(String name) {
+		List<NPC> npcs = getNPCManager().getNPCs();
+		for(NPC npc : npcs) {
+			if(((HumanNPC)npc).getName().equalsIgnoreCase(name)) {
+				npcm.despawnHumanByName(name);
+			}
+		}
+	}
+	
+	public void despawnById(String ID) {
+		List<NPC> npcs = getNPCManager().getNPCs();
+		for(NPC npc : npcs) {
+			if(npc.getBukkitEntity().getUniqueId() == UUID.fromString(ID)) {
+				npcm.despawnById(ID);
+			}
+		}
 	}
 }

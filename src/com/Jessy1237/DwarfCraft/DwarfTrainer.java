@@ -5,15 +5,16 @@ package com.Jessy1237.DwarfCraft;
  */
 
 import java.util.List;
+import java.util.UUID;
 
-import net.minecraft.server.v1_7_R1.EntityLiving;
-import net.minecraft.server.v1_7_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.EntityPlayer;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -29,12 +30,12 @@ public final class DwarfTrainer {
 	private World mWorld;
 	private Material mHeldItem;
 	private String mName;
-	private String mID;
+	private UUID mID;
 	private final DwarfCraft plugin;
 	private boolean wait;
 	private long lastTrain;
 
-	public DwarfTrainer(final DwarfCraft plugin, Location location, String uniqueId, String name, Integer skillId, Integer maxSkill, Integer minSkill, String greeterMessage, boolean isGreeter, boolean wait, long lastTrain) {
+	public DwarfTrainer(final DwarfCraft plugin, Location location, UUID uuid, String name, Integer skillId, Integer maxSkill, Integer minSkill, String greeterMessage, boolean isGreeter, boolean wait, long lastTrain) {
 
 		this.plugin = plugin;
 		this.mSkillID = skillId;
@@ -44,13 +45,17 @@ public final class DwarfTrainer {
 		this.mIsGreeter = isGreeter;
 		this.mWorld = location.getWorld();
 		this.mName = name;
-		this.mID = uniqueId;
-		this.mEntity = (HumanNPC) plugin.getNPCManager().spawnHumanNPC(mName, location, uniqueId);
+		this.mEntity = (HumanNPC) plugin.getNPCManager().spawnHumanNPC(mName, location, uuid.toString());
+		System.out.println(uuid.toString());
 		this.wait = wait;
 		this.lastTrain = lastTrain;
 		this.getEntity().getEntity().yaw = location.getYaw();
-		((EntityPlayer) this.getEntity().getEntity()).aP = location.getYaw();
+		((EntityPlayer) this.getEntity().getEntity()).aI = location.getYaw();
+		((EntityPlayer) this.getEntity().getEntity()).aJ = location.getYaw();
 		this.getEntity().getEntity().pitch = location.getPitch();
+		this.mID = uuid;
+		this.wait = wait;
+		this.lastTrain = lastTrain;
 
 		if (mIsGreeter)
 			mHeldItem = Material.AIR;
@@ -60,7 +65,8 @@ public final class DwarfTrainer {
 		assert (mHeldItem != null);
 
 		if (mHeldItem != Material.AIR)
-			mEntity.setItemInHand(mHeldItem);
+			((LivingEntity) mEntity.getBukkitEntity()).getEquipment().setItemInHand(new ItemStack(mHeldItem, 1));
+
 	}
 
 	@Override
@@ -80,6 +86,7 @@ public final class DwarfTrainer {
 		return mEntity.getBukkitEntity().getLocation();
 	}
 
+	@SuppressWarnings("deprecation")
 	protected int getMaterial() {
 		if (mHeldItem != null)
 			return mHeldItem.getId();
@@ -90,7 +97,7 @@ public final class DwarfTrainer {
 	public Integer getMaxSkill() {
 		return mMaxLevel;
 	}
-	
+
 	public Integer getMinSkill() {
 		return mMinLevel;
 	}
@@ -100,14 +107,14 @@ public final class DwarfTrainer {
 	}
 
 	public String getName() {
-		return mEntity.getName();
+		return mName;
 	}
 
 	public Integer getSkillTrained() {
 		return mSkillID;
 	}
 
-	public String getUniqueId() {
+	public UUID getUniqueId() {
 		return mID;
 	}
 
@@ -134,9 +141,9 @@ public final class DwarfTrainer {
 		if (p != null) {
 			Location l = p.getEyeLocation().clone();
 			d.getEntity().lookAtPoint(l);
-			d.getLocation().setYaw((float)((EntityPlayer) d.getEntity().getEntity()).aP);
+			d.getLocation().setYaw((float) ((EntityPlayer) d.getEntity().getEntity()).aI);
 			d.getLocation().setPitch(d.getEntity().getEntity().pitch);
-			plugin.getDataManager().updateTrainerLocation(d, (float)((EntityLiving) d.getEntity().getEntity()).aP, d.getEntity().getEntity().pitch);
+			plugin.getDataManager().updateTrainerLocation(d, (float) ((EntityPlayer) d.getEntity().getEntity()).aI, d.getEntity().getEntity().pitch);
 		}
 		return;
 	}
@@ -164,7 +171,7 @@ public final class DwarfTrainer {
 		return;
 	}
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings({ "unused", "deprecation" })
 	public void trainSkill(DCPlayer dCPlayer) {
 		Skill skill = dCPlayer.getSkill(mSkillID);
 		Player player = dCPlayer.getPlayer();
@@ -175,13 +182,13 @@ public final class DwarfTrainer {
 			setWait(false);
 			return;
 		}
-		
+
 		if (skill.getLevel() >= 5 && !plugin.getConfigManager().getAllSkills(dCPlayer.getRace()).contains(skill.getId())) {
 			plugin.getOut().sendMessage(player, "&cYour race doesn't specialize in this skill! Max level is (5)!");
 			setWait(false);
 			return;
 		}
-		
+
 		if (skill.getLevel() >= 30) {
 			plugin.getOut().sendMessage(player, "&cYour skill is max level (30)!", tag);
 			setWait(false);
@@ -193,13 +200,13 @@ public final class DwarfTrainer {
 			setWait(false);
 			return;
 		}
-		
+
 		if (skill.getLevel() < mMinLevel) {
 			plugin.getOut().sendMessage(player, "&cI can't teach a low level like you, find a lower level trainer", tag);
 			setWait(false);
 			return;
 		}
-		
+
 		List<List<ItemStack>> costs = dCPlayer.calculateTrainingCost(skill);
 		List<ItemStack> trainingCostsToLevel = costs.get(0);
 		// List<ItemStack> totalCostsToLevel = costs.get(1);
@@ -271,7 +278,6 @@ public final class DwarfTrainer {
 			plugin.getDataManager().saveDwarfData(dCPlayer, dCSkills);
 		}
 
-
 		setWait(false);
 	}
 
@@ -279,7 +285,7 @@ public final class DwarfTrainer {
 		Location loc = getLocation();
 		plugin.getNPCManager().despawnHumanByName(this.mName);
 		this.mName = name;
-		this.mEntity = (HumanNPC) plugin.getNPCManager().spawnHumanNPC(mName, loc, this.mID);
+		this.mEntity = (HumanNPC) plugin.getNPCManager().spawnHumanNPC(mName, loc, this.mID.toString());
 		plugin.getDataManager().renameTrainer(this.mID, name);
 	}
 

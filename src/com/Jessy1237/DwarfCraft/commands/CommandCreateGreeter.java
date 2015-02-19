@@ -6,6 +6,7 @@ package com.Jessy1237.DwarfCraft.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -40,22 +41,19 @@ public class CommandCreateGreeter extends Command {
 				List<Object> desiredArguments = new ArrayList<Object>();
 				List<Object> outputList = null;
 
-				String uniqueId = "UniqueIdAdd";
 				String name = "Name";
 				String greeterMessage = "GreeterMessage";
 				
-				desiredArguments.add(uniqueId);
 				desiredArguments.add(name);
 				desiredArguments.add(greeterMessage);
 				
 				outputList = parser.parse(desiredArguments, false);
-				uniqueId       = (String) outputList.get(0);
-				name           = (String) outputList.get(1);
-				greeterMessage = (String) outputList.get(2);
+				name           = (String) outputList.get(0);
+				greeterMessage = (String) outputList.get(1);
 			
 				Location location = ((Player)sender).getLocation();
 				DwarfTrainer d = new DwarfTrainer(plugin, location,
-						uniqueId, name, null, null, null, greeterMessage, true, false, 0);
+						UUID.randomUUID(), name, null, null, null, greeterMessage, true, false, 0);
 				plugin.getDataManager().insertTrainer(d);
 			} catch (DCCommandException e) {
 				e.describe(sender);

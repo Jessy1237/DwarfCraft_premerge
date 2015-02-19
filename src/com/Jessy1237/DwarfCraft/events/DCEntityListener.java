@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_7_R1.entity.CraftSheep;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftSheep;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
@@ -24,6 +24,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.projectiles.ProjectileSource;
 
 import com.Jessy1237.DwarfCraft.DCPlayer;
 import com.Jessy1237.DwarfCraft.DwarfCraft;
@@ -94,7 +95,7 @@ public class DCEntityListener implements Listener {
 		if (trainer != null) {
 			if (event.getDamager() instanceof Player) {
 				if (plugin.getDataManager().getTrainerRemove().contains(event.getDamager())) {
-					plugin.getDataManager().removeTrainer(trainer.getUniqueId());
+					plugin.getDataManager().removeTrainer(trainer.getName());
 					plugin.getDataManager().getTrainerRemove().remove(event.getDamager());
 				} else if (plugin.getDataManager().getTrainerLookAt().contains((Player) event.getDamager())) {
 					trainer.lookAt((Player) event.getDamager(), trainer);
@@ -137,7 +138,7 @@ public class DCEntityListener implements Listener {
 						} else {
 							trainer.setWait(true);
 							trainer.setLastTrain(currentTime);
-							trainer.getEntity().animateArmSwing();
+							/* trainer.getEntity().animateArmSwing(); */
 							plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new TrainSkillSchedule(trainer, dCPlayer), 2);
 						}
 					}
@@ -265,7 +266,7 @@ public class DCEntityListener implements Listener {
 		}
 
 		Arrow arrow = (Arrow) event.getDamager();
-		LivingEntity attacker = arrow.getShooter();
+		ProjectileSource attacker = arrow.getShooter();
 		if (event.getEntity() instanceof EnderCrystal) {
 			return;
 		}

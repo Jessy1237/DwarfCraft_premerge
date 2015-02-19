@@ -5,6 +5,7 @@ package com.Jessy1237.DwarfCraft;
  */
 
 import java.util.List;
+
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -308,7 +309,7 @@ public class Out {
 	 * Used to send messages to all players on a server with a prefix
 	 */
 	protected void sendBroadcast(Server server, String message, String prefix) {
-		Player[] playerArray = server.getOnlinePlayers();
+		Player[] playerArray = (Player[])server.getOnlinePlayers().toArray();
 		sendMessage(playerArray, message, prefix);
 	}
 

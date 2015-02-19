@@ -60,6 +60,7 @@ public class Util {
 		return retval;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static ItemStack parseItem(String info) {
 		String[] pts = info.split(":");
 		int data = (pts.length == 1 ? -1 : Integer.parseInt(pts[1]));
@@ -80,6 +81,7 @@ public class Util {
 		return item1;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static String getCleanName(ItemStack item) {
 		if (item == null)
 			return "NULL";

@@ -6,6 +6,7 @@ package com.Jessy1237.DwarfCraft.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -43,12 +44,10 @@ public class CommandCreateTrainer extends Command {
 				List<Object> desiredArguments = new ArrayList<Object>();
 				List<Object> outputList = null;
 
-				String uniqueId = "UniqueIdAdd";
 				String name = "Name";
 				Skill skill = new Skill(0, null, 0, null, null, null, null, null);
 				Integer maxSkill = 1;
 				Integer minSkill = 1;
-				desiredArguments.add(uniqueId);
 				desiredArguments.add(name);
 				desiredArguments.add(skill);
 				desiredArguments.add(maxSkill);
@@ -57,19 +56,17 @@ public class CommandCreateTrainer extends Command {
 					if (!(sender instanceof Player))
 							throw new DCCommandException(plugin, Type.CONSOLECANNOTUSE);
 					outputList = parser.parse(desiredArguments, false);
-					uniqueId   = (String)outputList.get(0);
-					name       = (String)outputList.get(1);
-					skill      = (Skill)outputList.get(2);
-					maxSkill   = (Integer)outputList.get(3);
-					minSkill   = (Integer)outputList.get(4);
+					name       = (String)outputList.get(0);
+					skill      = (Skill)outputList.get(1);
+					maxSkill   = (Integer)outputList.get(2);
+					minSkill   = (Integer)outputList.get(3);
 				} catch (DCCommandException e) {
 					if (e.getType() == Type.TOOFEWARGS) {
 						outputList = parser.parse(desiredArguments, true);
-						uniqueId   = (String)outputList.get(0);
-						name       = (String)outputList.get(1);
-						skill      = (Skill)outputList.get(2);
-						maxSkill   = (Integer)outputList.get(3);
-						minSkill   = (Integer)outputList.get(4);
+						name       = (String)outputList.get(0);
+						skill      = (Skill)outputList.get(1);
+						maxSkill   = (Integer)outputList.get(2);
+						minSkill   = (Integer)outputList.get(3);
 					} else
 						throw e;
 				}
@@ -81,7 +78,7 @@ public class CommandCreateTrainer extends Command {
 				Player p = (Player)sender;
 				Location location = new Location(p.getWorld(),p.getLocation().getX() , p.getLocation().getY(), p.getLocation().getZ(), p.getLocation().getYaw() - 180, p.getLocation().getPitch());
 				DwarfTrainer d = new DwarfTrainer(plugin, location,
-						uniqueId, name, skill.getId(), maxSkill, minSkill, null, false, false, 0);
+						UUID.randomUUID(), name, skill.getId(), maxSkill, minSkill, null, false, false, 0);
 				plugin.getDataManager().insertTrainer(d);
 			} catch (DCCommandException e) {
 				e.describe(sender);
