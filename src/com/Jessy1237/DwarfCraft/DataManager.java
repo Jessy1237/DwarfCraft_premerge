@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -30,7 +28,7 @@ public class DataManager {
 
 	private List<DCPlayer> dwarves = new ArrayList<DCPlayer>();
 	private List<DwarfVehicle> vehicleList = new ArrayList<DwarfVehicle>();
-	public HashMap<Integer, DwarfTrainer> trainerList = new HashMap<Integer, DwarfTrainer>();
+	public HashMap<String, DwarfTrainer> trainerList = new HashMap<String, DwarfTrainer>();
 	private HashMap<String, GreeterMessage> greeterMessageList = new HashMap<String, GreeterMessage>();
 	private HashMap<Player, String> Rename = new HashMap<Player, String>();
 	private final ConfigManager configManager;
@@ -143,8 +141,8 @@ public class DataManager {
 	}
 
 	public boolean checkTrainersInChunk(Chunk chunk) {
-		for (Iterator<Map.Entry<Integer, DwarfTrainer>> i = trainerList.entrySet().iterator(); i.hasNext();) {
-			Map.Entry<Integer, DwarfTrainer> pairs = i.next();
+		for (Iterator<Map.Entry<String, DwarfTrainer>> i = trainerList.entrySet().iterator(); i.hasNext();) {
+			Map.Entry<String, DwarfTrainer> pairs = i.next();
 			DwarfTrainer d = (pairs.getValue());
 			if (Math.abs(chunk.getX() - d.getLocation().getBlock().getChunk().getX()) > 1)
 				continue;
@@ -225,8 +223,8 @@ public class DataManager {
 								if (DwarfCraft.debugMessagesThreshold < 5)
 									System.out.println("DC5: trainer: " + rs.getString("name") + " in world: " + world.getName());
 
-								DwarfTrainer trainer = new DwarfTrainer(plugin, new Location(world, rs.getDouble("x"), rs.getDouble("y"), rs.getDouble("z"), rs.getFloat("yaw"), rs.getFloat("pitch")), rs.getInt("uniqueId"), rs.getString("name"), rs.getInt("skill"), rs.getInt("maxSkill"), -1,
-										rs.getString("messageId"), rs.getBoolean("isGreeter"), false, 0);
+								DwarfTrainer trainer = new DwarfTrainer(plugin, new Location(world, rs.getDouble("x"), rs.getDouble("y"), rs.getDouble("z"), rs.getFloat("yaw"), rs.getFloat("pitch")), UUID.fromString(rs.getString("uniqueId")), rs.getString("name"), rs.getInt("skill"),
+										rs.getInt("maxSkill"), -1, rs.getString("messageId"), rs.getBoolean("isGreeter"), false, 0);
 
 								trainers.add(trainer);
 							}
@@ -243,7 +241,7 @@ public class DataManager {
 					if (d != null) {
 						PreparedStatement prep = mDBCon.prepareStatement("insert into trainers values (?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
 						prep.setString(1, d.getWorld().getName());
-						prep.setInt(2, d.getUniqueId());
+						prep.setString(2, d.getUniqueId().toString());
 						prep.setString(3, d.getName());
 						prep.setInt(4, d.getSkillTrained());
 						prep.setInt(5, d.getMaxSkill());
@@ -372,11 +370,11 @@ public class DataManager {
 		return greeterMessageList.get(messageId);
 	}
 
-	public DwarfTrainer getTrainer(NPC npc) {
-		for (Iterator<Map.Entry<Integer, DwarfTrainer>> i = trainerList.entrySet().iterator(); i.hasNext();) {
-			Map.Entry<Integer, DwarfTrainer> pairs = i.next();
+	public DwarfTrainer getTrainer(Entity entity) {
+		for (Iterator<Map.Entry<String, DwarfTrainer>> i = trainerList.entrySet().iterator(); i.hasNext();) {
+			Map.Entry<String, DwarfTrainer> pairs = i.next();
 			DwarfTrainer trainer = (pairs.getValue());
-			if (trainer.getEntity().getId() == npc.getId())
+			if (trainer.getEntity().getBukkitEntity().getEntityId() == entity.getEntityId())
 				return trainer;
 		}
 		return null;
@@ -391,10 +389,10 @@ public class DataManager {
 	 * return trainer; } return null; }
 	 */
 	public boolean isTrainer(Entity entity) {
-		for (Iterator<Map.Entry<Integer, DwarfTrainer>> i = trainerList.entrySet().iterator(); i.hasNext();) {
-			Map.Entry<Integer, DwarfTrainer> pairs = i.next();
+		for (Iterator<Map.Entry<String, DwarfTrainer>> i = trainerList.entrySet().iterator(); i.hasNext();) {
+			Map.Entry<String, DwarfTrainer> pairs = i.next();
 			DwarfTrainer trainer = (pairs.getValue());
-			if (trainer.getEntity().getId() == entity.getEntityId())
+			if (trainer.getEntity().getBukkitEntity().getEntityId() == entity.getEntityId())
 				return true;
 		}
 		return false;
@@ -423,11 +421,11 @@ public class DataManager {
 
 	public void insertTrainer(DwarfTrainer trainer) {
 		assert (trainer != null);
-		trainerList.put(trainer.getUniqueId(), trainer);
+		trainerList.put(trainer.getUniqueId().toString(), trainer);
 		try {
 			PreparedStatement prep = mDBCon.prepareStatement("insert into trainers values (?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
 			prep.setString(1, trainer.getWorld().getName());
-			prep.setInt(2, trainer.getUniqueId());
+			prep.setString(2, trainer.getUniqueId().toString());
 			prep.setString(3, trainer.getName());
 
 			if (!trainer.isGreeter()) {
@@ -478,7 +476,7 @@ public class DataManager {
 			PreparedStatement prep = mDBCon.prepareStatement("UPDATE trainers SET yaw=?, pitch=? WHERE uniqueId=?;");
 			prep.setFloat(1, yaw);
 			prep.setFloat(2, pitch);
-			prep.setInt(3, trainer.getUniqueId());
+			prep.setString(3, trainer.getUniqueId().toString());
 			prep.execute();
 			prep.close();
 		} catch (Exception e) {
@@ -487,7 +485,7 @@ public class DataManager {
 		return;
 	}
 
-	private HashMap<Integer, DwarfTrainer> populateTrainers(World world) {
+	private HashMap<String, DwarfTrainer> populateTrainers(World world) {
 		try {
 			PreparedStatement prep = mDBCon.prepareStatement("SELECT * FROM trainers WHERE world = ?;");
 			prep.setString(1, world.getName());
@@ -498,10 +496,10 @@ public class DataManager {
 					if (DwarfCraft.debugMessagesThreshold < 5)
 						System.out.println("DC5: trainer: " + rs.getString("name") + " in world: " + world.getName());
 
-					DwarfTrainer trainer = new DwarfTrainer(plugin, new Location(world, rs.getDouble("x"), rs.getDouble("y"), rs.getDouble("z"), rs.getFloat("yaw"), rs.getFloat("pitch")), rs.getInt("uniqueId"), rs.getString("name"), rs.getInt("skill"), rs.getInt("maxSkill"), rs.getInt("minSkill"),
-							rs.getString("messageId"), rs.getBoolean("isGreeter"), false, 0);
+					DwarfTrainer trainer = new DwarfTrainer(plugin, new Location(world, rs.getDouble("x"), rs.getDouble("y"), rs.getDouble("z"), rs.getFloat("yaw"), rs.getFloat("pitch")), UUID.fromString(rs.getString("uniqueId")), rs.getString("name"), rs.getInt("skill"), rs.getInt("maxSkill"),
+							rs.getInt("minSkill"), rs.getString("messageId"), rs.getBoolean("isGreeter"), false, 0);
 
-					trainerList.put(rs.getInt("uniqueId"), trainer);
+					trainerList.put(rs.getString("uniqueId"), trainer);
 				}
 			}
 			rs.close();
@@ -524,11 +522,11 @@ public class DataManager {
 	public void removeTrainer(String str) {
 		DwarfTrainer trainer = getTrainerByName(str);
 
-		plugin.despawnById(trainer.getUniqueId());
+		plugin.despawnNPCByName(str);
 
 		try {
 			PreparedStatement prep = mDBCon.prepareStatement("DELETE FROM trainers WHERE uniqueId = ?;");
-			prep.setInt(1, trainer.getUniqueId());
+			prep.setString(1, trainer.getUniqueId().toString());
 			prep.execute();
 			prep.close();
 		} catch (Exception e) {

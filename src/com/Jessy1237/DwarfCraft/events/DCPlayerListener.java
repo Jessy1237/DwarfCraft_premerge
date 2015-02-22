@@ -6,6 +6,11 @@ package com.Jessy1237.DwarfCraft.events;
 
 import java.util.HashMap;
 
+import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.EnumPlayerInfoAction;
+import net.minecraft.server.v1_8_R1.PacketPlayOutNamedEntitySpawn;
+import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerInfo;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -32,6 +37,8 @@ import com.Jessy1237.DwarfCraft.Effect;
 import com.Jessy1237.DwarfCraft.EffectType;
 import com.Jessy1237.DwarfCraft.Skill;
 import com.Jessy1237.DwarfCraft.Util;
+import com.sharesc.caliog.npclib.NPC;
+import com.sharesc.caliog.npclib.NPCUtils;
 
 public class DCPlayerListener implements Listener {
 	private final DwarfCraft plugin;
@@ -52,6 +59,10 @@ public class DCPlayerListener implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerJoin(PlayerJoinEvent event) {
+		for(NPC npc : plugin.getNPCManager().getNPCs()) {
+			NPCUtils.sendPacketNearby(npc.getBukkitEntity().getLocation(), new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, (EntityPlayer)npc.getEntity()));
+			NPCUtils.sendPacketNearby(npc.getBukkitEntity().getLocation(), new PacketPlayOutNamedEntitySpawn((EntityPlayer)npc.getEntity()));
+		}
 		DataManager dm = plugin.getDataManager();
 		Player player = event.getPlayer();
 		DCPlayer data = dm.find(player);
