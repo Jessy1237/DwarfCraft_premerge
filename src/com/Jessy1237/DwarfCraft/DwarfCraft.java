@@ -4,9 +4,11 @@ package com.Jessy1237.DwarfCraft;
  * Original Authors: smartaleq, LexManos and RCarretta
  */
 
-import java.util.List;
-import java.util.UUID;
-
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.DespawnReason;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.trait.TraitInfo;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.command.Command;
@@ -42,10 +44,6 @@ import com.Jessy1237.DwarfCraft.events.DCEntityListener;
 import com.Jessy1237.DwarfCraft.events.DCInventoryListener;
 import com.Jessy1237.DwarfCraft.events.DCPlayerListener;
 import com.Jessy1237.DwarfCraft.events.DCVehicleListener;
-import com.Jessy1237.DwarfCraft.events.DCWorldListener;
-import com.sharesc.caliog.npclib.HumanNPC;
-import com.sharesc.caliog.npclib.NPC;
-import com.sharesc.caliog.npclib.NPCManager;
 
 import de.diddiz.LogBlock.Consumer;
 import de.diddiz.LogBlock.LogBlock;
@@ -72,16 +70,19 @@ public class DwarfCraft extends JavaPlugin {
 	private final DCPlayerListener playerListener = new DCPlayerListener(this);
 	private final DCEntityListener entityListener = new DCEntityListener(this);
 	private final DCVehicleListener vehicleListener = new DCVehicleListener(this);
-	private final DCWorldListener worldListener = new DCWorldListener(this);
 	private final DCInventoryListener inventoryListener = new DCInventoryListener(this);
+	private NPCRegistry npcr;
 	private ConfigManager cm;
 	private DataManager dm;
 	private Out out;
-	private NPCManager npcm;
 	private Consumer consumer = null;
 
 	public static int debugMessagesThreshold = 10;
 
+	public NPCRegistry getNPCRegistry() {
+		return npcr;
+	}
+	
 	public ConfigManager getConfigManager() {
 		return cm;
 	}
@@ -90,16 +91,16 @@ public class DwarfCraft extends JavaPlugin {
 		return dm;
 	}
 
-	public NPCManager getNPCManager() {
-		return npcm;
-	}
-
 	public Out getOut() {
 		return out;
 	}
-	
+
 	public Consumer getConsumer() {
 		return consumer;
+	}
+
+	public DCEntityListener getDCEntityListener() {
+		return entityListener;
 	}
 
 	public Permission perms = null;
@@ -115,12 +116,12 @@ public class DwarfCraft extends JavaPlugin {
 		if (perms == null)
 			return false;
 
-		if (sender instanceof Player){
-			if(type.equals("op")){
+		if (sender instanceof Player) {
+			if (type.equals("op")) {
 				return perms.has((Player) sender, ("DwarfCraft.op." + name).toLowerCase());
-			}else if(type.equals("norm")){
+			} else if (type.equals("norm")) {
 				return perms.has((Player) sender, ("DwarfCraft.norm." + name).toLowerCase());
-			} else if(type.equals("all")){
+			} else if (type.equals("all")) {
 				return perms.has((Player) sender, "DwarfCraft.*".toLowerCase());
 			}
 		}
@@ -244,10 +245,9 @@ public class DwarfCraft extends JavaPlugin {
 	 */
 	@Override
 	public void onDisable() {
-		List<NPC> npcs = npcm.getNPCs();
-		for (NPC npc : npcs) {
-			HumanNPC hnpc = (HumanNPC) npc;
-			npcm.despawnHumanByName(hnpc.getName());
+		for(DwarfTrainer trainer: getDataManager().trainerList.values()) {
+			trainer.getEntity().despawn(DespawnReason.PLUGIN);
+			getNPCRegistry().deregister(trainer.getEntity());
 		}
 	}
 
@@ -267,11 +267,19 @@ public class DwarfCraft extends JavaPlugin {
 
 		pm.registerEvents(vehicleListener, this);
 
-		pm.registerEvents(worldListener, this);
-		
 		pm.registerEvents(inventoryListener, this);
 
-		npcm = new NPCManager(this);
+		if(getServer().getPluginManager().getPlugin("Citizens") == null || getServer().getPluginManager().getPlugin("Citizens").isEnabled() == false) {
+			System.out.println("DC Init: Couldn't find Citizens!");
+			System.out.println("DC Init: DwarfCraft now disabiling...");
+			getServer().getPluginManager().disablePlugin(this);	
+			return;
+		}
+		System.out.println("DC Init: Hooked into Citizens!");
+		
+		CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(DwarfTrainerTrait.class).withName("DwarfTrainer"));
+		
+		npcr = CitizensAPI.getNPCRegistry();
 		cm = new ConfigManager(this, getDataFolder().getAbsolutePath(), "DwarfCraft.config");
 		dm = new DataManager(this, cm);
 		out = new Out(this);
@@ -290,9 +298,9 @@ public class DwarfCraft extends JavaPlugin {
 			if (!getDataManager().getDwarfData(dCPlayer))
 				getDataManager().createDwarfData(dCPlayer);
 		}
-		
-		if(pm.getPlugin("LogBlock") != null) {
-			consumer = ((LogBlock)pm.getPlugin("LogBlock")).getConsumer();
+
+		if (pm.getPlugin("LogBlock") != null) {
+			consumer = ((LogBlock) pm.getPlugin("LogBlock")).getConsumer();
 			System.out.println("DC Init: Hooked into LogBlock!");
 		} else {
 			System.out.println("DC Init: Couldn't find LogBlock!");
@@ -300,22 +308,10 @@ public class DwarfCraft extends JavaPlugin {
 
 		System.out.println(getDescription().getName() + " version " + getDescription().getVersion() + " is enabled!");
 	}
-	
-	public void despawnNPCByName(String name) {
-		List<NPC> npcs = getNPCManager().getNPCs();
-		for(NPC npc : npcs) {
-			if(((HumanNPC)npc).getName().equalsIgnoreCase(name)) {
-				npcm.despawnHumanByName(name);
-			}
-		}
-	}
-	
-	public void despawnById(String ID) {
-		List<NPC> npcs = getNPCManager().getNPCs();
-		for(NPC npc : npcs) {
-			if(npc.getBukkitEntity().getUniqueId() == UUID.fromString(ID)) {
-				npcm.despawnById(ID);
-			}
-		}
+
+	public void despawnById(int ID) {
+		NPC npc = getNPCRegistry().getById(ID);
+		npc.despawn(DespawnReason.REMOVAL);
+		getNPCRegistry().deregister(npc);
 	}
 }

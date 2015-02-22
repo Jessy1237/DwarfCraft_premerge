@@ -2,8 +2,8 @@ name: DwarfCraft
 description: A skills and progression plugin for character development in RPG worlds.
 author: Jessy1237
 main: com.Jessy1237.DwarfCraft.DwarfCraft
-version: 2.0
-depend: [Vault]
+version: 2.1
+depend: [Vault, Citizens]
 commands: 
    renamenpc: 
       description: Renames the trainer/greeter.
@@ -78,7 +78,7 @@ commands:
              Example: /race elf - Displays information about the elf race.
              Example: /race elf confirm - Changes the player's race to elf and resets their skills.
              Admin: /race <Player> <Racename> <confirm> - Alters another player's race, use confirm.
-      aliases: [dwarf, elf]
+      aliases: []
    setskill: 
       description: Admin command to change a players skill level manually.
       usage: |
@@ -89,7 +89,7 @@ commands:
    createtrainer: 
       description: Creates a new trainer where you are standing.
       usage: |
-             /<command> <UniqueID> <DisplayName> <Skill ID or Skill Name> <Max Skill Level> <Min Skill Level>
+             /<command> <ID> <DisplayName> <Skill ID or Skill Name> <Max Skill Level> <Min Skill Level>
       aliases: [ct]
    removetrainer: 
       description: 

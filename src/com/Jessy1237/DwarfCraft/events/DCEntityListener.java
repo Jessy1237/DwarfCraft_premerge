@@ -7,6 +7,9 @@ package com.Jessy1237.DwarfCraft.events;
 import java.util.HashMap;
 import java.util.List;
 
+import net.citizensnpcs.api.event.NPCLeftClickEvent;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
+
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftSheep;
 import org.bukkit.entity.Arrow;
@@ -22,7 +25,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 
@@ -57,18 +59,6 @@ public class DCEntityListener implements Listener {
 			}
 		}
 
-		if (event instanceof EntityDamageByEntityEvent) {
-			if ((event.getEntity() instanceof HumanEntity) && plugin.getDataManager().isTrainer(event.getEntity())) {
-				EntityDamageByEntityEvent nevent = (EntityDamageByEntityEvent) event;
-				if (!(nevent.getDamager() instanceof Arrow)) {
-					if (checkTrainerLeftClick((EntityDamageByEntityEvent) event)) {
-						event.setCancelled(true);
-						return;
-					}
-				}
-			}
-		}
-
 		if (event.isCancelled())
 			return;
 
@@ -90,25 +80,25 @@ public class DCEntityListener implements Listener {
 		}
 	}
 
-	private boolean checkTrainerLeftClick(EntityDamageByEntityEvent event) {
-		DwarfTrainer trainer = plugin.getDataManager().getTrainer(event.getEntity());
+	private boolean checkTrainerLeftClick(NPCLeftClickEvent event) {
+		DwarfTrainer trainer = plugin.getDataManager().getTrainer(event.getNPC());
 		if (trainer != null) {
-			if (event.getDamager() instanceof Player) {
-				if (plugin.getDataManager().getTrainerRemove().contains(event.getDamager())) {
+			if (event.getClicker() instanceof Player) {
+				if (plugin.getDataManager().getTrainerRemove().contains(event.getClicker())) {
 					plugin.getDataManager().removeTrainer(trainer.getName());
-					plugin.getDataManager().getTrainerRemove().remove(event.getDamager());
-				} else if (plugin.getDataManager().getTrainerLookAt().contains((Player) event.getDamager())) {
-					trainer.lookAt((Player) event.getDamager(), trainer);
-					plugin.getDataManager().getTrainerLookAt().remove(event.getDamager());
-				} else if (plugin.getDataManager().getRename().containsKey((Player) event.getDamager())) {
-					trainer.setDisplayName(plugin.getDataManager().getRename().get((Player) event.getDamager()));
-					plugin.getDataManager().getRename().remove((Player) event.getDamager());
+					plugin.getDataManager().getTrainerRemove().remove(event.getClicker());
+				} else if (plugin.getDataManager().getTrainerLookAt().contains((Player) event.getClicker())) {
+					trainer.lookAt((Player) event.getClicker());
+					plugin.getDataManager().getTrainerLookAt().remove(event.getClicker());
+				} else if (plugin.getDataManager().getRename().containsKey((Player) event.getClicker())) {
+					trainer.setDisplayName(plugin.getDataManager().getRename().get((Player) event.getClicker()));
+					plugin.getDataManager().getRename().remove((Player) event.getClicker());
 				} else {
 					// in business, left click
 					if (trainer.isGreeter()) {
-						trainer.printLeftClick((Player) (event.getDamager()));
+						trainer.printLeftClick((Player) (event.getClicker()));
 					} else {
-						Player player = (Player) event.getDamager();
+						Player player = (Player) event.getClicker();
 						DCPlayer dCPlayer = plugin.getDataManager().find(player);
 						Skill skill = dCPlayer.getSkill(trainer.getSkillTrained());
 						plugin.getOut().printSkillInfo(player, skill, dCPlayer, trainer.getMaxSkill());
@@ -120,13 +110,13 @@ public class DCEntityListener implements Listener {
 		return false;
 	}
 
-	private boolean checkDwarfTrainer(PlayerInteractEntityEvent event) {
+	private boolean checkDwarfTrainer(NPCRightClickEvent event) {
 		try {
-			DCPlayer dCPlayer = plugin.getDataManager().find(event.getPlayer());
-			DwarfTrainer trainer = plugin.getDataManager().getTrainer(event.getRightClicked());
+			DCPlayer dCPlayer = plugin.getDataManager().find(event.getClicker());
+			DwarfTrainer trainer = plugin.getDataManager().getTrainer(event.getNPC());
 			if (trainer != null) {
 				if (trainer.isGreeter()) {
-					trainer.printRightClick(event.getPlayer());
+					trainer.printRightClick(event.getClicker());
 				} else {
 					if (trainer.isWaiting()) {
 						plugin.getOut().sendMessage(dCPlayer.getPlayer(), "&6Please wait, Currently training a skill.");
@@ -406,10 +396,13 @@ public class DCEntityListener implements Listener {
 		}
 
 	}
+	
+	public void onNPCLeftClickEvent(NPCLeftClickEvent event) {
+		checkTrainerLeftClick(event);
+	}
 
 	// Replaced EntityTarget Event since 1.5.1
-	@EventHandler(priority = EventPriority.HIGH)
-	public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+	public void onNPCRightClickEvent(NPCRightClickEvent event) {
 		checkDwarfTrainer(event);
 	}
 }
