@@ -7,21 +7,19 @@ package com.Jessy1237.DwarfCraft;
 import java.util.List;
 import java.util.UUID;
 
-import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.citizensnpcs.api.npc.AbstractNPC;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.sharesc.caliog.npclib.HumanNPC;
-
 public final class DwarfTrainer {
-	private HumanNPC mEntity;
+	private AbstractNPC mEntity;
 	private Integer mSkillID;
 	private Integer mMaxLevel;
 	private Integer mMinLevel;
@@ -30,12 +28,12 @@ public final class DwarfTrainer {
 	private World mWorld;
 	private Material mHeldItem;
 	private String mName;
-	private UUID mID;
+	private int mID;
 	private final DwarfCraft plugin;
 	private boolean wait;
 	private long lastTrain;
 
-	public DwarfTrainer(final DwarfCraft plugin, Location location, UUID uuid, String name, Integer skillId, Integer maxSkill, Integer minSkill, String greeterMessage, boolean isGreeter, boolean wait, long lastTrain) {
+	public DwarfTrainer(final DwarfCraft plugin, Location location, int id, String name, Integer skillId, Integer maxSkill, Integer minSkill, String greeterMessage, boolean isGreeter, boolean wait, long lastTrain) {
 
 		this.plugin = plugin;
 		this.mSkillID = skillId;
@@ -45,15 +43,13 @@ public final class DwarfTrainer {
 		this.mIsGreeter = isGreeter;
 		this.mWorld = location.getWorld();
 		this.mName = name;
-		this.mEntity = (HumanNPC) plugin.getNPCManager().spawnHumanNPC(mName, location, uuid.toString());
-		System.out.println(uuid.toString());
+		this.mEntity = (AbstractNPC) plugin.getNPCRegistry().createNPC(EntityType.PLAYER, UUID.randomUUID(), id, name);
+		mEntity.spawn(location);
+		mEntity.addTrait(DwarfTrainerTrait.class);
+		mEntity.setProtected(true);
 		this.wait = wait;
 		this.lastTrain = lastTrain;
-		this.getEntity().getEntity().yaw = location.getYaw();
-		((EntityPlayer) this.getEntity().getEntity()).aI = location.getYaw();
-		((EntityPlayer) this.getEntity().getEntity()).aJ = location.getYaw();
-		this.getEntity().getEntity().pitch = location.getPitch();
-		this.mID = uuid;
+		this.mID = mEntity.getId();
 		this.wait = wait;
 		this.lastTrain = lastTrain;
 
@@ -65,7 +61,7 @@ public final class DwarfTrainer {
 		assert (mHeldItem != null);
 
 		if (mHeldItem != Material.AIR)
-			((LivingEntity) mEntity.getBukkitEntity()).getEquipment().setItemInHand(new ItemStack(mHeldItem, 1));
+			((LivingEntity)mEntity.getEntity()).getEquipment().setItemInHand(new ItemStack(mHeldItem, 1));
 
 	}
 
@@ -74,16 +70,16 @@ public final class DwarfTrainer {
 		if (this == that)
 			return true;
 		else if (that instanceof HumanEntity)
-			return (mEntity.getBukkitEntity().getEntityId() == ((HumanEntity) that).getEntityId());
+			return (mEntity.getId() == ((HumanEntity) that).getEntityId());
 		return false;
 	}
 
-	public HumanNPC getEntity() {
+	public AbstractNPC getEntity() {
 		return mEntity;
 	}
 
 	public Location getLocation() {
-		return mEntity.getBukkitEntity().getLocation();
+		return mEntity.getStoredLocation();
 	}
 
 	@SuppressWarnings("deprecation")
@@ -114,7 +110,7 @@ public final class DwarfTrainer {
 		return mSkillID;
 	}
 
-	public UUID getUniqueId() {
+	public int getUniqueId() {
 		return mID;
 	}
 
@@ -124,33 +120,6 @@ public final class DwarfTrainer {
 
 	public boolean isGreeter() {
 		return mIsGreeter;
-	}
-
-	public void lookAt(Entity target) {
-		assert (target != null);
-		Location l;
-		l = target.getLocation().clone();
-		if (target instanceof Player) {
-			l.setY(l.getY() + ((Player) target).getEyeHeight());
-		}
-		this.lookAt(l);
-		return;
-	}
-
-	public void lookAt(Player p, DwarfTrainer d) {
-		if (p != null) {
-			Location l = p.getEyeLocation().clone();
-			d.getEntity().lookAtPoint(l);
-			d.getLocation().setYaw((float) ((EntityPlayer) d.getEntity().getEntity()).aI);
-			d.getLocation().setPitch(d.getEntity().getEntity().pitch);
-			plugin.getDataManager().updateTrainerLocation(d, (float) ((EntityPlayer) d.getEntity().getEntity()).aI, d.getEntity().getEntity().pitch);
-		}
-		return;
-	}
-
-	protected void lookAt(Location l) {
-		assert (l != null);
-		return;
 	}
 
 	public void printLeftClick(Player player) {
@@ -282,11 +251,7 @@ public final class DwarfTrainer {
 	}
 
 	public void setDisplayName(String name) {
-		Location loc = getLocation();
-		plugin.getNPCManager().despawnHumanByName(this.mName);
-		this.mName = name;
-		this.mEntity = (HumanNPC) plugin.getNPCManager().spawnHumanNPC(mName, loc, this.mID.toString());
-		plugin.getDataManager().renameTrainer(this.mID, name);
+		this.mEntity.setName(name);
 	}
 
 	public boolean isWaiting() {
@@ -303,5 +268,10 @@ public final class DwarfTrainer {
 
 	public void setLastTrain(long lastTrain) {
 		this.lastTrain = lastTrain;
+	}
+
+	public void lookAt(Player p) {
+		this.mEntity.faceLocation(p.getLocation());
+		plugin.getDataManager().updateTrainerLocation(this, this.getLocation().getYaw(), this.getLocation().getPitch());
 	}
 }
