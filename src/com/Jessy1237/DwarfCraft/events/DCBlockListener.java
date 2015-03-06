@@ -40,32 +40,37 @@ public class DCBlockListener implements Listener {
 	public DCBlockListener(final DwarfCraft plugin) {
 		this.plugin = plugin;
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockFromTo(BlockFromToEvent event) {
-		
-		//Code to prevent water from normally breaking crops
-		//Added due to players being able to bypass DC skill restrictions
-		if(event.getToBlock().getType() == Material.CROPS) {
-			//Might have to add checks for carrots, reeds, potatoes and cacti at some point...
-			
-			Block toBlock = event.getToBlock();					//Get the crop block
-			Crops crops = (Crops)toBlock.getState().getData();	//Get the crop block material data
-			
-			
-			//Cheap way to break block without causing drops
+
+		// Code to prevent water from normally breaking crops
+		// Added due to players being able to bypass DC skill restrictions
+		if (event.getToBlock().getType() == Material.CROPS) {
+			// Might have to add checks for carrots, reeds, potatoes and cacti
+			// at some point...
+
+			Block toBlock = event.getToBlock(); // Get the crop block
+			Crops crops = (Crops) toBlock.getState().getData(); // Get the crop
+																// block
+																// material data
+
+			// Cheap way to break block without causing drops
 			toBlock.setType(Material.AIR);
-			
+
 			ItemStack itemDrops;
-			
-			if(crops.getState() == CropState.RIPE) {		//If the wheat is fully grown, drop one wheat
+
+			if (crops.getState() == CropState.RIPE) { // If the wheat is fully
+														// grown, drop one wheat
 				itemDrops = new ItemStack(Material.WHEAT);
-				itemDrops.setAmount(1);						//I'm keeping the drop amount here in case I wish to alter it at a later stage, setting?
-			} else {										//If the wheat is no fully grown, drop a seed
+				itemDrops.setAmount(1); // I'm keeping the drop amount here in
+										// case I wish to alter it at a later
+										// stage, setting?
+			} else { // If the wheat is no fully grown, drop a seed
 				itemDrops = new ItemStack(Material.SEEDS);
-				itemDrops.setAmount(1);						
+				itemDrops.setAmount(1);
 			}
-			
+
 			toBlock.getLocation().getWorld().dropItemNaturally(toBlock.getLocation(), itemDrops);
 		}
 	}
@@ -120,28 +125,39 @@ public class DCBlockListener implements Listener {
 							item.setData(i.getData());
 						}
 
+						// Makes sure that the right blocks are dropped
+						// according to metadata for sand and wood planks
+						if (block.getTypeId() == 12 || block.getTypeId() == 5) {
+							item.setData(new MaterialData(item.getTypeId(), meta));
+						}
+
+						// Makes sure that the right stone is dropped
+						if (block.getTypeId() == 1 && block.getData() != (byte) 0) {
+							return;
+						}
+
 						// Makes sure logs drop the right logs and vertically
 						if (event.getBlock().getTypeId() == 17 || event.getBlock().getTypeId() == 162) {
 							final ItemStack old = item;
 							item = new ItemStack(Material.LOG, old.getAmount(), event.getBlock().getData());
-							if(block.getData() == 0 || block.getData() == 4 || block.getData() == 8 || block.getData() == 12) {
-								item.setData(new MaterialData(item.getTypeId(), (byte)0));
+							if (block.getData() == 0 || block.getData() == 4 || block.getData() == 8 || block.getData() == 12) {
+								item.setData(new MaterialData(item.getTypeId(), (byte) 0));
 							}
-							if(block.getData() == 1 || block.getData() == 5 || block.getData() ==9 || block.getData() == 13) {
-								item.setData(new MaterialData(item.getTypeId(), (byte)1));
+							if (block.getData() == 1 || block.getData() == 5 || block.getData() == 9 || block.getData() == 13) {
+								item.setData(new MaterialData(item.getTypeId(), (byte) 1));
 							}
-							if(block.getData() == 2 || block.getData() == 6 || block.getData() == 10 || block.getData() == 14) {
-								item.setData(new MaterialData(item.getTypeId(), (byte)2));
+							if (block.getData() == 2 || block.getData() == 6 || block.getData() == 10 || block.getData() == 14) {
+								item.setData(new MaterialData(item.getTypeId(), (byte) 2));
 							}
-							if(block.getData() == 3 || block.getData() == 7 || block.getData() == 11 || block.getData() == 15) {
-								item.setData(new MaterialData(item.getTypeId(), (byte)3));
+							if (block.getData() == 3 || block.getData() == 7 || block.getData() == 11 || block.getData() == 15) {
+								item.setData(new MaterialData(item.getTypeId(), (byte) 3));
 							}
 						}
 
-						// Checks for Silktouch & and allows for Silktouch items
-						// to override default
-						if (plugin.getConfigManager().silkTouch) {
-							if (tool.containsEnchantment(Enchantment.SILK_TOUCH)) {
+						if (tool.containsEnchantment(Enchantment.SILK_TOUCH)) {
+							// Checks for Silktouch & and allows for Silktouch
+							// items to override default
+							if (plugin.getConfigManager().silkTouch) {
 								if (block.getType() == Material.STONE) {
 									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.STONE, 1);
@@ -212,7 +228,7 @@ public class DCBlockListener implements Listener {
 						if (event.getExpToDrop() != 0) {
 							((ExperienceOrb) loc.getWorld().spawn(loc, ExperienceOrb.class)).setExperience(event.getExpToDrop());
 						}
-						if(plugin.getConsumer() != null) {
+						if (plugin.getConsumer() != null) {
 							plugin.getConsumer().queueBlockBreak(event.getPlayer().getName(), event.getBlock().getState());
 						}
 						blockDropChange = true;
