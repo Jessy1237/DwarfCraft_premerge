@@ -11,7 +11,7 @@ import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_8_R2.entity.CraftSheep;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftSheep;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
