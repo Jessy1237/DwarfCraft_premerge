@@ -86,7 +86,12 @@ public class DCInventoryListener implements Listener {
 
 		// Make sure we are actually crafting anything
 		if (player != null && hasItems(toCraft)) {
-
+			//Make sure they aren't duping when repairing tools
+			for(ItemStack i : event.getClickedInventory().getContents()) {
+				if(toCraft.getTypeId() == i.getTypeId()) {
+					return;
+				}
+			}
 			if (event.isShiftClick()) {
 				DCPlayer dCPlayer = plugin.getDataManager().find((Player) player);
 				for (Skill s : dCPlayer.getSkills().values()) {
@@ -173,18 +178,14 @@ public class DCInventoryListener implements Listener {
 			HashMap<Integer, Skill> skills = player.getSkills();
 			ItemStack item = event.getCurrentItem();
 			final int amount = item.getAmount();
-			System.out.println("1");
 			BrewingStand block = (BrewingStand) event.getInventory().getHolder();
 			BrewerInventory inv = check(block.getLocation());
 			ItemStack[] stack = inv.getContents();
 			if (stack != null) {
-				System.out.println("2");
 				if (sameInv(stack, block.getInventory())) {
-					System.out.println("3");
 					for (Skill s : skills.values()) {
 						for (Effect effect : s.getEffects()) {
 							if (effect.getEffectType() == EffectType.BREW && effect.checkInitiator(item)) {
-								System.out.println("4");
 								int newAmount = (int) (amount * effect.getEffectAmount(player));
 								for (int n = 0; n != stack.length; n++) {
 									ItemStack it = stack[n];

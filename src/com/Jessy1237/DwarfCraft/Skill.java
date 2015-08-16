@@ -10,24 +10,22 @@ import org.bukkit.Material;
 
 public class Skill implements Cloneable {
 
-	private final int          mID;
-	private final String       mName;
-	private int                mLevel;
+	private final int mID;
+	private final String mName;
+	private int mLevel;
 	private final List<Effect> mEffects;
-	private final Material     mHeldItem;
-	public final TrainingItem  Item1;
-	public final TrainingItem  Item2;
-	public final TrainingItem  Item3;
-	private int 			   deposit1;
-	private int                deposit2;
-	private int                deposit3;
+	private final Material mHeldItem;
+	public final TrainingItem Item1;
+	public final TrainingItem Item2;
+	public final TrainingItem Item3;
+	private int deposit1;
+	private int deposit2;
+	private int deposit3;
 
-	public Skill(int id, String displayName, int level, List<Effect> effects, 
-			TrainingItem item1, TrainingItem item2, TrainingItem item3,
-			Material trainerHeldMaterial) {
+	public Skill(int id, String displayName, int level, List<Effect> effects, TrainingItem item1, TrainingItem item2, TrainingItem item3, Material trainerHeldMaterial) {
 		mID = id;
 		mName = displayName;
-		
+
 		Item1 = item1;
 		Item2 = item2;
 		Item3 = item3;
@@ -46,7 +44,7 @@ public class Skill implements Cloneable {
 	 */
 	@Override
 	public Skill clone() {
-		
+
 		Skill newSkill = new Skill(mID, mName, mLevel, mEffects, Item1, Item2, Item3, mHeldItem);
 		return newSkill;
 	}
