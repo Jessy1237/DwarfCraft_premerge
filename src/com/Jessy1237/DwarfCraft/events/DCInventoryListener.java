@@ -16,7 +16,9 @@ import org.bukkit.event.inventory.FurnaceExtractEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.BrewerInventory;
+import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.material.MaterialData;
 
 import com.Jessy1237.DwarfCraft.DCPlayer;
@@ -77,6 +79,15 @@ public class DCInventoryListener implements Listener {
 		return stack != null && stack.getAmount() > 0;
 	}
 
+	// Checks the itemID to see if it is a tool. Excludes fishing rod and, flint
+	// and steel.
+	private boolean isTool(int i) {
+		if ((i >= 256 && i <= 258) || (i >= 267 && i <= 279) || (i >= 283 && i <= 286) || (i >= 290 && i <= 294)) {
+			return true;
+		}
+		return false;
+	}
+
 	@SuppressWarnings("deprecation")
 	private void handleCrafting(InventoryClickEvent event) {
 
@@ -86,12 +97,20 @@ public class DCInventoryListener implements Listener {
 
 		// Make sure we are actually crafting anything
 		if (player != null && hasItems(toCraft)) {
-			//Make sure they aren't duping when repairing tools
-			for(ItemStack i : event.getClickedInventory().getContents()) {
-				if(toCraft.getTypeId() == i.getTypeId()) {
-					return;
+
+			// Make sure they aren't duping when repairing tools
+			if (isTool(toCraft.getTypeId())) {
+				CraftingInventory ci = (CraftingInventory) event.getInventory();
+				if (ci.getRecipe() instanceof ShapelessRecipe) {
+					ShapelessRecipe r = (ShapelessRecipe) ci.getRecipe();
+					for (ItemStack i : r.getIngredientList()) {
+						if (isTool(i.getTypeId()) && toCraft.getTypeId() == i.getTypeId()) {
+							return;
+						}
+					}
 				}
 			}
+
 			if (event.isShiftClick()) {
 				DCPlayer dCPlayer = plugin.getDataManager().find((Player) player);
 				for (Skill s : dCPlayer.getSkills().values()) {

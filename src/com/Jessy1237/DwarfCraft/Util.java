@@ -87,7 +87,6 @@ public class Util {
 			return "NULL";
 		if (item.getData() == null || item.getData().getData() == -1)
 			return item.getType().toString();
-
 		switch (item.getType()) {
 		case INK_SACK:
 			switch (item.getData().getData()) {
@@ -135,8 +134,31 @@ public class Util {
 			case 2:
 				return "Birch Sapling";
 			case 3:
-				return "Jungle Tree Sapling";
+				return "Jungle Sapling";
+			case 4:
+				return "Acacia Sapling";
+			case 5:
+				return "Dark Oak Sapling";
 			}
+		case SAND:
+			switch(item.getData().getData()) {
+			case 0:
+				return "Sand";
+			case 1:
+				return "Red Sand";
+			}
+		case RAW_FISH:
+			switch(item.getData().getData()) {
+			case 0:
+				return "Raw Fish";
+			case 1: 
+				return "Raw Salmon";
+			case 2:
+				return "Clownfish";
+			case 3:
+				return "Pufferfish";
+			}
+			
 		case LOG:
 			switch (item.getData().getData()) {
 			case 0:
@@ -148,6 +170,13 @@ public class Util {
 			case 3:
 				return "Jungle Tree Log";
 			}
+		case LOG_2:
+			switch(item.getData().getData()) {
+			case 0:
+				return "Acacia Log";
+			case 1: 
+				return "Dark Oak Log";
+			}
 		case LEAVES:
 			switch (item.getData().getData()) {
 			case 0:
@@ -158,6 +187,13 @@ public class Util {
 				return "Birch Leaves";
 			case 3:
 				return "Jungle Tree Leaves";
+			}
+		case LEAVES_2:
+			switch(item.getData().getData()) {
+			case 0:
+				return "Acacia Leaves";
+			case 1:
+				return "Dark Oak Leaves";
 			}
 		case WOOL:
 			switch (item.getData().getData()) {
@@ -196,6 +232,8 @@ public class Util {
 			}
 		case DOUBLE_STEP:
 			switch (item.getData().getData()) {
+			case 15:
+				return "Tile Quartz Double Slab";
 			case 9:
 				return "Smooth Sandstone Double Slab";
 			case 8:
@@ -233,6 +271,10 @@ public class Util {
 			case 1:
 				return "Charcoal";
 			}
+		case NETHER_STALK:
+			return "Nether Wart";
+		case NETHER_WARTS:
+			return "Nether Wart";
 		default:
 			return item.getType().toString();
 		}

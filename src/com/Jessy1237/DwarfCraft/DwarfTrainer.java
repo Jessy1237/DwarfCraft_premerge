@@ -190,7 +190,7 @@ public final class DwarfTrainer {
 				plugin.getOut().sendMessage(player, String.format("&aNo more &2%s &ais needed", costStack.getType()), tag);
 				continue;
 			}
-			if (!player.getInventory().contains(costStack.getTypeId())) {
+			if (!player.getInventory().contains(costStack.getTypeId()) && !(costStack.getTypeId() == 17 && player.getInventory().contains(162)) && !(costStack.getTypeId() == 162 && player.getInventory().contains(17))) {
 				hasMats = false;
 				plugin.getOut().sendMessage(player, String.format("&cAn additional &2%d %s &cis required", costStack.getAmount(), costStack.getType()), tag);
 				continue;
