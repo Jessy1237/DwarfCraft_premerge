@@ -108,7 +108,7 @@ public class Effect {
 			output = "None";
 		double effectAmountLow = getEffectAmount(0);
 		double effectAmountHigh = getEffectAmount(30);
-		double elfAmount = getEffectAmount(mNormalLevel);
+		double elfAmount = getEffectAmount(-1);
 		String toolType = toolType();
 		description = String.format("Effect Block Trigger: %s Block Output: %s . " + "Effect value ranges from %.2f - %.2f for levels 0 to 30. " + "Elves have the effect %.2f , as if they were level %d . " + "Tools affected: %s. " + (mRequireTool ? "Tool needed." : "Tool not needed."), initiator,
 				output, effectAmountLow, effectAmountHigh, elfAmount, mNormalLevel, toolType);
@@ -206,7 +206,7 @@ public class Effect {
 			description = String.format("&6You catch %s%.2f &6fish instead of &e%.2f &6when you fish", effectLevelColor, effectAmount, elfAmount);
 			break;
 		case BREW:
-			description = String.format("&6You brew %s%.2f &6potion(s) instead of &e%.2f &6when you're brewing potions", effectLevelColor, effectAmount, elfAmount);
+			description = String.format("&6You brew %s%.2f &6potion(s) instead of &e%.2f &6when you're brewing potions", effectLevelColor, effectAmount, (float)mNormalLevel);
 			break;
 		case DIGTIME:
 			description = String.format("&a%.0f%%&6 of the time &2%s &6break &2%s &6instantly ", effectAmount * 100, toolType, initiator);

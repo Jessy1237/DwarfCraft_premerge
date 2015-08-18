@@ -187,7 +187,7 @@ public final class DwarfTrainer {
 				continue;
 			}
 			if (costStack.getAmount() == 0) {
-				plugin.getOut().sendMessage(player, String.format("&aNo more &2%s &ais needed", costStack.getType()), tag);
+				plugin.getOut().sendMessage(player, String.format("&aNo more &2%s &ais needed", Util.getCleanName(costStack)), tag);
 				continue;
 			}
 			if (!player.getInventory().contains(costStack.getTypeId()) && !(costStack.getTypeId() == 17 && player.getInventory().contains(162)) && !(costStack.getTypeId() == 162 && player.getInventory().contains(17))) {

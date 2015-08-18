@@ -230,7 +230,7 @@ public class Out {
 			if (r != null && t != null) {
 				int totalCost = t.getAmount();
 				int deposited = t.getAmount() - r.getAmount();
-				sendMessage(sender, String.format(" &2%d of %d %s&6  --", deposited, totalCost, r.getType()), " &6-- ");
+				sendMessage(sender, String.format(" &2%d of %d %s&6  --", deposited, totalCost, Util.getCleanName(r)), " &6-- ");
 			}
 
 		}

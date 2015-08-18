@@ -135,25 +135,7 @@ public class DCBlockListener implements Listener {
 						if (block.getTypeId() == 1 && block.getData() != (byte) 0) {
 							return;
 						}
-
-						// Makes sure logs drop the right logs and vertically
-						if (event.getBlock().getTypeId() == 17 || event.getBlock().getTypeId() == 162) {
-							final ItemStack old = item;
-							item = new ItemStack(Material.LOG, old.getAmount(), event.getBlock().getData());
-							if (block.getData() == 0 || block.getData() == 4 || block.getData() == 8 || block.getData() == 12) {
-								item.setData(new MaterialData(item.getTypeId(), (byte) 0));
-							}
-							if (block.getData() == 1 || block.getData() == 5 || block.getData() == 9 || block.getData() == 13) {
-								item.setData(new MaterialData(item.getTypeId(), (byte) 1));
-							}
-							if (block.getData() == 2 || block.getData() == 6 || block.getData() == 10 || block.getData() == 14) {
-								item.setData(new MaterialData(item.getTypeId(), (byte) 2));
-							}
-							if (block.getData() == 3 || block.getData() == 7 || block.getData() == 11 || block.getData() == 15) {
-								item.setData(new MaterialData(item.getTypeId(), (byte) 3));
-							}
-						}
-
+						
 						if (tool.containsEnchantment(Enchantment.SILK_TOUCH)) {
 							// Checks for Silktouch & and allows for Silktouch
 							// items to override default

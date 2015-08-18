@@ -271,6 +271,8 @@ public class Util {
 			case 1:
 				return "Charcoal";
 			}
+		case SULPHUR:
+			return "Gun Powder";
 		case NETHER_STALK:
 			return "Nether Wart";
 		case NETHER_WARTS:
