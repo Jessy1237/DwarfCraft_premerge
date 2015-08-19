@@ -192,7 +192,7 @@ public final class DwarfTrainer {
 			}
 			if (!player.getInventory().contains(costStack.getTypeId()) && !(costStack.getTypeId() == 17 && player.getInventory().contains(162)) && !(costStack.getTypeId() == 162 && player.getInventory().contains(17))) {
 				hasMats = false;
-				plugin.getOut().sendMessage(player, String.format("&cAn additional &2%d %s &cis required", costStack.getAmount(), costStack.getType()), tag);
+				plugin.getOut().sendMessage(player, String.format("&cAn additional &2%d %s &cis required", costStack.getAmount(), Util.getCleanName(costStack)), tag);
 				continue;
 			}
 
@@ -225,9 +225,9 @@ public final class DwarfTrainer {
 				}
 			}
 			if (costStack.getAmount() == 0) {
-				plugin.getOut().sendMessage(player, String.format("&aNo more &2%s &ais needed", costStack.getType()), tag);
+				plugin.getOut().sendMessage(player, String.format("&aNo more &2%s &ais needed", Util.getCleanName(costStack)), tag);
 			} else {
-				plugin.getOut().sendMessage(player, String.format("&cAn additional &2%d %s &c is required", costStack.getAmount(), costStack.getType()), tag);
+				plugin.getOut().sendMessage(player, String.format("&cAn additional &2%d %s &c is required", costStack.getAmount(), Util.getCleanName(costStack)), tag);
 				hasMats = false;
 				deposited = true;
 			}
