@@ -117,12 +117,10 @@ public class DCBlockListener implements Listener {
 
 					if (effect.checkTool(tool)) {
 						ItemStack item = effect.getOutput(player, meta);
-						ItemStack i = new ItemStack(item.getTypeId(), item.getAmount());
 						ItemStack item1 = null;
 
 						if (item.getTypeId() != 351) {
-							item.setDurability(i.getDurability());
-							item.setData(i.getData());
+							item.setDurability(block.getData());
 						}
 
 						// Makes sure that the right blocks are dropped
