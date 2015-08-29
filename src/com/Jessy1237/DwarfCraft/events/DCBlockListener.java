@@ -119,10 +119,9 @@ public class DCBlockListener implements Listener {
 						if (meta != 7)
 							return;
 					}
-					System.out.println("poop");
+					
 					if (effect.checkTool(tool)) {
 						ItemStack item = effect.getOutput(player, meta);
-						System.out.println("" + item.getAmount());
 						ItemStack item1 = null;
 
 						if (item.getTypeId() != 351 && item.getTypeId() == blockID && item.getTypeId() != 295 && blockID != 141 && item.getTypeId() != 391 && blockID != 142 && item.getTypeId() != 392 && blockID != 115 && item.getTypeId() != 372 && blockID != 31 && blockID != 175 && blockID != 59

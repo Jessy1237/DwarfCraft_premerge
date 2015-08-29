@@ -297,7 +297,6 @@ class ShiftCraftTask implements Runnable {
 		}
 		final int difference = held - init;
 		if (modifier > 1) {
-			System.out.println("add: " + Math.round((modifier * difference - difference)));
 			// Adds the leftover items to the player
 			for (int i = Math.round((modifier * difference - difference)); i > 0; i -= item.getMaxStackSize()) {
 				if (i > item.getMaxStackSize()) {
