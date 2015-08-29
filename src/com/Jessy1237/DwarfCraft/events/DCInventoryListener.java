@@ -116,7 +116,20 @@ public class DCInventoryListener implements Listener {
 				for (Skill s : dCPlayer.getSkills().values()) {
 					for (Effect e : s.getEffects()) {
 						if (e.getEffectType() == EffectType.CRAFT && e.checkInitiator(toCraft.getTypeId(), (byte) toCraft.getData().getData())) {
-							event.setCancelled(true);
+							// Shift Click HotFix, checks inv for result item
+							// before and then compares to after to modify the
+							// amount of crafted items.
+							int held = 0;
+							for (ItemStack i : player.getInventory().all(toCraft.getType()).values()) {
+								held += i.getAmount();
+							}
+
+							ItemStack output = e.getOutput(dCPlayer, (byte) toCraft.getData().getData());
+
+							float modifier = (float) output.getAmount() / (float) toCraft.getAmount();
+
+							plugin.getServer().getScheduler().runTaskLater(plugin, new ShiftCraftTask((Player) player, toCraft, held, modifier), 1);
+
 						}
 					}
 				}
@@ -131,7 +144,7 @@ public class DCInventoryListener implements Listener {
 						for (Effect e : s.getEffects()) {
 							if (e.getEffectType() == EffectType.CRAFT && e.checkInitiator(toCraft.getTypeId(), (byte) toCraft.getData().getData())) {
 
-								org.bukkit.inventory.ItemStack output = e.getOutput(dCPlayer, (byte) toCraft.getData().getData());
+								ItemStack output = e.getOutput(dCPlayer, (byte) toCraft.getData().getData());
 
 								if (output.getAmount() == 0)
 									toCraft = null;
@@ -181,7 +194,6 @@ public class DCInventoryListener implements Listener {
 		}
 
 		if (event.getInventory() != null && event.getSlotType() == SlotType.RESULT) {
-
 			switch (event.getInventory().getType()) {
 			case CRAFTING:
 				handleCrafting(event);
@@ -260,5 +272,57 @@ public class DCInventoryListener implements Listener {
 			}
 		}
 		return null;
+	}
+}
+
+class ShiftCraftTask implements Runnable {
+
+	Player p;
+	int init;
+	ItemStack item;
+	float modifier;
+
+	public ShiftCraftTask(Player p, final ItemStack item, int init, float modifier) {
+		this.p = p;
+		this.item = item;
+		this.init = init;
+		this.modifier = modifier;
+	}
+
+	@Override
+	public void run() {
+		int held = 0;
+		for (ItemStack i : p.getInventory().all(item.getType()).values()) {
+			held += i.getAmount();
+		}
+		final int difference = held - init;
+		if (modifier > 1) {
+			System.out.println("add: " + Math.round((modifier * difference - difference)));
+			// Adds the leftover items to the player
+			for (int i = Math.round((modifier * difference - difference)); i > 0; i -= item.getMaxStackSize()) {
+				if (i > item.getMaxStackSize()) {
+					p.getWorld().dropItemNaturally(p.getLocation(), new ItemStack(item.getType(), item.getMaxStackSize(), item.getDurability()));
+				} else {
+					p.getWorld().dropItemNaturally(p.getLocation(), new ItemStack(item.getType(), i, item.getDurability()));
+				}
+			}
+			// Takes away items from the inventory when the shift click crafts
+			// more than it should do
+		} else if (modifier < 1) {
+			int amount = Math.round((difference - modifier * difference));
+			boolean run = true;
+			for (ItemStack i : p.getInventory().all(item.getType()).values()) {
+				if (run == true && amount > 0) {
+					if (i.getAmount() > amount) {
+						i.setAmount(i.getAmount() - amount);
+						run = false;
+					} else {
+						int diff = amount - i.getAmount();
+						i.setAmount(0);
+						amount -= diff;
+					}
+				}
+			}
+		}
 	}
 }

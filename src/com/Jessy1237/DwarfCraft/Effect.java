@@ -34,7 +34,6 @@ import org.bukkit.entity.Villager;
 import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
 import org.jbls.LexManos.CSV.CSVRecord;
 
 @SuppressWarnings("deprecation")

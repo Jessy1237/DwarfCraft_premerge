@@ -104,6 +104,11 @@ public class DCBlockListener implements Listener {
 		int blockID = event.getBlock().getTypeId();
 		byte meta = event.getBlock().getData();
 
+		// Changed illuminated redstone ore block id to normal redstone ore
+		// block id
+		if (blockID == 74)
+			blockID = 73;
+
 		boolean blockDropChange = false;
 		for (Skill s : skills.values()) {
 			for (Effect effect : s.getEffects()) {
@@ -114,14 +119,16 @@ public class DCBlockListener implements Listener {
 						if (meta != 7)
 							return;
 					}
-
+					System.out.println("poop");
 					if (effect.checkTool(tool)) {
 						ItemStack item = effect.getOutput(player, meta);
+						System.out.println("" + item.getAmount());
 						ItemStack item1 = null;
 
-						if (item.getTypeId() != 351 && item.getTypeId() == event.getBlock().getTypeId() && item.getTypeId() != 295 && event.getBlock().getTypeId() != 141 && item.getTypeId() != 391 && event.getBlock().getTypeId() != 142 && item.getTypeId() != 392 && event.getBlock().getTypeId() != 115 && item.getTypeId() != 372 && event.getBlock().getTypeId() != 31 && event.getBlock().getTypeId() != 175 && event.getBlock().getTypeId() != 59 && event.getBlock().getTypeId() != 105 && item.getTypeId() != 362 && event.getBlock().getTypeId() != 104 && item.getTypeId() != 361 && event.getBlock().getTypeId() != 127) {
+						if (item.getTypeId() != 351 && item.getTypeId() == blockID && item.getTypeId() != 295 && blockID != 141 && item.getTypeId() != 391 && blockID != 142 && item.getTypeId() != 392 && blockID != 115 && item.getTypeId() != 372 && blockID != 31 && blockID != 175 && blockID != 59
+								&& blockID != 105 && item.getTypeId() != 362 && blockID != 104 && item.getTypeId() != 361 && blockID != 127) {
 							item.setDurability(block.getData());
-						} else {
+						} else if (item.getTypeId() != 351) {
 							item.setDurability(new ItemStack(item.getTypeId(), 1).getDurability());
 						}
 
@@ -217,6 +224,8 @@ public class DCBlockListener implements Listener {
 
 						if (DwarfCraft.debugMessagesThreshold < 6)
 							System.out.println("Debug: dropped " + item.toString());
+
+						System.out.println("" + item.getAmount());
 
 						if (item.getAmount() > 0)
 							loc.getWorld().dropItemNaturally(loc, item);
