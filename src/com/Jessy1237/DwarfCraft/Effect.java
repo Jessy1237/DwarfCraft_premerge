@@ -314,7 +314,6 @@ public class Effect {
 
 		int count = Util.randomAmount(getEffectAmount(player));
 		ItemStack item = new ItemStack(mOutput.getTypeId(), count, data);
-		item.setData(new MaterialData(item.getTypeId(), data));
 		return item;
 	}
 

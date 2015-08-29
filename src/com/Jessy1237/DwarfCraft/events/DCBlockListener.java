@@ -119,8 +119,10 @@ public class DCBlockListener implements Listener {
 						ItemStack item = effect.getOutput(player, meta);
 						ItemStack item1 = null;
 
-						if (item.getTypeId() != 351) {
+						if (item.getTypeId() != 351 && item.getTypeId() == event.getBlock().getTypeId() && item.getTypeId() != 295 && event.getBlock().getTypeId() != 141 && item.getTypeId() != 391 && event.getBlock().getTypeId() != 142 && item.getTypeId() != 392 && event.getBlock().getTypeId() != 115 && item.getTypeId() != 372 && event.getBlock().getTypeId() != 31 && event.getBlock().getTypeId() != 175 && event.getBlock().getTypeId() != 59 && event.getBlock().getTypeId() != 105 && item.getTypeId() != 362 && event.getBlock().getTypeId() != 104 && item.getTypeId() != 361 && event.getBlock().getTypeId() != 127) {
 							item.setDurability(block.getData());
+						} else {
+							item.setDurability(new ItemStack(item.getTypeId(), 1).getDurability());
 						}
 
 						// Makes sure that the right blocks are dropped
