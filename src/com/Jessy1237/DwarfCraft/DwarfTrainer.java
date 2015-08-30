@@ -28,13 +28,13 @@ public final class DwarfTrainer {
 	private World mWorld;
 	private Material mHeldItem;
 	private String mName;
+	private String type;
 	private int mID;
 	private final DwarfCraft plugin;
 	private boolean wait;
 	private long lastTrain;
 
 	public DwarfTrainer(final DwarfCraft plugin, Location location, int id, String name, Integer skillId, Integer maxSkill, Integer minSkill, String greeterMessage, boolean isGreeter, boolean wait, long lastTrain) {
-
 		this.plugin = plugin;
 		this.mSkillID = skillId;
 		this.mMaxLevel = maxSkill;
@@ -43,6 +43,7 @@ public final class DwarfTrainer {
 		this.mIsGreeter = isGreeter;
 		this.mWorld = location.getWorld();
 		this.mName = name;
+		this.type = "PLAYER";
 		this.mEntity = (AbstractNPC) plugin.getNPCRegistry().createNPC(EntityType.PLAYER, UUID.randomUUID(), id, name);
 		mEntity.spawn(location);
 		mEntity.addTrait(DwarfTrainerTrait.class);
@@ -61,7 +62,46 @@ public final class DwarfTrainer {
 		assert (mHeldItem != null);
 
 		if (mHeldItem != Material.AIR)
-			((LivingEntity)mEntity.getEntity()).getEquipment().setItemInHand(new ItemStack(mHeldItem, 1));
+			((LivingEntity) mEntity.getEntity()).getEquipment().setItemInHand(new ItemStack(mHeldItem, 1));
+
+	}
+
+	@SuppressWarnings("deprecation")
+	public DwarfTrainer(final DwarfCraft plugin, Location location, int id, String name, Integer skillId, Integer maxSkill, Integer minSkill, String greeterMessage, boolean isGreeter, boolean wait, long lastTrain, String type) {
+		this.plugin = plugin;
+		this.mSkillID = skillId;
+		this.mMaxLevel = maxSkill;
+		this.mMinLevel = minSkill;
+		this.mMsgID = greeterMessage;
+		this.mIsGreeter = isGreeter;
+		this.mWorld = location.getWorld();
+		this.mName = name;
+		this.type = type;
+
+		if (type.equalsIgnoreCase("PLAYER")) {
+			this.mEntity = (AbstractNPC) plugin.getNPCRegistry().createNPC(EntityType.PLAYER, UUID.randomUUID(), id, name);
+		} else {
+			this.mEntity = (AbstractNPC) plugin.getNPCRegistry().createNPC(EntityType.fromName(type), UUID.randomUUID(), id, name);
+		}
+
+		mEntity.spawn(location);
+		mEntity.addTrait(DwarfTrainerTrait.class);
+		mEntity.setProtected(true);
+		this.wait = wait;
+		this.lastTrain = lastTrain;
+		this.mID = mEntity.getId();
+		this.wait = wait;
+		this.lastTrain = lastTrain;
+
+		if (mIsGreeter)
+			mHeldItem = Material.AIR;
+		else
+			mHeldItem = plugin.getConfigManager().getGenericSkill(skillId).getTrainerHeldMaterial();
+
+		assert (mHeldItem != null);
+
+		if (mHeldItem != Material.AIR)
+			((LivingEntity) mEntity.getEntity()).getEquipment().setItemInHand(new ItemStack(mHeldItem, 1));
 
 	}
 
@@ -252,6 +292,8 @@ public final class DwarfTrainer {
 
 	public void setDisplayName(String name) {
 		this.mEntity.setName(name);
+		this.mName = name;
+		plugin.getDataManager().renameTrainer(this, name);
 	}
 
 	public boolean isWaiting() {
@@ -273,5 +315,20 @@ public final class DwarfTrainer {
 	public void lookAt(Player p) {
 		this.mEntity.faceLocation(p.getLocation());
 		plugin.getDataManager().updateTrainerLocation(this, this.getLocation().getYaw(), this.getLocation().getPitch());
+	}
+
+	@SuppressWarnings("deprecation")
+	public void setType(String type) {
+		this.type = type;
+		if (type.equalsIgnoreCase("PLAYER")) {
+			this.mEntity.setBukkitEntityType(EntityType.PLAYER);
+		} else {
+			this.mEntity.setBukkitEntityType(EntityType.fromName(type));
+		}
+		plugin.getDataManager().updateTrainerType(this, type);
+	}
+
+	public String getType() {
+		return this.type;
 	}
 }

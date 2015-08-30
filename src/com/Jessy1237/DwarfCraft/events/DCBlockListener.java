@@ -224,8 +224,6 @@ public class DCBlockListener implements Listener {
 						if (DwarfCraft.debugMessagesThreshold < 6)
 							System.out.println("Debug: dropped " + item.toString());
 
-						System.out.println("" + item.getAmount());
-
 						if (item.getAmount() > 0)
 							loc.getWorld().dropItemNaturally(loc, item);
 

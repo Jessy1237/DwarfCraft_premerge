@@ -128,7 +128,7 @@ public class DCInventoryListener implements Listener {
 
 							float modifier = (float) output.getAmount() / (float) toCraft.getAmount();
 
-							plugin.getServer().getScheduler().runTaskLater(plugin, new ShiftCraftTask((Player) player, toCraft, held, modifier), 1);
+							plugin.getServer().getScheduler().runTaskLater(plugin, new ShiftCraftTask((Player) player, toCraft, held, modifier), 30);
 
 						}
 					}
@@ -310,15 +310,17 @@ class ShiftCraftTask implements Runnable {
 		} else if (modifier < 1) {
 			int amount = Math.round((difference - modifier * difference));
 			boolean run = true;
-			for (ItemStack i : p.getInventory().all(item.getType()).values()) {
-				if (run == true && amount > 0) {
-					if (i.getAmount() > amount) {
-						i.setAmount(i.getAmount() - amount);
-						run = false;
-					} else {
-						int diff = amount - i.getAmount();
-						i.setAmount(0);
-						amount -= diff;
+			while (run) {
+				for (ItemStack i : p.getInventory().all(item.getType()).values()) {
+					if (amount > 0) {
+						if (i.getAmount() > amount) {
+							i.setAmount(i.getAmount() - amount);
+							amount = 0;
+							run = false;
+						} else {
+							amount -= (i.getAmount() - 1);
+							i.setAmount(1);
+						}
 					}
 				}
 			}

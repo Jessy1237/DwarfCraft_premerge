@@ -93,6 +93,9 @@ public class DCEntityListener implements Listener {
 				} else if (plugin.getDataManager().getRename().containsKey((Player) event.getClicker())) {
 					trainer.setDisplayName(plugin.getDataManager().getRename().get((Player) event.getClicker()));
 					plugin.getDataManager().getRename().remove((Player) event.getClicker());
+				} else if(plugin.getDataManager().getType().containsKey((Player) event.getClicker())) {
+					trainer.setType(plugin.getDataManager().getType().get((Player) event.getClicker()));
+					plugin.getDataManager().getType().remove((Player) event.getClicker());
 				} else {
 					// in business, left click
 					if (trainer.isGreeter()) {
@@ -128,7 +131,6 @@ public class DCEntityListener implements Listener {
 						} else {
 							trainer.setWait(true);
 							trainer.setLastTrain(currentTime);
-							/* trainer.getEntity().animateArmSwing(); */
 							plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new TrainSkillSchedule(trainer, dCPlayer), 2);
 						}
 					}

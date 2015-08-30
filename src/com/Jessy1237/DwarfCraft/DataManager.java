@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import net.citizensnpcs.api.npc.NPC;
 
@@ -36,6 +35,7 @@ public class DataManager {
 	private final ConfigManager configManager;
 	private final DwarfCraft plugin;
 	private List<Player> trainerRemove = new ArrayList<Player>();
+	private HashMap<Player, String> Type = new HashMap<Player, String>();
 	private List<Player> trainerLookAt = new ArrayList<Player>();
 	private Connection mDBCon;
 
@@ -64,7 +64,7 @@ public class DataManager {
 			Statement statement = mDBCon.createStatement();
 			ResultSet rs = statement.executeQuery("select * from sqlite_master WHERE name = 'trainers';");
 			if (!rs.next()) {
-				statement.executeUpdate("create table trainers " + "  (" + "    world, uniqueId, name, skill, maxSkill, minSkill, material, isGreeter, messageId, " + "    x, y, z, yaw, pitch" + "  );");
+				statement.executeUpdate("create table trainers " + "  (" + "    world, uniqueId, name, skill, maxSkill, minSkill, material, isGreeter, messageId, " + "    x, y, z, yaw, pitch" + ", type  );");
 			}
 			rs.close();
 
@@ -206,6 +206,7 @@ public class DataManager {
 				statement.executeUpdate("ALTER TABLE skills ADD COLUMN deposit2 NUMERIC DEFAULT 0;");
 				statement.executeUpdate("ALTER TABLE skills ADD COLUMN deposit3 NUMERIC DEFAULT 0;");
 			}
+
 			try {
 				rs = statement.executeQuery("select minSkill from trainers");
 			} catch (Exception e) {
@@ -237,11 +238,44 @@ public class DataManager {
 						e1.printStackTrace();
 					}
 				}
+			}
+			
+			try {
+				rs = statement.executeQuery("select type from trainers");
+			} catch (Exception e) {
+				System.out.println("DC Init: Converting Trainer DB to include Trainer Types (may lag a little wait for complete message).");
+				mDBCon.setAutoCommit(false);
+				ArrayList<DwarfTrainer> trainers = new ArrayList<DwarfTrainer>();
+
+				for (Iterator<World> i = plugin.getServer().getWorlds().iterator(); i.hasNext();) {
+					try {
+						final World world = i.next();
+						PreparedStatement prep = mDBCon.prepareStatement("SELECT * FROM trainers WHERE world = ?;");
+						prep.setString(1, world.getName());
+						rs = prep.executeQuery();
+
+						while (rs.next()) {
+							if (world.getName().equals(rs.getString("world"))) {
+								if (DwarfCraft.debugMessagesThreshold < 5)
+									System.out.println("DC5: trainer: " + rs.getString("name") + " in world: " + world.getName());
+
+								DwarfTrainer trainer = new DwarfTrainer(plugin, new Location(world, rs.getDouble("x"), rs.getDouble("y"), rs.getDouble("z"), rs.getFloat("yaw"), rs.getFloat("pitch")), rs.getInt("uniqueId"), rs.getString("name"), rs.getInt("skill"), rs.getInt("maxSkill"), -1,
+										rs.getString("messageId"), rs.getBoolean("isGreeter"), false, 0, "PLAYER");
+
+								trainers.add(trainer);
+							}
+						}
+						rs.close();
+						prep.close();
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				}
 				statement.execute("DROP TABLE trainers");
-				statement.executeUpdate("create table trainers " + "  (" + "    world, uniqueId, name, skill, maxSkill, minSkill, material, isGreeter, messageId, " + "    x, y, z, yaw, pitch" + "  );");
+				statement.executeUpdate("create table trainers " + "  (" + "    world, uniqueId, name, skill, maxSkill, minSkill, material, isGreeter, messageId, " + "    x, y, z, yaw, pitch" + ", type  );");
 				for (DwarfTrainer d : trainers) {
 					if (d != null) {
-						PreparedStatement prep = mDBCon.prepareStatement("insert into trainers values (?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+						PreparedStatement prep = mDBCon.prepareStatement("insert into trainers values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
 						prep.setString(1, d.getWorld().getName());
 						prep.setInt(2, d.getUniqueId());
 						prep.setString(3, d.getName());
@@ -256,6 +290,7 @@ public class DataManager {
 						prep.setDouble(12, d.getLocation().getZ());
 						prep.setFloat(13, d.getLocation().getYaw());
 						prep.setFloat(14, d.getLocation().getPitch());
+						prep.setString(15, d.getType());
 						prep.execute();
 						prep.close();
 					}
@@ -368,7 +403,6 @@ public class DataManager {
 	}
 
 	protected GreeterMessage getGreeterMessage(String messageId) {
-		System.out.println(messageId);
 		return greeterMessageList.get(messageId);
 	}
 
@@ -382,14 +416,6 @@ public class DataManager {
 		return null;
 	}
 
-	/*
-	 * public DwarfTrainer getTrainerById(String uniqueId) { for
-	 * (Iterator<Map.Entry<String, DwarfTrainer>> i =
-	 * trainerList.entrySet().iterator(); i.hasNext();) { Map.Entry<String,
-	 * DwarfTrainer> pairs = i.next(); DwarfTrainer trainer =
-	 * (pairs.getValue()); if (trainer.getUniqueId().toString() == uniqueId) ;
-	 * return trainer; } return null; }
-	 */
 	public boolean isTrainer(Entity entity) {
 		for (Iterator<Map.Entry<Integer, DwarfTrainer>> i = trainerList.entrySet().iterator(); i.hasNext();) {
 			Map.Entry<Integer, DwarfTrainer> pairs = i.next();
@@ -425,7 +451,7 @@ public class DataManager {
 		assert (trainer != null);
 		trainerList.put(trainer.getUniqueId(), trainer);
 		try {
-			PreparedStatement prep = mDBCon.prepareStatement("insert into trainers values (?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+			PreparedStatement prep = mDBCon.prepareStatement("insert into trainers values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
 			prep.setString(1, trainer.getWorld().getName());
 			prep.setInt(2, trainer.getUniqueId());
 			prep.setString(3, trainer.getName());
@@ -448,6 +474,7 @@ public class DataManager {
 			prep.setDouble(12, trainer.getLocation().getZ());
 			prep.setFloat(13, trainer.getLocation().getYaw());
 			prep.setFloat(14, trainer.getLocation().getPitch());
+			prep.setString(15, trainer.getType());
 
 			if (DwarfCraft.debugMessagesThreshold < 7)
 				System.out.println(String.format("DC7: Added trainer %s in world: %s", trainer.getUniqueId(), trainer.getWorld().getName()));
@@ -460,11 +487,11 @@ public class DataManager {
 		return;
 	}
 
-	public void renameTrainer(UUID mID, String name) {
+	public void renameTrainer(DwarfTrainer trainer, String name) {
 		try {
 			PreparedStatement prep = mDBCon.prepareStatement("UPDATE trainers SET name=? WHERE uniqueId=?;");
 			prep.setString(1, name);
-			prep.setString(2, mID.toString());
+			prep.setInt(2, trainer.getUniqueId());
 			prep.execute();
 			prep.close();
 		} catch (Exception e) {
@@ -486,6 +513,19 @@ public class DataManager {
 		}
 		return;
 	}
+	
+	public void updateTrainerType(DwarfTrainer trainer, String type) {
+		try {
+			PreparedStatement prep = mDBCon.prepareStatement("UPDATE trainers SET type=? WHERE uniqueId=?;");
+			prep.setString(1, type);
+			prep.setInt(2, trainer.getUniqueId());
+			prep.execute();
+			prep.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return;
+	}
 
 	private HashMap<Integer, DwarfTrainer> populateTrainers(World world) {
 		try {
@@ -499,7 +539,7 @@ public class DataManager {
 						System.out.println("DC5: trainer: " + rs.getString("name") + " in world: " + world.getName());
 
 					DwarfTrainer trainer = new DwarfTrainer(plugin, new Location(world, rs.getDouble("x"), rs.getDouble("y"), rs.getDouble("z"), rs.getFloat("yaw"), rs.getFloat("pitch")), rs.getInt("uniqueId"), rs.getString("name"), rs.getInt("skill"), rs.getInt("maxSkill"), rs.getInt("minSkill"),
-							rs.getString("messageId"), rs.getBoolean("isGreeter"), false, 0);
+							rs.getString("messageId"), rs.getBoolean("isGreeter"), false, 0, rs.getString("type"));
 
 					trainerList.put(rs.getInt("uniqueId"), trainer);
 				}
@@ -604,5 +644,9 @@ public class DataManager {
 
 	public HashMap<Player, String> getRename() {
 		return Rename;
+	}
+
+	public HashMap<Player, String> getType() {
+		return Type;
 	}
 }

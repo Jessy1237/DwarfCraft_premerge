@@ -49,6 +49,8 @@ public final class CommandParser {
 					output.add(parseName(arrayIterator));
 				else if (o instanceof String && ((String) o).equalsIgnoreCase("GreeterMessage"))
 					output.add(parseGreeterMessage(arrayIterator));
+				else if (o instanceof String && ((String) o).equalsIgnoreCase("Type"))
+					output.add(parseType(arrayIterator));
 				else if (o instanceof Integer)
 					output.add(parseInteger(arrayIterator));
 				else if (o instanceof String)
@@ -144,6 +146,11 @@ public final class CommandParser {
 	private Object parseName(int arrayIterator) {
 		String name = input[arrayIterator];
 		return name;
+	}
+	
+	private Object parseType(int arrayIterator) {
+		String type = input[arrayIterator];
+		return type;
 	}
 
 	private Object parsePlayer(int arrayIterator) throws DCCommandException {

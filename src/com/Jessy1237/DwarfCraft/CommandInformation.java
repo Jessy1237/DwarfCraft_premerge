@@ -28,7 +28,9 @@ public class CommandInformation {
 		REMOVENEXT("Removes the next trainer you hit."),
 		LOOKATNEXT("The next trainer you hit will look at you."),
 		RACES("Displays a list of the races with descriptions"),
-		DMEM("Displays a list of what type, and how many entites are loaded on the server.");
+		DMEM("Displays a list of what type, and how many entites are loaded on the server."), 
+		TYPECHANGE("Changes the entity type of a trainer/greeter."),
+		TYPENEXT("Changes the entity type of the next trainer/greeter you hit");
 		
 		private String Desc;
 
@@ -56,13 +58,15 @@ public class CommandInformation {
 		RACE("/race <Race name> <confirm>\nExample: /race - Displays the player's current race information.\nExample: /race elf - Displays information about the elf race.\nExample: /race elf confirm - Changes the player's race to elf and resets their skills.\nAdmin: /race <Player> <Racename> <confirm> - Alters another player's race, use confirm. \n Admin: /race <player> - shows a players race."),
 		SETSKILL("/<command> <player name> [Skill ID or Skill Name or All] [new skill level]"),
 		CREATEGREETER("/<command> <id> <DisplayName> <MessageId>"),
-		CREATETRAINER("/<command> <id> <DisplayName> <Skill ID or Skill Name> <Max Skill Level> <Min Skill Level>"),
+		CREATETRAINER("/<command> <id> <DisplayName> <Skill ID or Skill Name> <Max Skill Level> <Min Skill Level> <EntityType>"),
 		REMOVETRAINER("/<command> <DisplayName>"),
 		LISTTRAINERS("/<command> [PageNumber]"),
 		REMOVENEXT("/removenext"),
 		LOOKATNEXT("/lookatnext"),
 		RACES("/races"),
-		DMEM("/dmem");
+		DMEM("/dmem"),
+		TYPECHANGE("/<command> <DisplayName> <EntityType>"), 
+		TYPENEXT("/<command> <EntityType>");
 		
 		private String Usage;
 

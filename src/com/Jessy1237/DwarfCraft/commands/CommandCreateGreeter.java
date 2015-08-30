@@ -44,20 +44,23 @@ public class CommandCreateGreeter extends Command {
 				String uniqueId = "UniqueIdAdd";
 				String name = "Name";
 				String greeterMessage = "GreeterMessage";
+				String type = "Type";
 				desiredArguments.add(uniqueId);
 				desiredArguments.add(name);
 				desiredArguments.add(greeterMessage);
+				desiredArguments.add(type);
 				outputList = parser.parse(desiredArguments, false);
 				uniqueId = (String) outputList.get(0);
 				name = (String) outputList.get(1);
 				greeterMessage = (String) outputList.get(2);
+				type = (String) outputList.get(3);
 				
 				Location location = ((Player) sender).getLocation();
 				if(plugin.getNPCRegistry().getById(Integer.parseInt(uniqueId)) != null ){
 					plugin.getOut().sendMessage(sender, "An NPC with that ID already exsists! Try another ID.");
 					return false;
 				}
-				DwarfTrainer d = new DwarfTrainer(plugin, location, Integer.parseInt(uniqueId), name, null, null, null, greeterMessage, true, false, 0);
+				DwarfTrainer d = new DwarfTrainer(plugin, location, Integer.parseInt(uniqueId), name, null, null, null, greeterMessage, true, false, 0, type);
 				plugin.getDataManager().insertTrainer(d);
 			} catch (DCCommandException e) {
 				e.describe(sender);

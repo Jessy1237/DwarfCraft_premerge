@@ -18,6 +18,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.Jessy1237.DwarfCraft.commands.CommandChangeType;
 import com.Jessy1237.DwarfCraft.commands.CommandCreateGreeter;
 import com.Jessy1237.DwarfCraft.commands.CommandCreateTrainer;
 import com.Jessy1237.DwarfCraft.commands.CommandDCCommands;
@@ -39,6 +40,7 @@ import com.Jessy1237.DwarfCraft.commands.CommandSetSkill;
 import com.Jessy1237.DwarfCraft.commands.CommandSkillInfo;
 import com.Jessy1237.DwarfCraft.commands.CommandSkillSheet;
 import com.Jessy1237.DwarfCraft.commands.CommandTutorial;
+import com.Jessy1237.DwarfCraft.commands.CommandTypeNext;
 import com.Jessy1237.DwarfCraft.events.DCBlockListener;
 import com.Jessy1237.DwarfCraft.events.DCEntityListener;
 import com.Jessy1237.DwarfCraft.events.DCInventoryListener;
@@ -82,7 +84,7 @@ public class DwarfCraft extends JavaPlugin {
 	public NPCRegistry getNPCRegistry() {
 		return npcr;
 	}
-	
+
 	public ConfigManager getConfigManager() {
 		return cm;
 	}
@@ -220,6 +222,14 @@ public class DwarfCraft extends JavaPlugin {
 			}
 		} else if (name.equalsIgnoreCase("Races")) {
 			cmd = new CommandRaces(this);
+		} else if (name.equalsIgnoreCase("ChangeType")) {
+			if (hasOp || hasAll) {
+				cmd = new CommandChangeType(this);
+			}
+		} else if (name.equalsIgnoreCase("TypeNext")) {
+			if (hasOp || hasAll) {
+				cmd = new CommandTypeNext(this);
+			}
 		} else {
 			isCmd = false;
 		}
@@ -245,7 +255,7 @@ public class DwarfCraft extends JavaPlugin {
 	 */
 	@Override
 	public void onDisable() {
-		for(DwarfTrainer trainer: getDataManager().trainerList.values()) {
+		for (DwarfTrainer trainer : getDataManager().trainerList.values()) {
 			trainer.getEntity().despawn(DespawnReason.PLUGIN);
 			getNPCRegistry().deregister(trainer.getEntity());
 		}
@@ -269,16 +279,16 @@ public class DwarfCraft extends JavaPlugin {
 
 		pm.registerEvents(inventoryListener, this);
 
-		if(getServer().getPluginManager().getPlugin("Citizens") == null || getServer().getPluginManager().getPlugin("Citizens").isEnabled() == false) {
+		if (getServer().getPluginManager().getPlugin("Citizens") == null || getServer().getPluginManager().getPlugin("Citizens").isEnabled() == false) {
 			System.out.println("DC Init: Couldn't find Citizens!");
 			System.out.println("DC Init: DwarfCraft now disabiling...");
-			getServer().getPluginManager().disablePlugin(this);	
+			getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
 		System.out.println("DC Init: Hooked into Citizens!");
-		
+
 		CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(DwarfTrainerTrait.class).withName("DwarfTrainer"));
-		
+
 		npcr = CitizensAPI.getNPCRegistry();
 		cm = new ConfigManager(this, getDataFolder().getAbsolutePath(), "DwarfCraft.config");
 		dm = new DataManager(this, cm);
