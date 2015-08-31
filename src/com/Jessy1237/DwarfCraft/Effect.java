@@ -308,7 +308,7 @@ public class Effect {
 	public ItemStack getOutput(DCPlayer player, Byte oldData) {
 		Byte data = (mOutput.getData() == null ? null : mOutput.getData().getData());
 
-		if (data != null && data == -1)
+		if (data != null && data == 0)
 			data = oldData;
 
 		int count = Util.randomAmount(getEffectAmount(player));
@@ -326,7 +326,7 @@ public class Effect {
 
 	public boolean checkInitiator(ItemStack item) {
 		if (item == null)
-			return checkInitiator(-1, (byte) 0);
+			return checkInitiator(0, (byte) 0);
 		else
 			return checkInitiator(item.getTypeId(), (byte) item.getDurability());
 	}
@@ -336,7 +336,7 @@ public class Effect {
 			return false;
 
 		if (mInitator.getData() != null) {
-			if (mInitator.getData().getData() == -1) // -1 means we dont care.
+			if (mInitator.getData().getData() == 0) // -1 means we dont care.
 				return true;
 			return mInitator.getData().getData() == data;
 		}
