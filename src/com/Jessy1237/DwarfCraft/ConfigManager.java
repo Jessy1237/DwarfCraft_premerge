@@ -221,7 +221,7 @@ public final class ConfigManager {
 					DwarfCraft.debugMessagesThreshold = Integer.parseInt(theline[1].trim());
 				if (theline[0].equalsIgnoreCase("Send Login Greet"))
 					sendGreeting = Boolean.parseBoolean(theline[1].trim());
-				if (theline[0].equalsIgnoreCase("Disable Cacti Farms"))
+				if (theline[0].equalsIgnoreCase("Disable Farm Exploits"))
 					disableCacti = Boolean.parseBoolean(theline[1].trim());
 				if (theline[0].equalsIgnoreCase("World Blacklist"))
 					worldBlacklist = Boolean.parseBoolean(theline[1].trim());
@@ -458,8 +458,8 @@ public final class ConfigManager {
 				CSVRecord item = records.next();
 
 				@SuppressWarnings("deprecation")
-				Skill skill = new Skill(item.getInt("ID"), item.getString("Name"), 0, new ArrayList<Effect>(), new TrainingItem(Material.getMaterial(item.getInt("Item1")), item.getDouble("Item1Base"), item.getInt("Item1Max")), new TrainingItem(Material.getMaterial(item.getInt("Item2")),
-						item.getDouble("Item2Base"), item.getInt("Item2Max")), new TrainingItem(Material.getMaterial(item.getInt("Item3")), item.getDouble("Item3Base"), item.getInt("Item3Max")), Material.getMaterial(item.getInt("Held")));
+				Skill skill = new Skill(item.getInt("ID"), item.getString("Name"), 0, new ArrayList<Effect>(), new TrainingItem(Util.parseItem(item.getString("Item1")), item.getDouble("Item1Base"), item.getInt("Item1Max")), new TrainingItem(Util.parseItem(item.getString("Item2")),
+						item.getDouble("Item2Base"), item.getInt("Item2Max")), new TrainingItem(Util.parseItem(item.getString("Item3")), item.getDouble("Item3Base"), item.getInt("Item3Max")), Material.getMaterial(item.getInt("Held")));
 
 				skillsArray.put(skill.getId(), skill);
 

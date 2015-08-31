@@ -7,7 +7,6 @@ package com.Jessy1237.DwarfCraft.events;
 import java.util.HashMap;
 import java.util.Random;
 
-import org.bukkit.CropState;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,7 +23,6 @@ import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Crops;
 import org.bukkit.material.MaterialData;
 
 import com.Jessy1237.DwarfCraft.DCPlayer;
@@ -44,34 +42,23 @@ public class DCBlockListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockFromTo(BlockFromToEvent event) {
 
-		// Code to prevent water from normally breaking crops
-		// Added due to players being able to bypass DC skill restrictions
-		if (event.getToBlock().getType() == Material.CROPS) {
-			// Might have to add checks for carrots, reeds, potatoes and cacti
-			// at some point...
+		if (plugin.getConfigManager().disableCacti) {
 
-			Block toBlock = event.getToBlock(); // Get the crop block
-			Crops crops = (Crops) toBlock.getState().getData(); // Get the crop
-																// block
-																// material data
-
-			// Cheap way to break block without causing drops
-			toBlock.setType(Material.AIR);
-
-			ItemStack itemDrops;
-
-			if (crops.getState() == CropState.RIPE) { // If the wheat is fully
-														// grown, drop one wheat
-				itemDrops = new ItemStack(Material.WHEAT);
-				itemDrops.setAmount(1); // I'm keeping the drop amount here in
-										// case I wish to alter it at a later
-										// stage, setting?
-			} else { // If the wheat is no fully grown, drop a seed
-				itemDrops = new ItemStack(Material.SEEDS);
-				itemDrops.setAmount(1);
+			if (plugin.getConfigManager().worldBlacklist) {
+				for (World w : plugin.getConfigManager().worlds) {
+					if (w != null) {
+						if (event.getBlock().getWorld() == w) {
+							return;
+						}
+					}
+				}
 			}
 
-			toBlock.getLocation().getWorld().dropItemNaturally(toBlock.getLocation(), itemDrops);
+			// Code to prevent water from normally breaking crops // Added due
+			// to players being able to bypass DC skill restrictions
+			if (event.getToBlock().getType() == Material.CROPS || event.getToBlock().getType() == Material.POTATO || event.getToBlock().getType() == Material.CARROT || event.getToBlock().getType() == Material.SUGAR_CANE_BLOCK || event.getToBlock().getType() == Material.CACTUS) {
+				event.getToBlock().setType(Material.AIR, true);
+			}
 		}
 	}
 
@@ -115,8 +102,18 @@ public class DCBlockListener implements Listener {
 				if (effect.getEffectType() == EffectType.BLOCKDROP && effect.checkInitiator(blockID, meta)) {
 
 					// Crops special line:
-					if (effect.getInitiatorId() == 59) {
+					if (effect.getInitiatorId() == 59 || effect.getInitiatorId() == 141 || effect.getInitiatorId() == 142) {
 						if (meta != 7)
+							return;
+					}
+
+					if (effect.getInitiatorId() == 127) {
+						if (meta != 2)
+							return;
+					}
+					
+					if (effect.getInitiatorId() == 115) {
+						if (meta != 3)
 							return;
 					}
 					
@@ -124,6 +121,15 @@ public class DCBlockListener implements Listener {
 						ItemStack item = effect.getOutput(player, meta);
 						ItemStack item1 = null;
 
+						//Gives the 2% to drop poisonous potatoes when potatoes are broken
+						if(effect.getInitiatorId() == 142 && item.getTypeId() == 392) {
+							Random r = new Random();
+							final int i = r.nextInt(100);
+							if(i == 0 || i == 1) {
+								loc.getWorld().dropItemNaturally(loc, new ItemStack(394, 1));
+							}
+						}
+						
 						if (item.getTypeId() != 351 && item.getTypeId() == blockID && item.getTypeId() != 295 && blockID != 141 && item.getTypeId() != 391 && blockID != 142 && item.getTypeId() != 392 && blockID != 115 && item.getTypeId() != 372 && blockID != 31 && blockID != 175 && blockID != 59
 								&& blockID != 105 && item.getTypeId() != 362 && blockID != 104 && item.getTypeId() != 361 && blockID != 127) {
 							item.setDurability(block.getData());
@@ -313,10 +319,13 @@ public class DCBlockListener implements Listener {
 		}
 	}
 
+	// Code to check for farm automation i.e. (water, pistons, breaking the
+	// block below, cacti farms, etc)
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockPhysics(BlockPhysicsEvent event) {
-		if (event.getBlock().getType() == Material.CACTUS && plugin.getConfigManager().disableCacti) {
+
+		if (plugin.getConfigManager().disableCacti) {
 
 			if (plugin.getConfigManager().worldBlacklist) {
 				for (World w : plugin.getConfigManager().worlds) {
@@ -328,20 +337,55 @@ public class DCBlockListener implements Listener {
 				}
 			}
 
-			World world = event.getBlock().getWorld();
-			Location loc = event.getBlock().getLocation();
-			// this is a re-implementation of BlockCactus's doPhysics event,
-			// minus the spawning of a droped item.
-			if (!(checkCacti(world, loc))) {
+			if (event.getBlock().getType() == Material.CROPS || event.getBlock().getType() == Material.POTATO || event.getBlock().getType() == Material.CARROT || event.getBlock().getType() == Material.COCOA) {
+
+				World world = event.getBlock().getWorld();
+				Location loc = event.getBlock().getLocation();
+				if (!(checkCrops(world, loc))) {
+					event.getBlock().setTypeId(0, true);
+					event.setCancelled(true);
+				}
+			} else if (event.getBlock().getType() == Material.CACTUS) {
+
+				World world = event.getBlock().getWorld();
+				Location loc = event.getBlock().getLocation();
+				if (!(checkCacti(world, loc))) {
+					event.getBlock().setTypeId(0, true);
+					event.setCancelled(true);
+				}
+			} else if (event.getBlock().getType() == Material.SUGAR_CANE_BLOCK) {
+
+				World world = event.getBlock().getWorld();
+				Location loc = event.getBlock().getLocation();
+				if (!(checkSugarCane(world, loc))) {
+					event.getBlock().setTypeId(0, true);
+					event.setCancelled(true);
+				}
+			} else if (event.getBlock().getType() == Material.MELON_BLOCK) {
 				event.getBlock().setTypeId(0, true);
 				event.setCancelled(true);
-
-				Material base = world.getBlockAt(loc.getBlockX(), loc.getBlockY() - 1, loc.getBlockZ()).getType();
-				if ((base != Material.CACTUS) && (base != Material.SAND))
-					world.dropItemNaturally(loc, new ItemStack(Material.CACTUS, 1));
-
 			}
 		}
+	}
+
+	private boolean checkCrops(World world, Location loc) {
+		int x = loc.getBlockX();
+		int y = loc.getBlockY();
+		int z = loc.getBlockZ();
+
+		Material base = world.getBlockAt(x, y - 1, z).getType();
+
+		return (base == Material.SOIL);
+	}
+
+	private boolean checkSugarCane(World world, Location loc) {
+		int x = loc.getBlockX();
+		int y = loc.getBlockY();
+		int z = loc.getBlockZ();
+
+		Material base = world.getBlockAt(x, y - 1, z).getType();
+
+		return (base == Material.SUGAR_CANE_BLOCK) || (base == Material.SAND) || (base == Material.DIRT) || (base == Material.GRASS);
 	}
 
 	private boolean checkCacti(World world, Location loc) {

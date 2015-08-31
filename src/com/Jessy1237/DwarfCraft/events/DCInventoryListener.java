@@ -1,5 +1,6 @@
 package com.Jessy1237.DwarfCraft.events;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 import org.bukkit.Location;
@@ -26,6 +27,7 @@ import com.Jessy1237.DwarfCraft.DwarfCraft;
 import com.Jessy1237.DwarfCraft.Effect;
 import com.Jessy1237.DwarfCraft.EffectType;
 import com.Jessy1237.DwarfCraft.Skill;
+import com.Jessy1237.DwarfCraft.Util;
 
 public class DCInventoryListener implements Listener {
 
@@ -79,15 +81,6 @@ public class DCInventoryListener implements Listener {
 		return stack != null && stack.getAmount() > 0;
 	}
 
-	// Checks the itemID to see if it is a tool. Excludes fishing rod and, flint
-	// and steel.
-	private boolean isTool(int i) {
-		if ((i >= 256 && i <= 258) || (i >= 267 && i <= 279) || (i >= 283 && i <= 286) || (i >= 290 && i <= 294)) {
-			return true;
-		}
-		return false;
-	}
-
 	@SuppressWarnings("deprecation")
 	private void handleCrafting(InventoryClickEvent event) {
 
@@ -99,12 +92,12 @@ public class DCInventoryListener implements Listener {
 		if (player != null && hasItems(toCraft)) {
 
 			// Make sure they aren't duping when repairing tools
-			if (isTool(toCraft.getTypeId())) {
+			if (Util.isTool(toCraft.getTypeId())) {
 				CraftingInventory ci = (CraftingInventory) event.getInventory();
 				if (ci.getRecipe() instanceof ShapelessRecipe) {
 					ShapelessRecipe r = (ShapelessRecipe) ci.getRecipe();
 					for (ItemStack i : r.getIngredientList()) {
-						if (isTool(i.getTypeId()) && toCraft.getTypeId() == i.getTypeId()) {
+						if (Util.isTool(i.getTypeId()) && toCraft.getTypeId() == i.getTypeId()) {
 							return;
 						}
 					}
@@ -289,12 +282,17 @@ class ShiftCraftTask implements Runnable {
 		this.modifier = modifier;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void run() {
 		int held = 0;
-		for (ItemStack i : p.getInventory().all(item.getType()).values()) {
+
+		Collection<ItemStack> items = (Collection<ItemStack>) p.getInventory().all(item.getType()).values();
+		// Check inventory count of the item
+		for (ItemStack i : items) {
 			held += i.getAmount();
 		}
+
 		final int difference = held - init;
 		if (modifier > 1) {
 			// Adds the leftover items to the player
@@ -309,21 +307,7 @@ class ShiftCraftTask implements Runnable {
 			// more than it should do
 		} else if (modifier < 1) {
 			int amount = Math.round((difference - modifier * difference));
-			boolean run = true;
-			while (run) {
-				for (ItemStack i : p.getInventory().all(item.getType()).values()) {
-					if (amount > 0) {
-						if (i.getAmount() > amount) {
-							i.setAmount(i.getAmount() - amount);
-							amount = 0;
-							run = false;
-						} else {
-							amount -= (i.getAmount() - 1);
-							i.setAmount(1);
-						}
-					}
-				}
-			}
+			p.getInventory().removeItem(new ItemStack(item.getType(), amount, item.getDurability()));
 		}
 	}
 }

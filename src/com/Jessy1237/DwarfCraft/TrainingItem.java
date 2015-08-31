@@ -4,15 +4,15 @@ package com.Jessy1237.DwarfCraft;
  * Original Authors: smartaleq, LexManos and RCarretta
  */
 
-import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 public class TrainingItem {
 
-	public final Material Item;
+	public final ItemStack Item;
 	public final double Base;
 	public final int Max;
 	
-	public TrainingItem(Material item, double base, int max){
+	public TrainingItem(ItemStack item, double base, int max){
 		Item = item;
 		Base = base;
 		Max = max;

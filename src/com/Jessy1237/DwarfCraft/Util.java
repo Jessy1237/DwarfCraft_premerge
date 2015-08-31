@@ -6,7 +6,6 @@ package com.Jessy1237.DwarfCraft;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
 
 public class Util {
 
@@ -63,7 +62,7 @@ public class Util {
 	@SuppressWarnings("deprecation")
 	public static ItemStack parseItem(String info) {
 		String[] pts = info.split(":");
-		int data = (pts.length == 1 ? -1 : Integer.parseInt(pts[1]));
+		int data = (pts.length > 1 ? Integer.parseInt(pts[1]) : 0);
 		int item = -1;
 
 		try {
@@ -77,7 +76,7 @@ public class Util {
 			item = mat.getId();
 		}
 		ItemStack item1 = new ItemStack(item);
-		item1.setData(new MaterialData(item1.getTypeId(), (data == -1 ? (byte) -1 : (byte) (data & 0xFF))));
+		item1.setDurability((short) data);
 		return item1;
 	}
 
@@ -85,9 +84,185 @@ public class Util {
 	public static String getCleanName(ItemStack item) {
 		if (item == null)
 			return "NULL";
-		if (item.getData() == null || item.getData().getData() == -1)
-			return item.getType().toString();
 		switch (item.getType()) {
+		case SAPLING:
+			switch (item.getData().getData()) {
+			case 0:
+				return "Oak Sapling";
+			case 1:
+				return "Spruce Sapling";
+			case 2:
+				return "Birch Sapling";
+			case 3:
+				return "Jungle Sapling";
+			case 4:
+				return "Acacia Sapling";
+			case 5:
+				return "Dark Oak Sapling";
+			default:
+				return "Sapling";
+			}
+		case SAND:
+			switch (item.getData().getData()) {
+			case 0:
+				return "Sand";
+			case 1:
+				return "Red Sand";
+			default:
+				return "Sand";
+			}
+		case RAW_FISH:
+			switch (item.getData().getData()) {
+			case 0:
+				return "Raw Fish";
+			case 1:
+				return "Raw Salmon";
+			case 2:
+				return "Clownfish";
+			case 3:
+				return "Pufferfish";
+			default:
+				return "Raw Fish";
+			}
+
+		case LOG:
+			switch (item.getData().getData()) {
+			case 0:
+				return "Oak Log";
+			case 1:
+				return "Spruce Log";
+			case 2:
+				return "Birch Log";
+			case 3:
+				return "Jungle Tree Log";
+			default:
+				return "Log";
+			}
+		case LOG_2:
+			switch (item.getData().getData()) {
+			case 0:
+				return "Acacia Log";
+			case 1:
+				return "Dark Oak Log";
+			default:
+				return "Log";
+			}
+		case LEAVES:
+			switch (item.getData().getData()) {
+			case 0:
+				return "Oak Leaves";
+			case 1:
+				return "Spruce Leaves";
+			case 2:
+				return "Birch Leaves";
+			case 3:
+				return "Jungle Tree Leaves";
+			default:
+				return "Leaves";
+			}
+		case LEAVES_2:
+			switch (item.getData().getData()) {
+			case 0:
+				return "Acacia Leaves";
+			case 1:
+				return "Dark Oak Leaves";
+			default:
+				return "Leaves";
+			}
+		case WOOL:
+			switch (item.getData().getData()) {
+			case 0:
+				return "White Wool";
+			case 1:
+				return "Orange Wool";
+			case 2:
+				return "Magenta Wool";
+			case 3:
+				return "Light Blue Wool";
+			case 4:
+				return "Yellow Wool";
+			case 5:
+				return "Lime Wool";
+			case 6:
+				return "Pink Wool";
+			case 7:
+				return "Gray Wool";
+			case 8:
+				return "Light Gray Wool";
+			case 9:
+				return "Cyan Wool";
+			case 10:
+				return "Purple Wool";
+			case 11:
+				return "Blue Wool";
+			case 12:
+				return "Brown Wool";
+			case 13:
+				return "Green Wool";
+			case 14:
+				return "Red Wool";
+			case 15:
+				return "Black Wool";
+			default:
+				return "Wool";
+			}
+		case DOUBLE_STEP:
+			switch (item.getData().getData()) {
+			case 15:
+				return "Tile Quartz Double Slab";
+			case 9:
+				return "Smooth Sandstone Double Slab";
+			case 8:
+				return "Smooth Stone Double Slab";
+			case 7:
+				return "Quarts Double Slab";
+			case 6:
+				return "Nether Brick Double Slab";
+			case 5:
+				return "Stone Brick Double Slab";
+			case 4:
+				return "Brick Double Slab";
+			case 3:
+				return "Cobblestone Double Slab";
+			case 2:
+				return "Wooden Double Slab";
+			case 1:
+				return "Sandstone Double Slab";
+			case 0:
+				return "Stone Double Slab";
+			default:
+				return String.format("Slab");
+			}
+		case CROPS:
+			switch (item.getData().getData()) {
+			case 7:
+				return "Fully Grown Crops";
+			default:
+				return String.format("Crop");
+			}
+		case COAL:
+			switch (item.getData().getData()) {
+			case 0:
+				return "Coal";
+			case 1:
+				return "Charcoal";
+			default:
+				return "Coal";
+			}
+		case SULPHUR:
+			return "Gun Powder";
+		case NETHER_STALK:
+			return "Nether Wart";
+		case NETHER_WARTS:
+			return "Nether Wart";
+		case POTATO_ITEM:
+			return "Potato";
+		case POTATO:
+			return "Potato_Crop";
+		case CARROT_ITEM:
+			return "Carrot";
+		case CARROT:
+			return "Carrot_Crop";
 		case INK_SACK:
 			switch (item.getData().getData()) {
 			case 15:
@@ -125,160 +300,17 @@ public class Util {
 			default:
 				return String.format("Unknown Dye(%d)", item.getData().getData());
 			}
-		case SAPLING:
-			switch (item.getData().getData()) {
-			case 0:
-				return "Oak Sapling";
-			case 1:
-				return "Spruce Sapling";
-			case 2:
-				return "Birch Sapling";
-			case 3:
-				return "Jungle Sapling";
-			case 4:
-				return "Acacia Sapling";
-			case 5:
-				return "Dark Oak Sapling";
-			}
-		case SAND:
-			switch(item.getData().getData()) {
-			case 0:
-				return "Sand";
-			case 1:
-				return "Red Sand";
-			}
-		case RAW_FISH:
-			switch(item.getData().getData()) {
-			case 0:
-				return "Raw Fish";
-			case 1: 
-				return "Raw Salmon";
-			case 2:
-				return "Clownfish";
-			case 3:
-				return "Pufferfish";
-			}
-			
-		case LOG:
-			switch (item.getData().getData()) {
-			case 0:
-				return "Oak Log";
-			case 1:
-				return "Spruce Log";
-			case 2:
-				return "Birch Log";
-			case 3:
-				return "Jungle Tree Log";
-			}
-		case LOG_2:
-			switch(item.getData().getData()) {
-			case 0:
-				return "Acacia Log";
-			case 1: 
-				return "Dark Oak Log";
-			}
-		case LEAVES:
-			switch (item.getData().getData()) {
-			case 0:
-				return "Oak Leaves";
-			case 1:
-				return "Spruce Leaves";
-			case 2:
-				return "Birch Leaves";
-			case 3:
-				return "Jungle Tree Leaves";
-			}
-		case LEAVES_2:
-			switch(item.getData().getData()) {
-			case 0:
-				return "Acacia Leaves";
-			case 1:
-				return "Dark Oak Leaves";
-			}
-		case WOOL:
-			switch (item.getData().getData()) {
-			case 0:
-				return "White Wool";
-			case 1:
-				return "Orange Wool";
-			case 2:
-				return "Magenta Wool";
-			case 3:
-				return "Light Blue Wool";
-			case 4:
-				return "Yellow Wool";
-			case 5:
-				return "Lime Wool";
-			case 6:
-				return "Pink Wool";
-			case 7:
-				return "Gray Wool";
-			case 8:
-				return "Light Gray Wool";
-			case 9:
-				return "Cyan Wool";
-			case 10:
-				return "Purple Wool";
-			case 11:
-				return "Blue Wool";
-			case 12:
-				return "Brown Wool";
-			case 13:
-				return "Green Wool";
-			case 14:
-				return "Red Wool";
-			case 15:
-				return "Black Wool";
-			}
-		case DOUBLE_STEP:
-			switch (item.getData().getData()) {
-			case 15:
-				return "Tile Quartz Double Slab";
-			case 9:
-				return "Smooth Sandstone Double Slab";
-			case 8:
-				return "Smooth Stone Double Slab";
-			case 7:
-				return "Quarts Double Slab";
-			case 6:
-				return "Nether Brick Double Slab";
-			case 5:
-				return "Stone Brick Double Slab";
-			case 4:
-				return "Brick Double Slab";
-			case 3:
-				return "Cobblestone Double Slab";
-			case 2:
-				return "Wooden Double Slab";
-			case 1:
-				return "Sandstone Double Slab";
-			case 0:
-				return "Stone Double Slab";
-			default:
-				return String.format("Unknown Dye(%d)", item.getData().getData());
-			}
-		case CROPS:
-			switch (item.getData().getData()) {
-			case 7:
-				return "Fully Grown Crops";
-			default:
-				return String.format("Unknown Dye(%d)", item.getData().getData());
-			}
-		case COAL:
-			switch (item.getData().getData()) {
-			case 0:
-				return "Coal";
-			case 1:
-				return "Charcoal";
-			}
-		case SULPHUR:
-			return "Gun Powder";
-		case NETHER_STALK:
-			return "Nether Wart";
-		case NETHER_WARTS:
-			return "Nether Wart";
 		default:
 			return item.getType().toString();
 		}
+	}
+	
+	// Checks the itemID to see if it is a tool. Excludes fishing rod and, flint
+	// and steel.
+	public static boolean isTool(int i) {
+		if ((i >= 256 && i <= 258) || (i >= 267 && i <= 279) || (i >= 283 && i <= 286) || (i >= 290 && i <= 294)) {
+			return true;
+		}
+		return false;
 	}
 }

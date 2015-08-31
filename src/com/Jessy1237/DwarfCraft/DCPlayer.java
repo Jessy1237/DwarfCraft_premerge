@@ -82,16 +82,16 @@ public class DCPlayer {
 		int item1Amount = ((int) Math.min(Math.ceil((skill.getLevel() + 1) * skill.Item1.Base * multiplier - .01), skill.Item1.Max)), item2Amount = ((int) Math.min(Math.ceil((skill.getLevel() + 1) * skill.Item2.Base * multiplier - .01), skill.Item2.Max)), item3Amount = ((int) Math.min(
 				Math.ceil((skill.getLevel() + 1) * skill.Item3.Base * multiplier - .01), skill.Item3.Max));
 
-		totalCostStack.add(0, new ItemStack(skill.Item1.Item, item1Amount));
-		costToLevelStack.add(0, new ItemStack(skill.Item1.Item, item1Amount - skill.getDeposit1()));
+		totalCostStack.add(0, new ItemStack(skill.Item1.Item.getType(), item1Amount, skill.Item1.Item.getDurability()));
+		costToLevelStack.add(0, new ItemStack(skill.Item1.Item.getType(), item1Amount - skill.getDeposit1(), skill.Item1.Item.getDurability()));
 
-		if (skill.Item2.Item != Material.AIR) {
-			totalCostStack.add(1, new ItemStack(skill.Item2.Item, item2Amount));
-			costToLevelStack.add(1, new ItemStack(skill.Item2.Item, item2Amount - skill.getDeposit2()));
+		if (skill.Item2.Item.getType() != Material.AIR) {
+			totalCostStack.add(1, new ItemStack(skill.Item2.Item.getType(), item2Amount, skill.Item2.Item.getDurability()));
+			costToLevelStack.add(1, new ItemStack(skill.Item2.Item.getType(), item2Amount - skill.getDeposit2(), skill.Item2.Item.getDurability()));
 		}
-		if (skill.Item3.Item != Material.AIR) {
-			totalCostStack.add(2, new ItemStack(skill.Item3.Item, item3Amount));
-			costToLevelStack.add(2, new ItemStack(skill.Item3.Item, item3Amount - skill.getDeposit3()));
+		if (skill.Item3.Item.getType() != Material.AIR) {
+			totalCostStack.add(2, new ItemStack(skill.Item3.Item.getType(), item3Amount, skill.Item3.Item.getDurability()));
+			costToLevelStack.add(2, new ItemStack(skill.Item3.Item.getType(), item3Amount - skill.getDeposit3(), skill.Item3.Item.getDurability()));
 		}
 		List<List<ItemStack>> costs = new ArrayList<List<ItemStack>>();
 		costs.add(0, costToLevelStack);

@@ -239,28 +239,29 @@ public final class DwarfTrainer {
 			for (ItemStack invStack : player.getInventory().getContents()) {
 				if (invStack == null)
 					continue;
+				if ((costStack.getTypeId() == 162 || costStack.getTypeId() == 17) || costStack.getDurability() == invStack.getDurability() || (Util.isTool(costStack.getTypeId()) && Util.isTool(invStack.getTypeId()) && invStack.getDurability() == invStack.getType().getMaxDurability())) {
+					if (invStack.getTypeId() == costStack.getTypeId() || (invStack.getTypeId() == 162 && costStack.getTypeId() == 17) || (invStack.getTypeId() == 17 && costStack.getTypeId() == 162)) {
+						deposited = true;
+						int inv = invStack.getAmount();
+						int cost = costStack.getAmount();
+						int delta;
+						if (cost - inv >= 0) {
+							costStack.setAmount(cost - inv);
+							player.getInventory().removeItem(invStack);
+							delta = inv;
+						} else {
+							costStack.setAmount(0);
+							invStack.setAmount(inv - cost);
+							delta = cost;
+						}
 
-				if (invStack.getTypeId() == costStack.getTypeId() || (invStack.getTypeId() == 162 && costStack.getTypeId() == 17) || (invStack.getTypeId() == 17 && costStack.getTypeId() == 162)) {
-					deposited = true;
-					int inv = invStack.getAmount();
-					int cost = costStack.getAmount();
-					int delta;
-					if (cost - inv >= 0) {
-						costStack.setAmount(cost - inv);
-						player.getInventory().removeItem(invStack);
-						delta = inv;
-					} else {
-						costStack.setAmount(0);
-						invStack.setAmount(inv - cost);
-						delta = cost;
-					}
-
-					if (costStack.getType().equals(skill.Item1.Item)) {
-						skill.setDeposit1(skill.getDeposit1() + delta);
-					} else if (costStack.getType().equals(skill.Item2.Item)) {
-						skill.setDeposit2(skill.getDeposit2() + delta);
-					} else {
-						skill.setDeposit3(skill.getDeposit3() + delta);
+						if (costStack.getType().equals(skill.Item1.Item)) {
+							skill.setDeposit1(skill.getDeposit1() + delta);
+						} else if (costStack.getType().equals(skill.Item2.Item)) {
+							skill.setDeposit2(skill.getDeposit2() + delta);
+						} else {
+							skill.setDeposit3(skill.getDeposit3() + delta);
+						}
 					}
 				}
 			}

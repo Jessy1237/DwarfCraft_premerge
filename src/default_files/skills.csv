@@ -22,7 +22,8 @@ ID,Name,Item1,Item1Base,Item1Max,Item2,Item2Base,Item2Max,Item3,Item3Base,Item3M
 31,Lumberjack,17,8,2304,0,0,0,0,0,0,17
 32,Woodsplitter,17,8,2304,0,0,0,0,0,0,5
 41,Wheat Farmer,296,1,1152,295,1,1152,0,0,0,295
-42,Plantation Farmer,338,1,1152,81,1,1152,0,0,0,338
+42,Exotic Farmer,338,1,1152,81,1,1152,351:03:00,1,1152,338
+43,Vegetable Farmer,392,1,1152,391,1,1152,0,0,0,392
 51,Mason,44,8,2304,0,0,0,0,0,0,44
 52,Glassworker,20,2,2304,0,0,0,0,0,0,20
 53,Woodcrafter,5,2,1152,280,2,1152,0,0,0,324
