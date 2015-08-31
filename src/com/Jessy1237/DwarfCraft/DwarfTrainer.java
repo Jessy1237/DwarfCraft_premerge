@@ -239,7 +239,7 @@ public final class DwarfTrainer {
 			for (ItemStack invStack : player.getInventory().getContents()) {
 				if (invStack == null)
 					continue;
-				if ((costStack.getTypeId() == 162 || costStack.getTypeId() == 17) || costStack.getDurability() == invStack.getDurability() || (Util.isTool(costStack.getTypeId()) && Util.isTool(invStack.getTypeId()) && invStack.getDurability() == invStack.getType().getMaxDurability())) {
+				if ((costStack.getTypeId() == 162 || costStack.getTypeId() == 17 || costStack.getTypeId() == 5) || costStack.getDurability() == invStack.getDurability() || (Util.isTool(costStack.getTypeId()) && Util.isTool(invStack.getTypeId()) && invStack.getDurability() == invStack.getType().getMaxDurability())) {
 					if (invStack.getTypeId() == costStack.getTypeId() || (invStack.getTypeId() == 162 && costStack.getTypeId() == 17) || (invStack.getTypeId() == 17 && costStack.getTypeId() == 162)) {
 						deposited = true;
 						int inv = invStack.getAmount();

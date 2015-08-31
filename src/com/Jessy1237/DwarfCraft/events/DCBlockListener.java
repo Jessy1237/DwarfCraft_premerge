@@ -5,6 +5,7 @@ package com.Jessy1237.DwarfCraft.events;
  */
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import org.bukkit.GameMode;
@@ -12,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
@@ -22,6 +24,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
@@ -56,8 +60,10 @@ public class DCBlockListener implements Listener {
 
 			// Code to prevent water from normally breaking crops // Added due
 			// to players being able to bypass DC skill restrictions
-			if (event.getToBlock().getType() == Material.CROPS || event.getToBlock().getType() == Material.POTATO || event.getToBlock().getType() == Material.CARROT || event.getToBlock().getType() == Material.SUGAR_CANE_BLOCK || event.getToBlock().getType() == Material.CACTUS) {
+			if (event.getToBlock().getType() == Material.CROPS || event.getToBlock().getType() == Material.POTATO || event.getToBlock().getType() == Material.CARROT || event.getToBlock().getType() == Material.SUGAR_CANE_BLOCK || event.getToBlock().getType() == Material.CACTUS
+					|| event.getToBlock().getType() == Material.COCOA || event.getToBlock().getType() == Material.NETHER_WARTS && (event.getBlock().getType() == Material.WATER || event.getBlock().getType() == Material.STATIONARY_WATER)) {
 				event.getToBlock().setType(Material.AIR, true);
+				event.setCancelled(true);
 			}
 		}
 	}
@@ -108,28 +114,29 @@ public class DCBlockListener implements Listener {
 					}
 
 					if (effect.getInitiatorId() == 127) {
-						if (meta != 2)
+						if (meta < 8)
 							return;
 					}
-					
+
 					if (effect.getInitiatorId() == 115) {
 						if (meta != 3)
 							return;
 					}
-					
+
 					if (effect.checkTool(tool)) {
 						ItemStack item = effect.getOutput(player, meta);
 						ItemStack item1 = null;
 
-						//Gives the 2% to drop poisonous potatoes when potatoes are broken
-						if(effect.getInitiatorId() == 142 && item.getTypeId() == 392) {
+						// Gives the 2% to drop poisonous potatoes when potatoes
+						// are broken
+						if (effect.getInitiatorId() == 142 && item.getTypeId() == 392) {
 							Random r = new Random();
 							final int i = r.nextInt(100);
-							if(i == 0 || i == 1) {
+							if (i == 0 || i == 1) {
 								loc.getWorld().dropItemNaturally(loc, new ItemStack(394, 1));
 							}
 						}
-						
+
 						if (item.getTypeId() != 351 && item.getTypeId() == blockID && item.getTypeId() != 295 && blockID != 141 && item.getTypeId() != 391 && blockID != 142 && item.getTypeId() != 392 && blockID != 115 && item.getTypeId() != 372 && blockID != 31 && blockID != 175 && blockID != 59
 								&& blockID != 105 && item.getTypeId() != 362 && blockID != 104 && item.getTypeId() != 361 && blockID != 127) {
 							item.setDurability(block.getData());
@@ -337,7 +344,7 @@ public class DCBlockListener implements Listener {
 				}
 			}
 
-			if (event.getBlock().getType() == Material.CROPS || event.getBlock().getType() == Material.POTATO || event.getBlock().getType() == Material.CARROT || event.getBlock().getType() == Material.COCOA) {
+			if (event.getBlock().getType() == Material.CROPS || event.getBlock().getType() == Material.POTATO || event.getBlock().getType() == Material.CARROT) {
 
 				World world = event.getBlock().getWorld();
 				Location loc = event.getBlock().getLocation();
@@ -366,6 +373,78 @@ public class DCBlockListener implements Listener {
 				event.setCancelled(true);
 			}
 		}
+	}
+
+	// Checks to see if pistons are breaking crop related blocks
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onBlockPistonExtend(BlockPistonExtendEvent event) {
+		if (plugin.getConfigManager().disableCacti) {
+
+			if (plugin.getConfigManager().worldBlacklist) {
+				for (World w : plugin.getConfigManager().worlds) {
+					if (w != null) {
+						if (event.getBlock().getWorld() == w) {
+							return;
+						}
+					}
+				}
+			}
+
+			Material[] mats = { Material.COCOA, Material.CACTUS, Material.CROPS, Material.POTATO, Material.CARROT, Material.NETHER_STALK, Material.MELON_BLOCK, Material.SUGAR_CANE_BLOCK };
+			if (removeCrops(event.getBlocks(), mats))
+				event.setCancelled(true);
+		}
+	}
+
+	// Checks to see if pistons are breaking crop related blocks
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onBlockPistonRetract(BlockPistonRetractEvent event) {
+		if (plugin.getConfigManager().disableCacti) {
+
+			if (plugin.getConfigManager().worldBlacklist) {
+				for (World w : plugin.getConfigManager().worlds) {
+					if (w != null) {
+						if (event.getBlock().getWorld() == w) {
+							return;
+						}
+					}
+				}
+			}
+			Material[] mats = { Material.COCOA, Material.CACTUS, Material.CROPS, Material.POTATO, Material.CARROT, Material.NETHER_WARTS, Material.MELON_BLOCK, Material.SUGAR_CANE_BLOCK };
+			if (removeCrops(event.getBlocks(), mats))
+				event.setCancelled(true);
+		}
+	}
+
+	private boolean removeCrops(List<Block> blocks, Material[] mats) {
+		boolean bool = false;
+		for (Material m : mats) {
+			if (m != null) {
+				for (Block b : blocks) {
+					if (b != null) {
+						if (b.getType() == m) {
+							b.setType(Material.AIR, true);
+							bool = true;
+						} else if (m == Material.COCOA) {
+							if (b.getRelative(BlockFace.SOUTH).getType() == m) {
+								b.getRelative(BlockFace.SOUTH).setType(Material.AIR);
+								bool = true;
+							} else if (b.getRelative(BlockFace.NORTH).getType() == m) {
+								b.getRelative(BlockFace.NORTH).setType(Material.AIR);
+								bool = true;
+							} else if (b.getRelative(BlockFace.WEST).getType() == m) {
+								b.getRelative(BlockFace.WEST).setType(Material.AIR);
+								bool = true;
+							} else if (b.getRelative(BlockFace.EAST).getType() == m) {
+								b.getRelative(BlockFace.EAST).setType(Material.AIR);
+								bool = true;
+							}
+						}
+					}
+				}
+			}
+		}
+		return bool;
 	}
 
 	private boolean checkCrops(World world, Location loc) {
