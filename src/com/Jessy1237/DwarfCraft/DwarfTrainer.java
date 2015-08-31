@@ -255,9 +255,9 @@ public final class DwarfTrainer {
 							delta = cost;
 						}
 
-						if (costStack.getType().equals(skill.Item1.Item)) {
+						if (costStack.getType().equals(skill.Item1.Item.getType())) {
 							skill.setDeposit1(skill.getDeposit1() + delta);
-						} else if (costStack.getType().equals(skill.Item2.Item)) {
+						} else if (costStack.getType().equals(skill.Item2.Item.getType())) {
 							skill.setDeposit2(skill.getDeposit2() + delta);
 						} else {
 							skill.setDeposit3(skill.getDeposit3() + delta);
