@@ -12,11 +12,11 @@ import org.bukkit.entity.Blaze;
 import org.bukkit.entity.CaveSpider;
 import org.bukkit.entity.Chicken;
 import org.bukkit.entity.Cow;
-import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Ghast;
 import org.bukkit.entity.Giant;
 import org.bukkit.entity.MagmaCube;
@@ -56,7 +56,7 @@ public class Effect {
 	private int[] mTools;
 	private boolean mFloorResult;
 
-	private CreatureType mCreature;
+	private EntityType mCreature;
 
 	public Effect(CSVRecord record) {
 		if (record == null)
@@ -76,7 +76,7 @@ public class Effect {
 		if (mType != EffectType.MOBDROP) {
 			mInitator = Util.parseItem(record.getString("OriginID"));
 		} else {
-			mCreature = CreatureType.fromName(record.getString("OriginID"));
+			mCreature = EntityType.fromName(record.getString("OriginID"));
 		}
 		mOutput = Util.parseItem(record.getString("OutputID"));
 		mRequireTool = record.getBool("RequireTool");
@@ -141,8 +141,8 @@ public class Effect {
 			description = String.format("&6Break a &2%s &6and %s%.2f &2%s&6 are created", initiator, effectLevelColor, effectAmount, output);
 			break;
 		case MOBDROP:
-			if (mID == 850 || mID == 851) {
-				description = String.format("&6Zombies drop about %s%.2f &2%s", effectLevelColor, effectAmount, output);
+			if (mCreature != null) {
+				description = String.format("&6%s drop about %s%.2f &2%s", mCreature.getName(), effectLevelColor, effectAmount, output);
 				break;
 			}
 			description = String.format("&6Enemies that drop &2%s &6leave about %s%.2f&6", output, effectLevelColor, effectAmount, output);
@@ -302,7 +302,7 @@ public class Effect {
 	}
 
 	public ItemStack getOutput(DCPlayer player) {
-		return getOutput(player, null);
+		return getOutput(player, (byte)0);
 	}
 
 	public ItemStack getOutput(DCPlayer player, Byte oldData) {
@@ -424,6 +424,10 @@ public class Effect {
 		default:
 			return false;
 		}
+	}
+	
+	public EntityType getCreature() {
+		return mCreature;
 	}
 
 	public boolean checkTool(ItemStack tool) {

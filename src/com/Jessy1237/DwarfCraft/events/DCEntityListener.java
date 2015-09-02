@@ -93,7 +93,7 @@ public class DCEntityListener implements Listener {
 				} else if (plugin.getDataManager().getRename().containsKey((Player) event.getClicker())) {
 					trainer.setDisplayName(plugin.getDataManager().getRename().get((Player) event.getClicker()));
 					plugin.getDataManager().getRename().remove((Player) event.getClicker());
-				} else if(plugin.getDataManager().getType().containsKey((Player) event.getClicker())) {
+				} else if (plugin.getDataManager().getType().containsKey((Player) event.getClicker())) {
 					trainer.setType(plugin.getDataManager().getType().get((Player) event.getClicker()));
 					plugin.getDataManager().getType().remove((Player) event.getClicker());
 				} else {
@@ -225,7 +225,7 @@ public class DCEntityListener implements Listener {
 					}
 					event.setDamage(damage);
 					if (DwarfCraft.debugMessagesThreshold < 6) {
-						System.out.println(String.format("DC6: PVE %s attacked %s for %.2f of %d doing %d dmg of %d hp" + " effect called: %d", attacker.getPlayer().getName(), victim.getClass().getSimpleName(), e.getEffectAmount(attacker), event.getDamage(), damage, hp, e.getId()));
+						System.out.println(String.format("DC6: PVE %s attacked %s for %.2f of %d doing %d dmg of %lf hp" + " effect called: %d", attacker.getPlayer().getName(), victim.getClass().getSimpleName(), e.getEffectAmount(attacker), event.getDamage(), damage, hp, e.getId()));
 					}
 				}
 
@@ -233,7 +233,7 @@ public class DCEntityListener implements Listener {
 					damage = Util.randomAmount((e.getEffectAmount(attacker)) * damage);
 					event.setDamage(damage);
 					if (DwarfCraft.debugMessagesThreshold < 6) {
-						System.out.println(String.format("DC6: PVP %s attacked %s for %.2f of %d doing %d dmg of %d hp" + " effect called: %d", attacker.getPlayer().getName(), ((Player) victim).getName(), e.getEffectAmount(attacker), event.getDamage(), damage, hp, e.getId()));
+						System.out.println(String.format("DC6: PVP %s attacked %s for %.2f of %d doing %d dmg of %lf hp" + " effect called: %d", attacker.getPlayer().getName(), ((Player) victim).getName(), e.getEffectAmount(attacker), event.getDamage(), damage, hp, e.getId()));
 					}
 				}
 			}
@@ -285,7 +285,7 @@ public class DCEntityListener implements Listener {
 		}
 
 		damage = Util.randomAmount((damage * mitigation) + (origDamage / 4));
-		event.setDamage((int) damage);
+		event.setDamage(damage);
 		if (damage >= hp && attacker instanceof Player && !killMap.containsKey(hitThing) && !(hitThing instanceof Player)) {
 			killMap.put(hitThing, attackDwarf);
 		}
@@ -336,12 +336,13 @@ public class DCEntityListener implements Listener {
 			if (DwarfCraft.debugMessagesThreshold < 1) {
 				System.out.println(String.format("DC1: environment damage type: %s base damage: %d new damage: %.2f\r\n", event.getCause(), event.getDamage(), damage));
 			}
-			event.setDamage((int) damage);
+			event.setDamage(damage);
 			if (damage == 0)
 				event.setCancelled(true);
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.LOW)
 	public void onEntityDeath(EntityDeathEvent event) {
 
@@ -368,7 +369,7 @@ public class DCEntityListener implements Listener {
 
 		items.clear();
 
-		if (killMap.containsKey(event.getEntity())) {
+		if (killMap.containsKey(deadThing)) {
 			DCPlayer killer = killMap.get(deadThing);
 			for (Skill skill : killer.getSkills().values()) {
 				for (Effect effect : skill.getEffects()) {
@@ -383,9 +384,38 @@ public class DCEntityListener implements Listener {
 								System.out.println(String.format("DC5: killed a %s effect called: %d created %d of %s\r\n", deadThing.getClass().getSimpleName(), effect.getId(), output.getAmount(), output.getType().name()));
 							}
 
-							changed = true;
 							if (output.getAmount() > 0)
 								items.add(output);
+							if (changed == false) {
+								for (ItemStack i : normal)
+									items.add(i);
+							}
+							changed = true;
+						} else if (effect.getCreature() == null) {
+							ItemStack output = effect.getOutput(killer);
+
+							if (deadThing instanceof CraftSheep)
+								output.setDurability((short) ((CraftSheep) deadThing).getColor().ordinal());
+
+							if (DwarfCraft.debugMessagesThreshold < 5) {
+								System.out.println(String.format("DC5: killed a %s effect called: %d created %d of %s\r\n", deadThing.getClass().getSimpleName(), effect.getId(), output.getAmount(), output.getType().name()));
+							}
+
+							for (ItemStack i : normal) {
+								if (i.getTypeId() == output.getTypeId()) {
+									if (output.getAmount() > 0) {
+										if (changed == false) {
+											items.add(output);
+										} else {
+											items.remove(i);
+											items.add(output);
+										}
+									}
+								} else if (changed == false) {
+									items.add(i);
+								}
+							}
+							changed = true;
 						}
 					}
 				}
@@ -398,7 +428,7 @@ public class DCEntityListener implements Listener {
 		}
 
 	}
-	
+
 	public void onNPCLeftClickEvent(NPCLeftClickEvent event) {
 		checkTrainerLeftClick(event);
 	}

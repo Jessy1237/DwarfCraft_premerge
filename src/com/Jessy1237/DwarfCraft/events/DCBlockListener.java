@@ -368,9 +368,6 @@ public class DCBlockListener implements Listener {
 					event.getBlock().setTypeId(0, true);
 					event.setCancelled(true);
 				}
-			} else if (event.getBlock().getType() == Material.MELON_BLOCK) {
-				event.getBlock().setTypeId(0, true);
-				event.setCancelled(true);
 			}
 		}
 	}
