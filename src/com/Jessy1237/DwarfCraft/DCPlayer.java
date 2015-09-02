@@ -195,9 +195,9 @@ public class DCPlayer {
 					return skill;
 				if (skill.toString().equalsIgnoreCase(skillName))
 					return skill;
-				if (skill.getDisplayName().toLowerCase().regionMatches(0, skillName.toLowerCase(), 0, 5))
+				if (skill.getDisplayName().toLowerCase().regionMatches(0, skillName.toLowerCase(), 0, 8))
 					return skill;
-				if (skill.toString().toLowerCase().regionMatches(0, skillName.toLowerCase(), 0, 5))
+				if (skill.toString().toLowerCase().regionMatches(0, skillName.toLowerCase(), 0, 8))
 					return skill;
 			}
 

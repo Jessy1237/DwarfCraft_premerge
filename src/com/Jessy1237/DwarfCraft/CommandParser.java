@@ -174,11 +174,11 @@ public final class CommandParser {
 				skillID = Integer.parseInt(inputString);
 				return plugin.getConfigManager().getAllSkills().get(skillID);
 			} catch (NumberFormatException nfe) {
-				if (inputString.length() < 5)
+				if (inputString.length() < 8)
 					throw new DCCommandException(plugin, Type.PARSESKILLFAIL);
 				for (int i : plugin.getConfigManager().getAllSkills(target.getRace())) {
 					Skill s = plugin.getConfigManager().getGenericSkill(i);
-					if (s.getDisplayName().regionMatches(0, inputString, 0, 5))
+					if (s.getDisplayName().regionMatches(0, inputString, 0, 8))
 						return s;
 				}
 			}
