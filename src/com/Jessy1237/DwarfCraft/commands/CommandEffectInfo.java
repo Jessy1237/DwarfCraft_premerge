@@ -13,10 +13,10 @@ import org.bukkit.command.CommandSender;
 import com.Jessy1237.DwarfCraft.CommandInformation;
 import com.Jessy1237.DwarfCraft.CommandParser;
 import com.Jessy1237.DwarfCraft.DCCommandException;
+import com.Jessy1237.DwarfCraft.DCCommandException.Type;
 import com.Jessy1237.DwarfCraft.DCPlayer;
 import com.Jessy1237.DwarfCraft.DwarfCraft;
 import com.Jessy1237.DwarfCraft.Effect;
-import com.Jessy1237.DwarfCraft.DCCommandException.Type;
 
 public class CommandEffectInfo extends Command {
 	private final DwarfCraft plugin;

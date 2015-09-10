@@ -4,9 +4,9 @@ package com.Jessy1237.DwarfCraft;
  * Original Authors: smartaleq, LexManos and RCarretta
  */
 
+import org.bukkit.Location;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.util.Vector;
-import org.bukkit.Location;
 
 public class DwarfVehicle {
 	private Vehicle vehicle;

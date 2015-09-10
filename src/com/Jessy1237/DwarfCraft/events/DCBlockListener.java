@@ -173,27 +173,74 @@ public class DCBlockListener implements Listener {
 						}
 
 						if (tool.containsEnchantment(Enchantment.SILK_TOUCH)) {
-							// Checks for Silktouch & and allows for Silktouch
-							// items to override default
+							// If enabled in the config, silk touch block
+							// replaces one of the items drop in the stack, if
+							// not acts as vanilla and no DC drops
 							if (plugin.getConfigManager().silkTouch) {
-								if (block.getType() == Material.STONE) {
+								switch (block.getType()) {
+								case STONE:
 									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.STONE, 1);
-								} else if (block.getType() == Material.DIAMOND_ORE) {
+									break;
+								case DIAMOND_ORE:
 									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.DIAMOND_ORE, 1);
-								} else if (block.getType() == Material.COAL_ORE) {
+									break;
+								case EMERALD_ORE:
+									item.setAmount(item.getAmount() - 1);
+									item1 = new ItemStack(Material.EMERALD_ORE, 1);
+									break;
+								case QUARTZ_ORE:
+									item.setAmount(item.getAmount() - 1);
+									item1 = new ItemStack(Material.QUARTZ_ORE, 1);
+									break;
+								case COAL_ORE:
 									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.COAL_ORE, 1);
-								} else if (block.getType() == Material.REDSTONE_ORE) {
+									break;
+								case REDSTONE_ORE:
 									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.REDSTONE_ORE, 1);
-								} else if (block.getType() == Material.GRASS) {
+									break;
+								case GRASS:
 									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.GRASS, 1);
-								} else if (block.getType() == Material.LAPIS_ORE) {
+									break;
+								case LAPIS_ORE:
 									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.LAPIS_ORE, 1);
+									break;
+								default:
+									break;
+								}
+							} else {
+								switch (block.getType()) {
+								case STONE:
+									item = new ItemStack(Material.STONE, 1);
+									break;
+								case DIAMOND_ORE:
+									item = new ItemStack(Material.DIAMOND_ORE, 1);
+									break;
+								case EMERALD_ORE:
+									item = new ItemStack(Material.EMERALD_ORE, 1);
+									break;
+								case QUARTZ_ORE:
+									item = new ItemStack(Material.QUARTZ_ORE, 1);
+									break;
+								case COAL_ORE:
+									item = new ItemStack(Material.COAL_ORE, 1);
+									break;
+								case REDSTONE_ORE:
+									item = new ItemStack(Material.REDSTONE_ORE, 1);
+									break;
+								case GRASS:
+									item = new ItemStack(Material.GRASS, 1);
+									break;
+								case LAPIS_ORE:
+									item = new ItemStack(Material.LAPIS_ORE, 1);
+									break;
+								default:
+									break;
 								}
 							}
 						}
@@ -201,7 +248,7 @@ public class DCBlockListener implements Listener {
 						// Checks for Fortune tools and adds it to the
 						// Dwarfcraft drops
 						Material type = block.getType();
-						if (type == Material.DIAMOND_ORE || type == Material.COAL_ORE || type == Material.REDSTONE_ORE || type == Material.GRASS || type == Material.STONE || type == Material.LAPIS_ORE) {
+						if (type == Material.DIAMOND_ORE || type == Material.COAL_ORE || type == Material.REDSTONE_ORE || type == Material.EMERALD_ORE || type == Material.QUARTZ_ORE || type == Material.GRASS || type == Material.STONE || type == Material.LAPIS_ORE) {
 							if (tool.containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
 								int lvl = tool.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
 								Random r = new Random();
@@ -326,7 +373,7 @@ public class DCBlockListener implements Listener {
 		}
 	}
 
-	// Code to check for farm automation i.e. (water, pistons, breaking the
+	// Code to check for farm automation i.e. (breaking the
 	// block below, cacti farms, etc)
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -357,14 +404,6 @@ public class DCBlockListener implements Listener {
 				World world = event.getBlock().getWorld();
 				Location loc = event.getBlock().getLocation();
 				if (!(checkCacti(world, loc))) {
-					event.getBlock().setTypeId(0, true);
-					event.setCancelled(true);
-				}
-			} else if (event.getBlock().getType() == Material.SUGAR_CANE_BLOCK) {
-
-				World world = event.getBlock().getWorld();
-				Location loc = event.getBlock().getLocation();
-				if (!(checkSugarCane(world, loc))) {
 					event.getBlock().setTypeId(0, true);
 					event.setCancelled(true);
 				}
@@ -452,16 +491,6 @@ public class DCBlockListener implements Listener {
 		Material base = world.getBlockAt(x, y - 1, z).getType();
 
 		return (base == Material.SOIL);
-	}
-
-	private boolean checkSugarCane(World world, Location loc) {
-		int x = loc.getBlockX();
-		int y = loc.getBlockY();
-		int z = loc.getBlockZ();
-
-		Material base = world.getBlockAt(x, y - 1, z).getType();
-
-		return (base == Material.SUGAR_CANE_BLOCK) || (base == Material.SAND) || (base == Material.DIRT) || (base == Material.GRASS);
 	}
 
 	private boolean checkCacti(World world, Location loc) {

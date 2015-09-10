@@ -28,7 +28,8 @@ public enum EffectType {
 	FISH,
 	RODDURABILITY,
 	SMELT,
-	BREW
+	BREW,
+	SHEAR
 	;
 	
 

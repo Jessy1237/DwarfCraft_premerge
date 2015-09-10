@@ -14,10 +14,10 @@ import org.bukkit.entity.Player;
 import com.Jessy1237.DwarfCraft.CommandInformation;
 import com.Jessy1237.DwarfCraft.CommandParser;
 import com.Jessy1237.DwarfCraft.DCCommandException;
+import com.Jessy1237.DwarfCraft.DCCommandException.Type;
 import com.Jessy1237.DwarfCraft.DCPlayer;
 import com.Jessy1237.DwarfCraft.DwarfCraft;
 import com.Jessy1237.DwarfCraft.Skill;
-import com.Jessy1237.DwarfCraft.DCCommandException.Type;
 
 public class CommandSetSkill extends Command {
 	private final DwarfCraft plugin;

@@ -59,7 +59,7 @@ public class DCInventoryListener implements Listener {
 			for (Effect effect : s.getEffects()) {
 				if (effect.getEffectType() == EffectType.SMELT && effect.checkInitiator(new ItemStack(item))) {
 					item = effect.getOutput().getType();
-					int newAmount = (int) (amount * effect.getEffectAmount(player));
+					int newAmount = Util.randomAmount(amount * effect.getEffectAmount(player));
 					int i = 0;
 					while (i != newAmount) {
 						ItemStack itemstack;
@@ -121,7 +121,16 @@ public class DCInventoryListener implements Listener {
 
 							float modifier = (float) output.getAmount() / (float) toCraft.getAmount();
 
-							plugin.getServer().getScheduler().runTaskLater(plugin, new ShiftCraftTask((Player) player, toCraft, held, modifier), 30);
+							ItemStack check = null;
+
+							if (toCraft.getTypeId() != output.getTypeId()) {
+								check = toCraft;
+								modifier = (float) (output.getAmount() + 1) / 1.0f;
+							}
+
+							player.setCanPickupItems(false);
+							
+							plugin.getServer().getScheduler().runTaskLater(plugin, new ShiftClickTask(dCPlayer, output, check, held, modifier, e), 5);
 
 						}
 					}
@@ -163,6 +172,46 @@ public class DCInventoryListener implements Listener {
 			return a.getAmount() + b.getAmount() <= a.getType().getMaxStackSize();
 	}
 
+	// HotFix for when Result is ShiftClicked out of FurnaceExtractEvent until
+	// spigot team fixes bug.
+	@SuppressWarnings("deprecation")
+	private void handleShiftClickFurnace(InventoryClickEvent event) {
+		if (event.isShiftClick()) {
+			Player player = (Player) event.getWhoClicked();
+			DCPlayer dCPlayer = plugin.getDataManager().find((Player) event.getWhoClicked());
+			HashMap<Integer, Skill> skills = dCPlayer.getSkills();
+			ItemStack extract = event.getCurrentItem();
+
+			for (Skill s : skills.values()) {
+				for (Effect effect : s.getEffects()) {
+					if (effect.getEffectType() == EffectType.SMELT && effect.checkInitiator(extract)) {
+
+						int held = 0;
+						for (ItemStack i : player.getInventory().all(extract.getType()).values()) {
+							held += i.getAmount();
+						}
+
+						ItemStack output = effect.getOutput(dCPlayer, (byte) extract.getData().getData());
+
+						// All Furnace recipes make 1 result item by default and
+						// also item.getAmount() will be 0 due to spigot event
+						// bug.
+						float modifier = (float) (output.getAmount() + 1) / 1.0f;
+						System.out.println("mod: " + modifier);
+
+						ItemStack check = null;
+						if (extract.getTypeId() != output.getTypeId())
+							check = extract;
+						
+						player.setCanPickupItems(false);
+						
+						plugin.getServer().getScheduler().runTaskLater(plugin, new ShiftClickTask(dCPlayer, output, check, held, modifier, effect), 5);
+					}
+				}
+			}
+		}
+	}
+
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBrewEvent(BrewEvent event) {
 		if (!stands.containsKey(event.getBlock())) {
@@ -193,6 +242,9 @@ public class DCInventoryListener implements Listener {
 				break;
 			case WORKBENCH:
 				handleCrafting(event);
+				break;
+			case FURNACE:
+				handleShiftClickFurnace(event);
 				break;
 			}
 		}
@@ -268,18 +320,26 @@ public class DCInventoryListener implements Listener {
 	}
 }
 
-class ShiftCraftTask implements Runnable {
+class ShiftClickTask implements Runnable {
 
-	Player p;
-	int init;
-	ItemStack item;
-	float modifier;
+	private DCPlayer p;
+	private int init;
+	private ItemStack item;
+	private ItemStack check;
+	private float modifier;
+	private Effect e;
 
-	public ShiftCraftTask(Player p, final ItemStack item, int init, float modifier) {
+	public ShiftClickTask(DCPlayer p, final ItemStack item, ItemStack check, int init, float modifier, Effect e) {
 		this.p = p;
 		this.item = item;
+		if (check == null) {
+			this.check = item;
+		} else {
+			this.check = check;
+		}
 		this.init = init;
 		this.modifier = modifier;
+		this.e = e;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -287,27 +347,48 @@ class ShiftCraftTask implements Runnable {
 	public void run() {
 		int held = 0;
 
-		Collection<ItemStack> items = (Collection<ItemStack>) p.getInventory().all(item.getType()).values();
+		Collection<ItemStack> items = (Collection<ItemStack>) p.getPlayer().getInventory().all(check.getType()).values();
 		// Check inventory count of the item
 		for (ItemStack i : items) {
 			held += i.getAmount();
 		}
 
+		// Checks if one of the effects has modified the amount of items in the
+		// players inventory. We want to apply the modifier effects on the
+		// Vanilla drops. We dont want them to stack with previous effect
+		// modifiers.
+
 		final int difference = held - init;
 		if (modifier > 1) {
+			final int amount = Util.randomAmount((modifier * difference - difference));
+
+			// Added the amount from this effect into the limbo ItemStack
+
+			System.out.println("amount: " + amount);
 			// Adds the leftover items to the player
-			for (int i = Math.round((modifier * difference - difference)); i > 0; i -= item.getMaxStackSize()) {
+			for (int i = amount; i > 0; i -= item.getMaxStackSize()) {
 				if (i > item.getMaxStackSize()) {
-					p.getWorld().dropItemNaturally(p.getLocation(), new ItemStack(item.getType(), item.getMaxStackSize(), item.getDurability()));
+					p.getPlayer().getWorld().dropItemNaturally(p.getPlayer().getLocation(), new ItemStack(item.getType(), item.getMaxStackSize(), item.getDurability()));
 				} else {
-					p.getWorld().dropItemNaturally(p.getLocation(), new ItemStack(item.getType(), i, item.getDurability()));
+					p.getPlayer().getWorld().dropItemNaturally(p.getPlayer().getLocation(), new ItemStack(item.getType(), i, item.getDurability()));
 				}
 			}
+			// Does nothing when the modifier is 0. Happens when extra items are
+			// dropped from furnace events as its not the usual drop.
+		} else if (modifier == 0) {
+
 			// Takes away items from the inventory when the shift click crafts
 			// more than it should do
 		} else if (modifier < 1) {
-			int amount = Math.round((difference - modifier * difference));
-			p.getInventory().removeItem(new ItemStack(item.getType(), amount, item.getDurability()));
+			int amount = Util.randomAmount((difference - modifier * difference));
+			p.getPlayer().getInventory().removeItem(new ItemStack(item.getType(), amount, item.getDurability()));
+		}
+		for (Skill s : p.getSkills().values()) {
+			if (s.getEffects().contains(e)) {
+				if (s.getEffects().indexOf(e) + 1 < s.getEffects().size()) {
+					p.getPlayer().setCanPickupItems(true);
+				}
+			}
 		}
 	}
 }

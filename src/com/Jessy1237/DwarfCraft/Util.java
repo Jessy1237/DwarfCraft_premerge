@@ -5,6 +5,7 @@ package com.Jessy1237.DwarfCraft;
  */
 
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 public class Util {
@@ -170,42 +171,7 @@ public class Util {
 				return "Leaves";
 			}
 		case WOOL:
-			switch (item.getData().getData()) {
-			case 0:
-				return "White Wool";
-			case 1:
-				return "Orange Wool";
-			case 2:
-				return "Magenta Wool";
-			case 3:
-				return "Light Blue Wool";
-			case 4:
-				return "Yellow Wool";
-			case 5:
-				return "Lime Wool";
-			case 6:
-				return "Pink Wool";
-			case 7:
-				return "Gray Wool";
-			case 8:
-				return "Light Gray Wool";
-			case 9:
-				return "Cyan Wool";
-			case 10:
-				return "Purple Wool";
-			case 11:
-				return "Blue Wool";
-			case 12:
-				return "Brown Wool";
-			case 13:
-				return "Green Wool";
-			case 14:
-				return "Red Wool";
-			case 15:
-				return "Black Wool";
-			default:
-				return "Wool";
-			}
+			return "Wool";
 		case DOUBLE_STEP:
 			switch (item.getData().getData()) {
 			case 15:
@@ -233,6 +199,8 @@ public class Util {
 			default:
 				return String.format("Slab");
 			}
+		case SUGAR_CANE_BLOCK:
+			return "Sugar Cane";
 		case CROPS:
 			switch (item.getData().getData()) {
 			case 7:
@@ -304,13 +272,119 @@ public class Util {
 			return item.getType().toString();
 		}
 	}
-	
+
 	// Checks the itemID to see if it is a tool. Excludes fishing rod and, flint
 	// and steel.
 	public static boolean isTool(int i) {
-		if ((i >= 256 && i <= 258) || (i >= 267 && i <= 279) || (i >= 283 && i <= 286) || (i >= 290 && i <= 294)) {
+		if ((i >= 256 && i <= 258) || (i >= 267 && i <= 279) || (i >= 283 && i <= 286) || (i >= 290 && i <= 294) || i == 359) {
 			return true;
 		}
 		return false;
+	}
+
+	@SuppressWarnings("deprecation")
+	public static String getCleanName(EntityType mCreature) {
+		if (mCreature == null)
+			return "NULL";
+
+		switch (mCreature) {
+		case MUSHROOM_COW:
+			return "Mooshroom";
+		case IRON_GOLEM:
+			return "Iron Golem";
+		case MAGMA_CUBE:
+			return "Magma Cube";
+		case ENDER_DRAGON:
+			return "Ender Dragon";
+		case WITHER_SKULL:
+			return "Wither Skull";
+		case PIG_ZOMBIE:
+			return "Pig Zombie";
+		case CAVE_SPIDER:
+			return "Cave Spider";
+		case WITHER:
+			return "Wither";
+		case OCELOT:
+			return "Ocelot";
+		default:
+			return mCreature.getName();
+		}
+	}
+
+	public enum FoodLevel {
+
+		APPLE(260, 4, 2.4f),
+		BAKED_POTATO(393, 5, 7.2f),
+		BREAD(297, 5, 6f),
+		CAKE(92, 2, 2f),
+		CARROT(391, 3, 4.8f),
+		COOKED_CHICKEN(366, 6, 7.2f),
+		COOKED_FISH(350, 5, 6f),
+		COOKED_MUTTON(424, 6, 9.6f),
+		COOKED_PORKCHOP(320, 8, 12.8f),
+		COOKED_RABBIT(412, 5, 6f),
+		COOKIE(357, 2, 0.4f),
+		GOLDEN_APPLE(322, 4, 9.6f),
+		GOLDEN_CARROT(396, 6, 14.4f),
+		MELON(360, 2, 1.2f),
+		MUSHROOM_STEW(282, 6, 7.2f), 
+		POISONOUS_POTATO(394, 2, 1.2f),
+		POTATO(392, 1, 0.6f),
+		PUMPKIN_PIE(400, 8, 4.8f),
+		RABBIT_STEW(413, 10, 12f),
+		RAW_BEEF(363, 3, 1.8f),
+		RAW_CHICKEN(365, 2, 1.2f),
+		RAW_FISH(349, 2, 0.4f),
+		RAW_MUTTON(423, 2, 1.2f),
+		RAW_PORKCHOP(319, 3, 1.8f),
+		RAW_RABBIT(411, 2, 1.8f),
+		ROTTEN_FLESH(367, 4, 0.8f),
+		SPIDER_EYE(375, 2, 3.2f),
+		STEAK(364, 8, 12.8f)
+		;
+
+		private int lvl;
+		private int id;
+		private float sat;
+
+		private FoodLevel(int id, int lvl, float sat) {
+			this.id = id;
+			this.lvl = lvl;
+			this.sat = sat;
+		}
+
+		public int getId() {
+			return id;
+		}
+
+		public int getLevel() {
+			return this.lvl;
+		}
+
+		public float getSat() {
+			return this.sat;
+		}
+
+		public static int getLvl(int id) {
+			for (FoodLevel f : FoodLevel.values()) {
+				if (f != null) {
+					if (f.getId() == id) {
+						return f.getLevel();
+					}
+				}
+			}
+			return 0;
+		}
+
+		public static float getSat(int id) {
+			for (FoodLevel f : FoodLevel.values()) {
+				if (f != null) {
+					if (f.getId() == id) {
+						return f.getSat();
+					}
+				}
+			}
+			return 0;
+		}
 	}
 }

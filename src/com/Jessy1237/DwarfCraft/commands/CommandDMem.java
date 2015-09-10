@@ -4,14 +4,15 @@ package com.Jessy1237.DwarfCraft.commands;
  * Original Authors: smartaleq, LexManos and RCarretta
  */
 
-import java.util.*;
+import java.util.HashMap;
 import java.util.Map.Entry;
 
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+
 import com.Jessy1237.DwarfCraft.DwarfCraft;
-import org.bukkit.*;
-import org.bukkit.entity.*;
 
 public class CommandDMem extends Command {
 	public CommandDMem(final DwarfCraft plugin) {

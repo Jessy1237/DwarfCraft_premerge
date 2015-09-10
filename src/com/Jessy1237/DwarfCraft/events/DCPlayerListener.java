@@ -10,19 +10,24 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Cow;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerFishEvent.State;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.Jessy1237.DwarfCraft.DCPlayer;
@@ -121,7 +126,7 @@ public class DCPlayerListener implements Listener {
 						int foodLevel = Util.randomAmount((e.getEffectAmount(dcPlayer)));
 
 						if (block.getTypeId() == 92) {
-							if(((origFoodLevel - 2) + foodLevel) > 20){
+							if (((origFoodLevel - 2) + foodLevel) > 20) {
 								event.getPlayer().setFoodLevel(20);
 								event.getPlayer().setSaturation(event.getPlayer().getSaturation() + 0.4f);
 							} else {
@@ -138,36 +143,6 @@ public class DCPlayerListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
-		Player player = event.getPlayer();
-		ItemStack item = event.getItem();
-		int id = item.getTypeId();
-		DCPlayer dcPlayer = plugin.getDataManager().find(player);
-		HashMap<Integer, Skill> skills = dcPlayer.getSkills();
-		int lvl = FoodLevel.getLvl(id);
-		
-		if(lvl == 0) {
-			return;
-		}
-		
-		for (Skill s : skills.values()) {
-			for (Effect e : s.getEffects()) {
-				if (e.getEffectType() == EffectType.EAT && e.checkInitiator(item)) {
-					int foodLevel = Util.randomAmount((e.getEffectAmount(dcPlayer)));
-					player.setFoodLevel((player.getFoodLevel() - lvl) + foodLevel);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Called when a player opens an inventory
-	 * 
-	 * @param event
-	 *            Relevant event details
-	 */
-
-	@EventHandler(priority = EventPriority.NORMAL)
-	public void onInventoryOpen(InventoryOpenEvent event) {
 
 		if (plugin.getConfigManager().worldBlacklist) {
 			for (World w : plugin.getConfigManager().worlds) {
@@ -178,7 +153,94 @@ public class DCPlayerListener implements Listener {
 				}
 			}
 		}
+
+		Player player = event.getPlayer();
+		ItemStack item = event.getItem();
+		int id = item.getTypeId();
+		DCPlayer dcPlayer = plugin.getDataManager().find(player);
+		HashMap<Integer, Skill> skills = dcPlayer.getSkills();
+		int lvl = Util.FoodLevel.getLvl(id);
+
+		if (lvl == 0) {
+			return;
+		}
+
+		for (Skill s : skills.values()) {
+			for (Effect e : s.getEffects()) {
+				if (e.getEffectType() == EffectType.EAT && e.checkInitiator(item)) {
+					int foodLevel = Util.randomAmount((e.getEffectAmount(dcPlayer)));
+					player.setFoodLevel((player.getFoodLevel() - lvl) + foodLevel);
+				}
+			}
+		}
 	}
+
+	@SuppressWarnings("deprecation")
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onPlayerShearEntityEvent(PlayerShearEntityEvent event) {
+
+		if (plugin.getConfigManager().worldBlacklist) {
+			for (World w : plugin.getConfigManager().worlds) {
+				if (w != null) {
+					if (event.getPlayer().getWorld() == w) {
+						return;
+					}
+				}
+			}
+		}
+
+		Player player = event.getPlayer();
+		Entity entity = event.getEntity();
+		DCPlayer dcPlayer = plugin.getDataManager().find(player);
+		HashMap<Integer, Skill> skills = dcPlayer.getSkills();
+		boolean changed = false;
+
+		for (Skill s : skills.values()) {
+			for (Effect e : s.getEffects()) {
+				if (e.getEffectType() == EffectType.SHEAR) {
+					if (entity.getType() == EntityType.SHEEP) {
+						Sheep sheep = (Sheep) entity;
+						if (!sheep.isSheared()) {
+							if (sheep.isAdult()) {
+								ItemStack item = e.getOutput(dcPlayer, sheep.getColor().getWoolData());
+								entity.getWorld().dropItemNaturally(entity.getLocation(), item);
+								sheep.setSheared(true);
+								changed = true;
+							}
+						}
+					} else if (entity.getType() == EntityType.MUSHROOM_COW) {
+						MushroomCow mooshroom = (MushroomCow) entity;
+						if (mooshroom.isAdult()) {
+
+							Entity newE = entity.getWorld().spawnEntity(entity.getLocation(), EntityType.COW);
+							Cow cow = (Cow) newE;
+							cow.setAge(mooshroom.getAge());
+							cow.setAgeLock(mooshroom.getAgeLock());
+							if (mooshroom.getCustomName() != null) {
+								cow.setCustomName(mooshroom.getCustomName());
+							}
+
+							ItemStack item = e.getOutput(dcPlayer);
+							entity.getWorld().dropItemNaturally(entity.getLocation(), item);
+
+							entity.remove();
+							changed = true;
+						}
+					}
+				}
+			}
+		}
+
+		if (changed)
+			event.setCancelled(true);
+	}
+
+	/**
+	 * Called when a player opens an inventory
+	 * 
+	 * @param event
+	 *            Relevant event details
+	 */
 
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -225,59 +287,5 @@ public class DCPlayerListener implements Listener {
 			}
 		}
 
-	}
-	
-	public enum FoodLevel {
-
-		APPLE(260,4),
-		BAKED_POTATO(393,6),
-		BREAD(297,5),
-		CAKE(92,2),
-		CARROT(391,4),
-		COOKED_CHICKEN(366,6),
-		COOKED_FISH(350,5),
-		COOKED_PORKCHOP(320,8),
-		COOKIE(357,2),
-		GOLDEN_APPLE(322,4),
-		GOLDEN_CARROT(396,6),
-		MELON(360,2),
-		MUSHROOM_STEW(282,6),
-		POISONOUS_POTATO(394,2),
-		POTATO(392,1),
-		PUMPKIN_PIE(400,8),
-		RAW_BEEF(363,3),
-		RAW_CHICKEN(365,2),
-		RAW_FISH(349,2),
-		RAW_PORKCHOP(319,3),
-		ROTTEN_FLESH(367,4),
-		SPIDER_EYE(375,2),
-		STEAK(364,8);
-		
-		private int lvl;
-		private int id;
-
-		private FoodLevel(int id, int lvl) {
-			this.lvl = lvl;
-		}
-
-		public int getId() {
-			return id;
-		}
-		
-		public int getLevel() {
-			return this.lvl;
-		}
-		
-		public static int getLvl(int id) {
-			for(FoodLevel f : FoodLevel.values()) {
-				if(f != null) {
-					if(f.getId() == id) {
-						return f.getLevel();
-					}
-				}
-			}
-			return 0;
-		}
-		
 	}
 }

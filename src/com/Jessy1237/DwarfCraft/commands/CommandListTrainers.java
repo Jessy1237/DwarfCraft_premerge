@@ -9,6 +9,7 @@ import java.util.Collection;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+
 import com.Jessy1237.DwarfCraft.DwarfCraft;
 import com.Jessy1237.DwarfCraft.DwarfTrainer;
 import com.Jessy1237.DwarfCraft.Skill;

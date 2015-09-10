@@ -194,7 +194,7 @@ public class DCEntityListener implements Listener {
 			assert (attacker != null);
 		} else {// EvP no effects, EvE no effects
 			if (DwarfCraft.debugMessagesThreshold < 4)
-				System.out.println(String.format("DC4: EVP %s attacked %s for %d of %d\r\n", damager.getClass().getSimpleName(), victim.getClass().getSimpleName(), damage, hp));
+				System.out.println(String.format("DC4: EVP %s attacked %s for %lf of %d\r\n", damager.getClass().getSimpleName(), victim.getClass().getSimpleName(), damage, hp));
 			if (!(event.getEntity() instanceof Player)) {
 				event.setDamage(Origdamage);
 			}
@@ -225,7 +225,7 @@ public class DCEntityListener implements Listener {
 					}
 					event.setDamage(damage);
 					if (DwarfCraft.debugMessagesThreshold < 6) {
-						System.out.println(String.format("DC6: PVE %s attacked %s for %.2f of %d doing %d dmg of %lf hp" + " effect called: %d", attacker.getPlayer().getName(), victim.getClass().getSimpleName(), e.getEffectAmount(attacker), event.getDamage(), damage, hp, e.getId()));
+						System.out.println(String.format("DC6: PVE %s attacked %s for %.2f of %d doing %lf dmg of %lf hp" + " effect called: %d", attacker.getPlayer().getName(), victim.getClass().getSimpleName(), e.getEffectAmount(attacker), event.getDamage(), damage, hp, e.getId()));
 					}
 				}
 
@@ -233,7 +233,7 @@ public class DCEntityListener implements Listener {
 					damage = Util.randomAmount((e.getEffectAmount(attacker)) * damage);
 					event.setDamage(damage);
 					if (DwarfCraft.debugMessagesThreshold < 6) {
-						System.out.println(String.format("DC6: PVP %s attacked %s for %.2f of %d doing %d dmg of %lf hp" + " effect called: %d", attacker.getPlayer().getName(), ((Player) victim).getName(), e.getEffectAmount(attacker), event.getDamage(), damage, hp, e.getId()));
+						System.out.println(String.format("DC6: PVP %s attacked %s for %.2f of %d doing %lf dmg of %lf hp" + " effect called: %d", attacker.getPlayer().getName(), ((Player) victim).getName(), e.getEffectAmount(attacker), event.getDamage(), damage, hp, e.getId()));
 					}
 				}
 			}
@@ -334,7 +334,7 @@ public class DCEntityListener implements Listener {
 				}
 			}
 			if (DwarfCraft.debugMessagesThreshold < 1) {
-				System.out.println(String.format("DC1: environment damage type: %s base damage: %d new damage: %.2f\r\n", event.getCause(), event.getDamage(), damage));
+				System.out.println(String.format("DC1: environment damage type: %s base damage: %lf new damage: %.2lf\r\n", event.getCause(), event.getDamage(), damage));
 			}
 			event.setDamage(damage);
 			if (damage == 0)

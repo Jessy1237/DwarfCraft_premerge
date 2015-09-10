@@ -50,7 +50,7 @@ public class Effect {
 	private double mExceptionValue;
 	private int mNormalLevel;
 	private EffectType mType;
-	private ItemStack mInitator;
+	private ItemStack mInitiator;
 	private ItemStack mOutput;
 	private boolean mRequireTool;
 	private int[] mTools;
@@ -73,8 +73,8 @@ public class Effect {
 		mExceptionValue = record.getDouble("ExceptionValue");
 		mNormalLevel = record.getInt("NormalLevel");
 		mType = EffectType.getEffectType(record.getString("Type"));
-		if (mType != EffectType.MOBDROP) {
-			mInitator = Util.parseItem(record.getString("OriginID"));
+		if (mType != EffectType.MOBDROP && mType != EffectType.SHEAR) {
+			mInitiator = Util.parseItem(record.getString("OriginID"));
 		} else {
 			mCreature = EntityType.fromName(record.getString("OriginID"));
 		}
@@ -99,7 +99,7 @@ public class Effect {
 	 */
 	protected String describeGeneral() {
 		String description;
-		String initiator = Util.getCleanName(mInitator);
+		String initiator = Util.getCleanName(mInitiator);
 		if (initiator.equalsIgnoreCase("AIR"))
 			initiator = "None";
 		String output = Util.getCleanName(mOutput);
@@ -127,7 +127,7 @@ public class Effect {
 
 		String description = "no skill description";
 		// Variables used in skill descriptions
-		String initiator = Util.getCleanName(mInitator);
+		String initiator = Util.getCleanName(mInitiator);
 		String output = Util.getCleanName(mOutput);
 
 		double effectAmount = getEffectAmount(dCPlayer);
@@ -142,7 +142,7 @@ public class Effect {
 			break;
 		case MOBDROP:
 			if (mCreature != null) {
-				description = String.format("&6%s drop about %s%.2f &2%s", mCreature.getName(), effectLevelColor, effectAmount, output);
+				description = String.format("&6%s drop about %s%.2f &2%s", Util.getCleanName(mCreature), effectLevelColor, effectAmount, output);
 				break;
 			}
 			description = String.format("&6Enemies that drop &2%s &6leave about %s%.2f&6", output, effectLevelColor, effectAmount, output);
@@ -193,7 +193,10 @@ public class Effect {
 			description = String.format("&6Using a &2%s &6removes about %s%.2f &6durability", toolType, effectLevelColor, effectAmount);
 			break;
 		case EAT:
-			description = String.format("&6You gain %s%.2f &6Hunger (not &e%.2f&6) when you eat &2%s", effectLevelColor, effectAmount / 2, elfAmount / 2, initiator);
+			System.out.println("" + ((double)Util.FoodLevel.getLvl(mInitiator.getTypeId())));
+			System.out.println("" + (Util.FoodLevel.getLvl(mInitiator.getTypeId())));
+			System.out.println("" + mInitiator.getTypeId());
+			description = String.format("&6You gain %s%.2f &6Hunger instead of &e%.2f&6 when you eat &2%s", effectLevelColor, effectAmount / 2.0, ((double)Util.FoodLevel.getLvl(mInitiator.getTypeId())) / 2.0, initiator);
 			break;
 		case CRAFT:
 			description = String.format("&6You craft %s%.0f &2%s &6instead of &e%.0f", effectLevelColor, effectAmount, output, elfAmount);
@@ -205,7 +208,7 @@ public class Effect {
 			description = String.format("&6You catch %s%.2f &6fish instead of &e%.2f &6when you fish", effectLevelColor, effectAmount, elfAmount);
 			break;
 		case BREW:
-			description = String.format("&6You brew %s%.2f &6potion(s) instead of &e%.2f &6when you're brewing potions", effectLevelColor, effectAmount, (float)mNormalLevel);
+			description = String.format("&6You brew %s%.2f &6potion(s) instead of &e%.2f &6when you're brewing potions", effectLevelColor, effectAmount, elfAmount);
 			break;
 		case DIGTIME:
 			description = String.format("&a%.0f%%&6 of the time &2%s &6break &2%s &6instantly ", effectAmount * 100, toolType, initiator);
@@ -220,12 +223,15 @@ public class Effect {
 			description = String.format("&6Your boat travels %s%d%% &6faster than normal", effectLevelColor, (int) (effectAmount * 100 - 100));
 			break;
 		case SMELT:
-			if (mInitator.getTypeId() == 265) {
+			if (mInitiator.getTypeId() == 265) {
 				initiator = Util.getCleanName(new ItemStack(Material.IRON_ORE));
-			} else if (mInitator.getTypeId() == 266) {
+			} else if (mInitiator.getTypeId() == 266) {
 				initiator = Util.getCleanName(new ItemStack(Material.GOLD_ORE));
 			}
 			description = String.format("&6Smelt a &2%s &6and %s%.2f &2%s&6 are created as well", initiator, effectLevelColor, effectAmount, output);
+			break;
+		case SHEAR:
+			description = String.format("&6Shear a %s and %s%.2f &6%s are drop instead of &e%.2f", Util.getCleanName(mCreature), effectLevelColor, effectAmount, output, elfAmount);
 			break;
 		case SPECIAL:
 		default:
@@ -290,7 +296,7 @@ public class Effect {
 	}
 
 	public int getInitiatorId() {
-		return mInitator.getTypeId();
+		return mInitiator.getTypeId();
 	}
 
 	public int getOutputId() {
@@ -332,13 +338,13 @@ public class Effect {
 	}
 
 	public boolean checkInitiator(int id, byte data) {
-		if (mInitator.getTypeId() != id)
+		if (mInitiator.getTypeId() != id)
 			return false;
 
-		if (mInitator.getData() != null) {
-			if (mInitator.getData().getData() == 0) // -1 means we dont care.
+		if (mInitiator.getData() != null) {
+			if (mInitiator.getData().getData() == 0) // -1 means we dont care.
 				return true;
-			return mInitator.getData().getData() == data;
+			return mInitiator.getData().getData() == data;
 		}
 		return true;
 	}
