@@ -197,7 +197,6 @@ public class DCInventoryListener implements Listener {
 						// also item.getAmount() will be 0 due to spigot event
 						// bug.
 						float modifier = (float) (output.getAmount() + 1) / 1.0f;
-						System.out.println("mod: " + modifier);
 
 						ItemStack check = null;
 						if (extract.getTypeId() != output.getTypeId())
@@ -364,7 +363,6 @@ class ShiftClickTask implements Runnable {
 
 			// Added the amount from this effect into the limbo ItemStack
 
-			System.out.println("amount: " + amount);
 			// Adds the leftover items to the player
 			for (int i = amount; i > 0; i -= item.getMaxStackSize()) {
 				if (i > item.getMaxStackSize()) {
