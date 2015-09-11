@@ -198,7 +198,7 @@ public class DCPlayerListener implements Listener {
 		for (Skill s : skills.values()) {
 			for (Effect e : s.getEffects()) {
 				if (e.getEffectType() == EffectType.SHEAR) {
-					if (entity.getType() == EntityType.SHEEP) {
+					if (entity.getType() == EntityType.SHEEP && e.getCreature() == EntityType.SHEEP) {
 						Sheep sheep = (Sheep) entity;
 						if (!sheep.isSheared()) {
 							if (sheep.isAdult()) {
@@ -208,23 +208,27 @@ public class DCPlayerListener implements Listener {
 								changed = true;
 							}
 						}
-					} else if (entity.getType() == EntityType.MUSHROOM_COW) {
+					} else if (entity.getType() == EntityType.MUSHROOM_COW && e.getCreature() == EntityType.MUSHROOM_COW) {
 						MushroomCow mooshroom = (MushroomCow) entity;
 						if (mooshroom.isAdult()) {
-
+							
 							Entity newE = entity.getWorld().spawnEntity(entity.getLocation(), EntityType.COW);
 							Cow cow = (Cow) newE;
 							cow.setAge(mooshroom.getAge());
+							cow.setAdult();
+							cow.setBreed(mooshroom.canBreed());
 							cow.setAgeLock(mooshroom.getAgeLock());
-							if (mooshroom.getCustomName() != null) {
-								cow.setCustomName(mooshroom.getCustomName());
-							}
-
+							cow.setHealth(mooshroom.getHealth());
+							cow.setCustomName(mooshroom.getCustomName());
+							cow.setCustomNameVisible(mooshroom.isCustomNameVisible());
+							cow.setTicksLived(mooshroom.getTicksLived());
+							cow.setTarget(mooshroom.getTarget());
+							
 							ItemStack item = e.getOutput(dcPlayer);
 							entity.getWorld().dropItemNaturally(entity.getLocation(), item);
-
-							entity.remove();
 							changed = true;
+							
+							entity.remove();
 						}
 					}
 				}
