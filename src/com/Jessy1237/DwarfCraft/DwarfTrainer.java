@@ -230,39 +230,52 @@ public final class DwarfTrainer {
 				plugin.getOut().sendMessage(player, String.format("&aNo more &2%s &ais needed", Util.getCleanName(costStack)), tag);
 				continue;
 			}
-			if (!player.getInventory().contains(costStack.getTypeId()) && !(costStack.getTypeId() == 17 && player.getInventory().contains(162)) && !(costStack.getTypeId() == 162 && player.getInventory().contains(17))) {
-				hasMats = false;
-				plugin.getOut().sendMessage(player, String.format("&cAn additional &2%d %s &cis required", costStack.getAmount(), Util.getCleanName(costStack)), tag);
-				continue;
+			if (!player.getInventory().contains(costStack.getTypeId())) {
+				if (Util.checkEquivalentBuildBlocks(costStack.getTypeId(), -1) != null) {
+					int i[] = Util.checkEquivalentBuildBlocks(costStack.getTypeId(), -1);
+					boolean contains = false;
+					for(int id : i) {
+						if(player.getInventory().contains(id)) {
+							contains = true;
+						}
+					}
+					if(!contains) {
+						hasMats = false;
+						plugin.getOut().sendMessage(player, String.format("&cAn additional &2%d %s &cis required", costStack.getAmount(), Util.getCleanName(costStack)), tag);
+						continue;
+					}
+				} else {
+					hasMats = false;
+					plugin.getOut().sendMessage(player, String.format("&cAn additional &2%d %s &cis required", costStack.getAmount(), Util.getCleanName(costStack)), tag);
+					continue;
+				}
 			}
 
 			for (ItemStack invStack : player.getInventory().getContents()) {
 				if (invStack == null)
 					continue;
-				if ((costStack.getTypeId() == 162 || costStack.getTypeId() == 17 || costStack.getTypeId() == 5 || costStack.getTypeId() == 35) || costStack.getDurability() == invStack.getDurability()
-						|| (Util.isTool(costStack.getTypeId()) && Util.isTool(invStack.getTypeId()) && invStack.getDurability() == invStack.getType().getMaxDurability())) {
-					if (invStack.getTypeId() == costStack.getTypeId() || (invStack.getTypeId() == 162 && costStack.getTypeId() == 17) || (invStack.getTypeId() == 17 && costStack.getTypeId() == 162)) {
-						deposited = true;
-						int inv = invStack.getAmount();
-						int cost = costStack.getAmount();
-						int delta;
-						if (cost - inv >= 0) {
-							costStack.setAmount(cost - inv);
-							player.getInventory().removeItem(invStack);
-							delta = inv;
-						} else {
-							costStack.setAmount(0);
-							invStack.setAmount(inv - cost);
-							delta = cost;
-						}
+				if ((invStack.getTypeId() == costStack.getTypeId() && (invStack.getDurability() == costStack.getDurability() || (Util.isTool(invStack.getTypeId()) && invStack.getDurability() == invStack.getType().getMaxDurability())))
+						|| Util.checkEquivalentBuildBlocks(invStack.getTypeId(), costStack.getTypeId()) != null) {
+					deposited = true;
+					int inv = invStack.getAmount();
+					int cost = costStack.getAmount();
+					int delta;
+					if (cost - inv >= 0) {
+						costStack.setAmount(cost - inv);
+						player.getInventory().removeItem(invStack);
+						delta = inv;
+					} else {
+						costStack.setAmount(0);
+						invStack.setAmount(inv - cost);
+						delta = cost;
+					}
 
-						if (costStack.getType().equals(skill.Item1.Item.getType())) {
-							skill.setDeposit1(skill.getDeposit1() + delta);
-						} else if (costStack.getType().equals(skill.Item2.Item.getType())) {
-							skill.setDeposit2(skill.getDeposit2() + delta);
-						} else {
-							skill.setDeposit3(skill.getDeposit3() + delta);
-						}
+					if (costStack.getType().equals(skill.Item1.Item.getType())) {
+						skill.setDeposit1(skill.getDeposit1() + delta);
+					} else if (costStack.getType().equals(skill.Item2.Item.getType())) {
+						skill.setDeposit2(skill.getDeposit2() + delta);
+					} else {
+						skill.setDeposit3(skill.getDeposit3() + delta);
 					}
 				}
 			}

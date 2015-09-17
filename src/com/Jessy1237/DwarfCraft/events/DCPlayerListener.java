@@ -198,17 +198,17 @@ public class DCPlayerListener implements Listener {
 		for (Skill s : skills.values()) {
 			for (Effect e : s.getEffects()) {
 				if (e.getEffectType() == EffectType.SHEAR) {
-					if (entity.getType() == EntityType.SHEEP && e.getCreature() == EntityType.SHEEP) {
+					if (entity.getType() == EntityType.SHEEP && e.checkMob(entity)) {
 						Sheep sheep = (Sheep) entity;
 						if (!sheep.isSheared()) {
 							if (sheep.isAdult()) {
-								ItemStack item = e.getOutput(dcPlayer, sheep.getColor().getWoolData());
+								ItemStack item = e.getOutput(dcPlayer, sheep.getColor().getWoolData(), -1);
 								entity.getWorld().dropItemNaturally(entity.getLocation(), item);
 								sheep.setSheared(true);
 								changed = true;
 							}
 						}
-					} else if (entity.getType() == EntityType.MUSHROOM_COW && e.getCreature() == EntityType.MUSHROOM_COW) {
+					} else if (entity.getType() == EntityType.MUSHROOM_COW && e.checkMob(entity)) {
 						MushroomCow mooshroom = (MushroomCow) entity;
 						if (mooshroom.isAdult()) {
 							

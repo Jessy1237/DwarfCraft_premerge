@@ -78,6 +78,7 @@ public class DwarfCraft extends JavaPlugin {
 	private DataManager dm;
 	private Out out;
 	private Consumer consumer = null;
+	private Util util;
 
 	public static int debugMessagesThreshold = 10;
 
@@ -99,6 +100,10 @@ public class DwarfCraft extends JavaPlugin {
 
 	public Consumer getConsumer() {
 		return consumer;
+	}
+	
+	public Util getUtil() {
+		return util;
 	}
 
 	public DCEntityListener getDCEntityListener() {
@@ -293,6 +298,7 @@ public class DwarfCraft extends JavaPlugin {
 		cm = new ConfigManager(this, getDataFolder().getAbsolutePath(), "DwarfCraft.config");
 		dm = new DataManager(this, cm);
 		out = new Out(this);
+		util = new Util(this);
 
 		// readGreeterMessagesfile() depends on datamanager existing, so this
 		// has to go here

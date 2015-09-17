@@ -52,6 +52,7 @@ public final class ConfigManager {
 	public boolean worldBlacklist = false;
 	public boolean silkTouch = true;
 	public boolean vanilla = true;
+	public boolean buildingblocks = true;
 
 	protected ConfigManager(DwarfCraft plugin, String directory, String paramsFileName) {
 		this.plugin = plugin;
@@ -229,6 +230,8 @@ public final class ConfigManager {
 					trainDelay = Integer.parseInt(theline[1].trim());
 				if (theline[0].equalsIgnoreCase("Silk Touch"))
 					silkTouch = Boolean.parseBoolean(theline[1].trim());
+				if (theline[0].equalsIgnoreCase("Group Equivalent Building Blocks"))
+					buildingblocks = Boolean.parseBoolean(theline[1].trim());
 				if (theline[0].equalsIgnoreCase("Default Race"))
 					defaultRace = theline[1].trim();
 				if (theline[0].equalsIgnoreCase("Vanilla Race Enabled"))

@@ -10,6 +10,13 @@ import org.bukkit.inventory.ItemStack;
 
 public class Util {
 
+	private static DwarfCraft plugin;
+	
+	@SuppressWarnings("static-access")
+	public Util(DwarfCraft plugin) {
+		this.plugin = plugin;
+	}
+	
 	// Stolen from nossr50
 	private static int charLength(char x) {
 		if ("i.:,;|!".indexOf(x) != -1)
@@ -275,11 +282,137 @@ public class Util {
 
 	// Checks the itemID to see if it is a tool. Excludes fishing rod and, flint
 	// and steel.
-	public static boolean isTool(int i) {
-		if ((i >= 256 && i <= 258) || (i >= 267 && i <= 279) || (i >= 283 && i <= 286) || (i >= 290 && i <= 294) || i == 359) {
+	public static boolean isTool(int ID) {
+		if ((ID >= 256 && ID <= 258) || (ID >= 267 && ID <= 279) || (ID >= 283 && ID <= 286) || (ID >= 290 && ID <= 294) || ID == 359) {
 			return true;
 		}
 		return false;
+	}
+	
+	public static int[] checkEquivalentBuildBlocks(int ID, int compareID) {	
+		if(!plugin.getConfigManager().buildingblocks)
+			return null;
+		
+
+		if(ID == 5) {
+			if(compareID == 5 || compareID == -1) {
+				int i[] = {5};
+				return i;
+			}
+		} else if(ID == 6) {
+			if(compareID == 6 || compareID == -1) {
+				int i[] = {6};
+				return i;
+			}
+		} else if (ID == 43) {
+			if(compareID == 43 || compareID == -1) {
+				int i[] = {43};
+				return i;
+			}
+		} else if (ID == 44) {
+			if(compareID == 44 || compareID == -1) {
+				int i[] = {44};
+				return i;
+			}
+		} else if (ID == 125) {
+			if(compareID == 125 || compareID == -1) {
+				int i[] = {125};
+				return i;
+			}
+		} else if (ID == 126) {
+			if(compareID == 126 || compareID == -1) {
+				int i[] = {126};
+				return i;
+			}
+		} else if (ID == 95) {
+			if(compareID == 95 || compareID == -1) {
+				int i[] = {95};
+				return i;
+			}
+		} else if (ID == 160) {
+			if(compareID == 160 || compareID == -1) {
+				int i[] = {160};
+				return i;
+			}
+		} else if (ID == 17 || ID == 162) {
+			if(compareID == 17 || compareID == 162 || compareID == -1) {
+				int i[] = {17, 162};
+				return i;
+			}
+		} else if (ID == 18 || ID == 161) {
+			if(compareID == 18 || compareID == 161 || compareID == -1) {
+				int i[] = {18, 161};
+				return i;
+			}
+		} else if (ID == 134 || ID == 135 || ID == 136 || ID == 163 || ID == 164) {
+			if(compareID == 134 || compareID == 135 || compareID == 136 || compareID == 163 || compareID == 164 || compareID == -1) {
+				int i[] = {134, 135, 136, 163, 164};
+				return i;
+			}
+		} else if (ID == 107 || ID == 183 || ID == 184 || ID == 185 || ID == 186 || ID == 187) {
+			if(compareID == 107 || compareID == 183 || compareID == 184 || compareID == 185 || compareID == 186 || compareID == 187 || compareID == -1) {
+				int i[] = {107, 183, 184, 185, 186, 187};
+				return i;
+			}
+		} else if (ID == 85 || ID == 188 || ID == 189 || ID == 190 || ID == 191 || ID == 192) {
+			if(compareID == 85 || compareID == 188 || compareID == 189 || compareID == 190 || compareID == 191 || compareID == 192 || compareID == -1) {
+				int i[] = {85, 188, 189, 190, 191, 192};
+				return i;
+			}
+		} else if (ID == 35) {
+			if(compareID == 35 || compareID == -1) {
+				int i[] = {35};
+				return i;
+			}
+		} else if (ID == 171) {
+			if(compareID == 171 || compareID == -1) {
+				int i[] = {171};
+				return i;
+			}
+		} else if (ID == 73 || ID == 74) {
+			if(compareID == 73 || compareID == 74 || compareID == -1) {
+				int i[] = {73, 74};
+				return i;
+			}
+		} else if (ID == 75 || ID == 76) {
+			if(compareID == 75 || compareID == 76 || compareID == -1) {
+				int i[] = {75, 76};
+				return i;
+			}
+		} else if (ID == 93 || ID == 94) {
+			if(compareID == 93 || compareID == 94 || compareID == -1) {
+				int i[] = {93, 94};
+				return i;
+			}
+		} else if (ID == 123 || ID == 124) {
+			if(compareID == 123 || compareID == 124 || compareID == -1) {
+				int i[] = {123, 124};
+				return i;
+			}
+		} else if (ID == 149 || ID == 150) {
+			if(compareID == 149 || compareID == 150 || compareID == -1) {
+				int i[] = {149, 150};
+				return i;
+			}
+		} else if (ID == 61 || ID == 62) {
+			if(compareID == 61 || compareID == 62 || compareID == -1) {
+				int i[] = {61, 62};
+				return i;
+			}
+		} else if (ID == 64 || ID == 193 || ID == 194 || ID == 195 || ID == 196 || ID == 197) {
+			if(compareID == 64 || compareID == 193 || compareID == 194 || compareID == 195 || compareID == 196 || compareID == 197 || compareID == -1) {
+				int i[] = {64, 193, 194, 195, 196, 197};
+				return i;
+			}
+		} else if (ID == 324 || ID == 427 || ID == 428 || ID == 429 || ID == 430 || ID == 431) {
+			if(compareID == 324 || compareID == 427 || compareID == 428 || compareID == 429 || compareID == 430 || compareID == 431 || compareID == -1) {
+				int i[] = {324, 427, 428, 429, 430, 431};
+				return i;
+			}
+		} else {
+			return null;
+		}
+		return null;
 	}
 
 	@SuppressWarnings("deprecation")

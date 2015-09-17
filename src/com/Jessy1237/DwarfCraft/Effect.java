@@ -231,7 +231,7 @@ public class Effect {
 			description = String.format("&6Smelt a &2%s &6and %s%.2f &2%s&6 are created as well", initiator, effectLevelColor, effectAmount, output);
 			break;
 		case SHEAR:
-			description = String.format("&6Shear a %s and %s%.2f &6%s are drop instead of &e%.2f", Util.getCleanName(mCreature), effectLevelColor, effectAmount, output, elfAmount);
+			description = String.format("&6Shear a %s and %s%.2f &6%s are dropped instead of &e%.2f", Util.getCleanName(mCreature), effectLevelColor, effectAmount, output, elfAmount);
 			break;
 		case SPECIAL:
 		default:
@@ -308,17 +308,26 @@ public class Effect {
 	}
 
 	public ItemStack getOutput(DCPlayer player) {
-		return getOutput(player, (byte)0);
+		return getOutput(player, (byte)0, -1);
 	}
 
 	public ItemStack getOutput(DCPlayer player, Byte oldData) {
+		return getOutput(player, oldData, -1);
+	}
+	
+	public ItemStack getOutput(DCPlayer player, Byte oldData, int oldID) {
 		Byte data = (mOutput.getData() == null ? null : mOutput.getData().getData());
 
 		if (data != null && data == 0)
 			data = oldData;
 
-		int count = Util.randomAmount(getEffectAmount(player));
-		ItemStack item = new ItemStack(mOutput.getTypeId(), count, data);
+		final int count = Util.randomAmount(getEffectAmount(player));
+		ItemStack item = null;
+		if(Util.checkEquivalentBuildBlocks(mOutput.getTypeId(), oldID) == null || oldID == -1) {
+			item = new ItemStack(mOutput.getTypeId(), count, data);
+		} else {
+			item = new ItemStack(oldID, count, data);
+		}
 		return item;
 	}
 
@@ -338,11 +347,11 @@ public class Effect {
 	}
 
 	public boolean checkInitiator(int id, byte data) {
-		if (mInitiator.getTypeId() != id)
+		if (mInitiator.getTypeId() != id && Util.checkEquivalentBuildBlocks(id, mInitiator.getTypeId()) == null)
 			return false;
 
 		if (mInitiator.getData() != null) {
-			if (mInitiator.getData().getData() == 0) // -1 means we dont care.
+			if (mInitiator.getData().getData() == 0) // 0 means we dont care.
 				return true;
 			return mInitiator.getData().getData() == data;
 		}
@@ -378,7 +387,7 @@ public class Effect {
 
 	public boolean checkMob(Entity entity) {
 		if (mCreature == null)
-			return false;
+			return true;
 
 		switch (mCreature) {
 		case CHICKEN:

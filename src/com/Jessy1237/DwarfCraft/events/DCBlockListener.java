@@ -124,7 +124,7 @@ public class DCBlockListener implements Listener {
 					}
 
 					if (effect.checkTool(tool)) {
-						ItemStack item = effect.getOutput(player, meta);
+						ItemStack item = effect.getOutput(player, meta, blockID);
 						ItemStack item1 = null;
 
 						// Gives the 2% to drop poisonous potatoes when potatoes

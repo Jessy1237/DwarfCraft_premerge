@@ -117,7 +117,7 @@ public class DCInventoryListener implements Listener {
 								held += i.getAmount();
 							}
 
-							ItemStack output = e.getOutput(dCPlayer, (byte) toCraft.getData().getData());
+							final ItemStack output = e.getOutput(dCPlayer, (byte) toCraft.getData().getData());
 
 							float modifier = (float) output.getAmount() / (float) toCraft.getAmount();
 
@@ -129,7 +129,7 @@ public class DCInventoryListener implements Listener {
 							}
 
 							player.setCanPickupItems(false);
-							
+
 							plugin.getServer().getScheduler().runTaskLater(plugin, new ShiftClickTask(dCPlayer, output, check, held, modifier, e), 5);
 
 						}
@@ -146,7 +146,7 @@ public class DCInventoryListener implements Listener {
 						for (Effect e : s.getEffects()) {
 							if (e.getEffectType() == EffectType.CRAFT && e.checkInitiator(toCraft.getTypeId(), (byte) toCraft.getData().getData())) {
 
-								ItemStack output = e.getOutput(dCPlayer, (byte) toCraft.getData().getData());
+								final ItemStack output = e.getOutput(dCPlayer, (byte) toCraft.getData().getData());
 
 								if (output.getAmount() == 0)
 									toCraft = null;
@@ -158,6 +158,8 @@ public class DCInventoryListener implements Listener {
 							}
 						}
 					}
+				} else {
+					event.setCancelled(true);
 				}
 			}
 		}
@@ -201,9 +203,9 @@ public class DCInventoryListener implements Listener {
 						ItemStack check = null;
 						if (extract.getTypeId() != output.getTypeId())
 							check = extract;
-						
+
 						player.setCanPickupItems(false);
-						
+
 						plugin.getServer().getScheduler().runTaskLater(plugin, new ShiftClickTask(dCPlayer, output, check, held, modifier, effect), 5);
 					}
 				}
@@ -341,7 +343,7 @@ class ShiftClickTask implements Runnable {
 		this.e = e;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void run() {
 		int held = 0;
