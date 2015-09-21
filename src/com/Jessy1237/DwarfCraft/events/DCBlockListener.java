@@ -99,8 +99,10 @@ public class DCBlockListener implements Listener {
 
 		// Changed illuminated redstone ore block id to normal redstone ore
 		// block id
-		if (blockID == 74)
+		if (blockID == 74) {
 			blockID = 73;
+			block.setType(Material.REDSTONE_ORE);
+		}
 
 		boolean blockDropChange = false;
 		for (Skill s : skills.values()) {

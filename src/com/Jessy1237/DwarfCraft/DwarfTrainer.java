@@ -4,6 +4,7 @@ package com.Jessy1237.DwarfCraft;
  * Original Authors: smartaleq, LexManos and RCarretta
  */
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -232,7 +233,7 @@ public final class DwarfTrainer {
 			}
 			if (!player.getInventory().contains(costStack.getTypeId())) {
 				if (Util.checkEquivalentBuildBlocks(costStack.getTypeId(), -1) != null) {
-					int i[] = Util.checkEquivalentBuildBlocks(costStack.getTypeId(), -1);
+					ArrayList<Integer> i = Util.checkEquivalentBuildBlocks(costStack.getTypeId(), -1);
 					boolean contains = false;
 					for(int id : i) {
 						if(player.getInventory().contains(id)) {

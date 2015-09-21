@@ -37,12 +37,14 @@ public final class ConfigManager {
 	private String configWorldFileName;
 	private String cfgGreeterFile;
 	private String cfgRaceFile;
+	private String cfgBlockGroupsFile;
 	private String dbpath;
 	private int trainDelay;
 	private String vanillaRace;
 
 	private HashMap<Integer, Skill> skillsArray = new HashMap<Integer, Skill>();
 	public ArrayList<World> worlds = new ArrayList<World>();
+	private HashMap<String, ArrayList<Integer>> blockgroups = new HashMap<String, ArrayList<Integer>>();
 
 	private ArrayList<Race> raceList = new ArrayList<Race>();
 	private String defaultRace;
@@ -63,7 +65,7 @@ public final class ConfigManager {
 		checkFiles(configDirectory);
 
 		try {
-			if (!readConfigFile() || !readSkillsFile() || !readEffectsFile() || !readMessagesFile() || !readWorldFile() || !readRacesFile()) {
+			if (!readConfigFile() || !readSkillsFile() || !readEffectsFile() || !readMessagesFile() || !readWorldFile() || !readRacesFile() || !readBlockGroupsFile()) {
 				System.out.println("[SEVERE] Failed to Enable DwarfCraft Skills and Effects)");
 				plugin.getServer().getPluginManager().disablePlugin(plugin);
 			}
@@ -137,6 +139,8 @@ public final class ConfigManager {
 			dbpath = "dwarfcraft.db";
 		if (cfgRaceFile == null)
 			cfgRaceFile = "races.config";
+		if (cfgBlockGroupsFile == null)
+			cfgBlockGroupsFile = "block-groups.config";
 	}
 
 	private void checkFiles(String path) {
@@ -154,7 +158,7 @@ public final class ConfigManager {
 			getDefaultValues();
 
 			String[][] mfiles = { { configSkillsFileName, "skills.csv" }, { configEffectsFileName, "effects.csv" }, { configMessagesFileName, "messages.config" }, { dbpath, "dwarfcraft.db" }, { cfgGreeterFile, "greeters.config" }, { configWorldFileName, "world-blacklist.config" },
-					{ cfgRaceFile, "races.config" } };
+					{ cfgRaceFile, "races.config" }, { cfgBlockGroupsFile, "block-groups.config" } };
 			for (String[] mfile : mfiles) {
 				file = new File(root, mfile[0]);
 				if (!file.exists()) {
@@ -476,6 +480,65 @@ public final class ConfigManager {
 		return false;
 	}
 
+	@SuppressWarnings("resource")
+	private boolean readBlockGroupsFile() {
+		System.out.println("DC Init: Reading Block Groups file: " + configDirectory + cfgBlockGroupsFile);
+
+		try {
+			FileReader fr = new FileReader(configDirectory + cfgBlockGroupsFile);
+			BufferedReader br = new BufferedReader(fr);
+			String line = br.readLine();
+
+			while (line != null) {
+				if (line.length() == 0) {
+					line = br.readLine();
+					continue;
+				}
+				if (line.charAt(0) == '#') {
+					line = br.readLine();
+					continue;
+				}
+				if (line.indexOf(':') <= 0) {
+					line = br.readLine();
+					continue;
+				}
+
+				String[] split = line.split(":");
+
+				if (split.length > 2 || split.length == 0 || split == null) {
+					line = br.readLine();
+					continue;
+				}
+
+				if (split[0] == null || split[0] == "") {
+					line = br.readLine();
+					continue;
+				}
+
+				String[] ints = split[1].split(",");
+				ArrayList<Integer> blocks = new ArrayList<Integer>();
+
+				if (ints.length == 0 || ints == null) {
+					line = br.readLine();
+					continue;
+				}
+
+				for (int i = 0; i < ints.length; i++) {
+					blocks.add(Integer.parseInt(ints[i].trim()));
+					System.out.println("Adding " + ints[i].trim() + " to " + split[0].trim());
+				}
+
+				blockgroups.put(split[0].trim(), blocks);
+				line = br.readLine();
+			}
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+
 	public String getDefaultRace() {
 		return defaultRace;
 	}
@@ -486,6 +549,10 @@ public final class ConfigManager {
 
 	public int getTrainDelay() {
 		return trainDelay;
+	}
+
+	public HashMap<String, ArrayList<Integer>> getBlockGroups() {
+		return blockgroups;
 	}
 
 }

@@ -8,6 +8,7 @@ import java.util.Random;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Bat;
 import org.bukkit.entity.Blaze;
 import org.bukkit.entity.CaveSpider;
 import org.bukkit.entity.Chicken;
@@ -15,14 +16,20 @@ import org.bukkit.entity.Cow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Enderman;
+import org.bukkit.entity.Endermite;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Ghast;
 import org.bukkit.entity.Giant;
+import org.bukkit.entity.Guardian;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.MagmaCube;
 import org.bukkit.entity.MushroomCow;
+import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.PigZombie;
+import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Silverfish;
 import org.bukkit.entity.Skeleton;
@@ -31,6 +38,8 @@ import org.bukkit.entity.Snowman;
 import org.bukkit.entity.Spider;
 import org.bukkit.entity.Squid;
 import org.bukkit.entity.Villager;
+import org.bukkit.entity.Witch;
+import org.bukkit.entity.Wither;
 import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
@@ -193,10 +202,7 @@ public class Effect {
 			description = String.format("&6Using a &2%s &6removes about %s%.2f &6durability", toolType, effectLevelColor, effectAmount);
 			break;
 		case EAT:
-			System.out.println("" + ((double)Util.FoodLevel.getLvl(mInitiator.getTypeId())));
-			System.out.println("" + (Util.FoodLevel.getLvl(mInitiator.getTypeId())));
-			System.out.println("" + mInitiator.getTypeId());
-			description = String.format("&6You gain %s%.2f &6Hunger instead of &e%.2f&6 when you eat &2%s", effectLevelColor, effectAmount / 2.0, ((double)Util.FoodLevel.getLvl(mInitiator.getTypeId())) / 2.0, initiator);
+			description = String.format("&6You gain %s%.2f &6Hunger instead of &e%.2f&6 when you eat &2%s", effectLevelColor, effectAmount / 2.0, ((double) Util.FoodLevel.getLvl(mInitiator.getTypeId())) / 2.0, initiator);
 			break;
 		case CRAFT:
 			description = String.format("&6You craft %s%.0f &2%s &6instead of &e%.0f", effectLevelColor, effectAmount, output, elfAmount);
@@ -308,13 +314,13 @@ public class Effect {
 	}
 
 	public ItemStack getOutput(DCPlayer player) {
-		return getOutput(player, (byte)0, -1);
+		return getOutput(player, (byte) 0, -1);
 	}
 
 	public ItemStack getOutput(DCPlayer player, Byte oldData) {
 		return getOutput(player, oldData, -1);
 	}
-	
+
 	public ItemStack getOutput(DCPlayer player, Byte oldData, int oldID) {
 		Byte data = (mOutput.getData() == null ? null : mOutput.getData().getData());
 
@@ -323,7 +329,7 @@ public class Effect {
 
 		final int count = Util.randomAmount(getEffectAmount(player));
 		ItemStack item = null;
-		if(Util.checkEquivalentBuildBlocks(mOutput.getTypeId(), oldID) == null || oldID == -1) {
+		if (Util.checkEquivalentBuildBlocks(mOutput.getTypeId(), oldID) == null || oldID == -1) {
 			item = new ItemStack(mOutput.getTypeId(), count, data);
 		} else {
 			item = new ItemStack(oldID, count, data);
@@ -387,7 +393,7 @@ public class Effect {
 
 	public boolean checkMob(Entity entity) {
 		if (mCreature == null)
-			return true;
+			return false;
 
 		switch (mCreature) {
 		case CHICKEN:
@@ -436,11 +442,29 @@ public class Effect {
 			return (entity instanceof Snowman);
 		case ENDER_DRAGON:
 			return (entity instanceof EnderDragon);
+		case OCELOT:
+			return (entity instanceof Ocelot);
+		case WITHER:
+			return (entity instanceof Wither);
+		case IRON_GOLEM:
+			return (entity instanceof IronGolem);
+		case BAT:
+			return (entity instanceof Bat);
+		case RABBIT:
+			return (entity instanceof Rabbit);
+		case GUARDIAN:
+			return (entity instanceof Guardian);
+		case HORSE:
+			return (entity instanceof Horse);
+		case ENDERMITE:
+			return (entity instanceof Endermite);
+		case WITCH:
+			return (entity instanceof Witch);
 		default:
 			return false;
 		}
 	}
-	
+
 	public EntityType getCreature() {
 		return mCreature;
 	}
