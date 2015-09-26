@@ -8,7 +8,6 @@ import java.util.HashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Cow;
 import org.bukkit.entity.Entity;
@@ -80,16 +79,8 @@ public class DCPlayerListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerInteract(PlayerInteractEvent event) {
-
-		if (plugin.getConfigManager().worldBlacklist) {
-			for (World w : plugin.getConfigManager().worlds) {
-				if (w != null) {
-					if (event.getPlayer().getWorld() == w) {
-						return;
-					}
-				}
-			}
-		}
+		if (!Util.isWorldAllowed(event.getPlayer().getWorld()))
+			return;
 
 		Player player = event.getPlayer();
 		DCPlayer dcPlayer = plugin.getDataManager().find(player);
@@ -143,16 +134,8 @@ public class DCPlayerListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
-
-		if (plugin.getConfigManager().worldBlacklist) {
-			for (World w : plugin.getConfigManager().worlds) {
-				if (w != null) {
-					if (event.getPlayer().getWorld() == w) {
-						return;
-					}
-				}
-			}
-		}
+		if (!Util.isWorldAllowed(event.getPlayer().getWorld()))
+			return;
 
 		Player player = event.getPlayer();
 		ItemStack item = event.getItem();
@@ -177,17 +160,9 @@ public class DCPlayerListener implements Listener {
 
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerShearEntityEvent(PlayerShearEntityEvent event) {
-
-		if (plugin.getConfigManager().worldBlacklist) {
-			for (World w : plugin.getConfigManager().worlds) {
-				if (w != null) {
-					if (event.getPlayer().getWorld() == w) {
-						return;
-					}
-				}
-			}
-		}
+	public void onPlayerShearEntityEvent(PlayerShearEntityEvent event) {		
+		if (!Util.isWorldAllowed(event.getPlayer().getWorld()))
+			return;
 
 		Player player = event.getPlayer();
 		Entity entity = event.getEntity();
@@ -249,17 +224,9 @@ public class DCPlayerListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerFish(PlayerFishEvent event) {
-
-		if (plugin.getConfigManager().worldBlacklist) {
-			for (World w : plugin.getConfigManager().worlds) {
-				if (w != null) {
-					if (event.getPlayer().getWorld() == w) {
-						return;
-					}
-				}
-			}
-		}
-
+		if (!Util.isWorldAllowed(event.getPlayer().getWorld()))
+			return;
+		
 		if (event.isCancelled())
 			return;
 

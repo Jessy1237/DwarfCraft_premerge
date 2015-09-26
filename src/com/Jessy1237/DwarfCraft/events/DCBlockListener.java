@@ -45,18 +45,9 @@ public class DCBlockListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockFromTo(BlockFromToEvent event) {
-
 		if (plugin.getConfigManager().disableCacti) {
-
-			if (plugin.getConfigManager().worldBlacklist) {
-				for (World w : plugin.getConfigManager().worlds) {
-					if (w != null) {
-						if (event.getBlock().getWorld() == w) {
-							return;
-						}
-					}
-				}
-			}
+			if (!Util.isWorldAllowed(event.getBlock().getWorld()))
+				return;
 
 			// Code to prevent water from normally breaking crops // Added due
 			// to players being able to bypass DC skill restrictions
@@ -71,16 +62,8 @@ public class DCBlockListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBreak(BlockBreakEvent event) {
-
-		if (plugin.getConfigManager().worldBlacklist) {
-			for (World w : plugin.getConfigManager().worlds) {
-				if (w != null) {
-					if (event.getPlayer().getWorld() == w) {
-						return;
-					}
-				}
-			}
-		}
+		if (!Util.isWorldAllowed(event.getPlayer().getWorld()))
+			return;
 
 		if (event.isCancelled())
 			return;
@@ -331,16 +314,8 @@ public class DCBlockListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockDamage(BlockDamageEvent event) {
-
-		if (plugin.getConfigManager().worldBlacklist) {
-			for (World w : plugin.getConfigManager().worlds) {
-				if (w != null) {
-					if (event.getPlayer().getWorld() == w) {
-						return;
-					}
-				}
-			}
-		}
+		if (!Util.isWorldAllowed(event.getPlayer().getWorld()))
+			return;
 
 		if (event.isCancelled())
 			return;
@@ -380,18 +355,9 @@ public class DCBlockListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockPhysics(BlockPhysicsEvent event) {
-
 		if (plugin.getConfigManager().disableCacti) {
-
-			if (plugin.getConfigManager().worldBlacklist) {
-				for (World w : plugin.getConfigManager().worlds) {
-					if (w != null) {
-						if (event.getBlock().getWorld() == w) {
-							return;
-						}
-					}
-				}
-			}
+			if (!Util.isWorldAllowed(event.getBlock().getWorld()))
+				return;
 
 			if (event.getBlock().getType() == Material.CROPS || event.getBlock().getType() == Material.POTATO || event.getBlock().getType() == Material.CARROT) {
 
@@ -417,16 +383,8 @@ public class DCBlockListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockPistonExtend(BlockPistonExtendEvent event) {
 		if (plugin.getConfigManager().disableCacti) {
-
-			if (plugin.getConfigManager().worldBlacklist) {
-				for (World w : plugin.getConfigManager().worlds) {
-					if (w != null) {
-						if (event.getBlock().getWorld() == w) {
-							return;
-						}
-					}
-				}
-			}
+			if (!Util.isWorldAllowed(event.getBlock().getWorld()))
+				return;
 
 			Material[] mats = { Material.COCOA, Material.CACTUS, Material.CROPS, Material.POTATO, Material.CARROT, Material.NETHER_STALK, Material.MELON_BLOCK, Material.SUGAR_CANE_BLOCK };
 			if (removeCrops(event.getBlocks(), mats))
@@ -438,16 +396,9 @@ public class DCBlockListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockPistonRetract(BlockPistonRetractEvent event) {
 		if (plugin.getConfigManager().disableCacti) {
-
-			if (plugin.getConfigManager().worldBlacklist) {
-				for (World w : plugin.getConfigManager().worlds) {
-					if (w != null) {
-						if (event.getBlock().getWorld() == w) {
-							return;
-						}
-					}
-				}
-			}
+			if (!Util.isWorldAllowed(event.getBlock().getWorld()))
+				return;
+			
 			Material[] mats = { Material.COCOA, Material.CACTUS, Material.CROPS, Material.POTATO, Material.CARROT, Material.NETHER_WARTS, Material.MELON_BLOCK, Material.SUGAR_CANE_BLOCK };
 			if (removeCrops(event.getBlocks(), mats))
 				event.setCancelled(true);
