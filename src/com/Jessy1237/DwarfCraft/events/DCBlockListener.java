@@ -168,7 +168,17 @@ public class DCBlockListener implements Listener {
 							if (block.getData() == 3 || block.getData() == 7 || block.getData() == 11 || block.getData() == 15) {
 								item.setDurability((short) 3);
 							}
+						} else if (event.getBlock().getTypeId() == 162) {
+							final ItemStack old = item;
+							item = new ItemStack(Material.LOG_2, old.getAmount());
+							if (block.getData() == 0 || block.getData() == 4 || block.getData() == 8 || block.getData() == 12) {
+								item.setDurability((short) 0);
+							}
+							if (block.getData() == 1 || block.getData() == 5 || block.getData() == 9 || block.getData() == 13) {
+								item.setDurability((short) 1);
+							}
 						}
+						
 						// Makes sure that the right stone is dropped
 						if (block.getTypeId() == 1 && block.getData() != (byte) 0) {
 							return;
