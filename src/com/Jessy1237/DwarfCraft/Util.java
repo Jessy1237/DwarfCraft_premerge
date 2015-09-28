@@ -7,6 +7,7 @@ package com.Jessy1237.DwarfCraft;
 import java.util.ArrayList;
 
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
@@ -418,5 +419,19 @@ public class Util {
 			}
 			return 0;
 		}
+	}
+	
+	public static boolean isWorldAllowed(World world) {
+		if (plugin.getConfigManager().worldBlacklist) {
+			for (World w : plugin.getConfigManager().worlds) {
+				if (w != null) {
+					if (world.equals(w)) {
+						return false;
+					}
+				}
+			}
+		}
+		
+		return true;
 	}
 }

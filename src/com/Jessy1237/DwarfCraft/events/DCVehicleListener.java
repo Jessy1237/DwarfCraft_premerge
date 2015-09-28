@@ -5,7 +5,6 @@ package com.Jessy1237.DwarfCraft.events;
  */
 
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftBoat;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Player;
@@ -25,6 +24,7 @@ import com.Jessy1237.DwarfCraft.DwarfVehicle;
 import com.Jessy1237.DwarfCraft.Effect;
 import com.Jessy1237.DwarfCraft.EffectType;
 import com.Jessy1237.DwarfCraft.Skill;
+import com.Jessy1237.DwarfCraft.Util;
 
 public class DCVehicleListener implements Listener {
 	private final DwarfCraft plugin;
@@ -40,16 +40,8 @@ public class DCVehicleListener implements Listener {
      */
 	@EventHandler(priority = EventPriority.HIGHEST)
     public void onVehicleDestroy(VehicleDestroyEvent event) {
-		
-		if(plugin.getConfigManager().worldBlacklist){
-			for (World w : plugin.getConfigManager().worlds){
-				if(w != null){
-					if(event.getAttacker().getWorld() == w){
-						return;
-					}
-				}
-			}
-		}
+		if (!Util.isWorldAllowed(event.getAttacker().getWorld()))
+			return;
 		
     	boolean dropChange = false;
     	
@@ -84,16 +76,8 @@ public class DCVehicleListener implements Listener {
     }
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onVehicleEnter(VehicleEnterEvent event) {
-		
-		if(plugin.getConfigManager().worldBlacklist){
-			for (World w : plugin.getConfigManager().worlds){
-				if(w != null){
-					if(event.getVehicle().getWorld() == w){
-						return;
-					}
-				}
-			}
-		}
+		if (!Util.isWorldAllowed(event.getVehicle().getWorld()))
+			return;
 		
 		if (!(event.getVehicle() instanceof CraftBoat)) return;
 		plugin.getDataManager().addVehicle(new DwarfVehicle(event.getVehicle()));
@@ -113,16 +97,8 @@ public class DCVehicleListener implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onVehicleMove(VehicleMoveEvent event) {
-		
-		if(plugin.getConfigManager().worldBlacklist){
-			for (World w : plugin.getConfigManager().worlds){
-				if(w != null){
-					if(event.getVehicle().getWorld() == w){
-						return;
-					}
-				}
-			}
-		}
+		if (!Util.isWorldAllowed(event.getVehicle().getWorld()))
+			return;
 		
 		if (event.getVehicle().getPassenger() == null) return;
 		if (!(event.getVehicle() instanceof CraftBoat)) return;

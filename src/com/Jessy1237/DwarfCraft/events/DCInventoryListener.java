@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -40,16 +39,9 @@ public class DCInventoryListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onFurnaceExtractEvent(FurnaceExtractEvent event) {
-		if (plugin.getConfigManager().worldBlacklist) {
-			for (World w : plugin.getConfigManager().worlds) {
-				if (w != null) {
-					if (event.getPlayer().getWorld() == w) {
-						return;
-					}
-				}
-			}
-		}
-
+		if (!Util.isWorldAllowed(event.getPlayer().getWorld()))
+			return;
+		
 		DCPlayer player = plugin.getDataManager().find(event.getPlayer());
 		HashMap<Integer, Skill> skills = player.getSkills();
 		Material item = event.getItemType();
@@ -83,7 +75,6 @@ public class DCInventoryListener implements Listener {
 
 	@SuppressWarnings("deprecation")
 	private void handleCrafting(InventoryClickEvent event) {
-
 		HumanEntity player = event.getWhoClicked();
 		ItemStack toCraft = event.getCurrentItem();
 		ItemStack toStore = event.getCursor();
@@ -226,15 +217,8 @@ public class DCInventoryListener implements Listener {
 	@SuppressWarnings({ "deprecation", "incomplete-switch" })
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onInventoryClickEvent(InventoryClickEvent event) {
-		if (plugin.getConfigManager().worldBlacklist) {
-			for (World w : plugin.getConfigManager().worlds) {
-				if (w != null) {
-					if (event.getWhoClicked().getWorld() == w) {
-						return;
-					}
-				}
-			}
-		}
+		if (!Util.isWorldAllowed(event.getWhoClicked().getWorld()))
+			return;
 
 		if (event.getInventory() != null && event.getSlotType() == SlotType.RESULT) {
 			switch (event.getInventory().getType()) {

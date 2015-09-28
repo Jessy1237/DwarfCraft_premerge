@@ -10,7 +10,6 @@ import java.util.List;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 
-import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftSheep;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderCrystal;
@@ -48,16 +47,8 @@ public class DCEntityListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onEntityDamage(EntityDamageEvent event) {
-
-		if (plugin.getConfigManager().worldBlacklist) {
-			for (World w : plugin.getConfigManager().worlds) {
-				if (w != null) {
-					if (event.getEntity().getWorld() == w) {
-						return;
-					}
-				}
-			}
-		}
+		if (!Util.isWorldAllowed(event.getEntity().getWorld()))
+			return;
 
 		if (event.isCancelled())
 			return;
@@ -144,21 +135,14 @@ public class DCEntityListener implements Listener {
 	}
 
 	public void onEntityAttack(EntityDamageByEntityEvent event) {
-
-		if (plugin.getConfigManager().worldBlacklist) {
-			for (World w : plugin.getConfigManager().worlds) {
-				if (w != null) {
-					if (event.getDamager().getWorld() == w) {
-						return;
-					}
-				}
-			}
-		}
+		if (!Util.isWorldAllowed(event.getDamager().getWorld()))
+			return;
 
 		if ((plugin.getDataManager().isTrainer(event.getEntity())) && event.getEntity() instanceof HumanEntity) {
 			event.setDamage(0);
 			return;
 		}
+		
 		if (!(event.getDamager() instanceof Player)) {
 			return;
 		}
@@ -241,16 +225,8 @@ public class DCEntityListener implements Listener {
 	}
 
 	public void onEntityDamageByProjectile(EntityDamageByEntityEvent event) {
-
-		if (plugin.getConfigManager().worldBlacklist) {
-			for (World w : plugin.getConfigManager().worlds) {
-				if (w != null) {
-					if (event.getDamager().getWorld() == w) {
-						return;
-					}
-				}
-			}
-		}
+		if (!Util.isWorldAllowed(event.getDamager().getWorld()))
+			return;
 
 		if ((plugin.getDataManager().isTrainer(event.getEntity())) && event.getEntity() instanceof HumanEntity) {
 			event.setDamage(0);
@@ -262,6 +238,7 @@ public class DCEntityListener implements Listener {
 		if (event.getEntity() instanceof EnderCrystal) {
 			return;
 		}
+		
 		LivingEntity hitThing = (LivingEntity) event.getEntity();
 
 		double hp = hitThing.getHealth();
@@ -292,22 +269,15 @@ public class DCEntityListener implements Listener {
 	}
 
 	public void onEntityDamagedByEnvirons(EntityDamageEvent event) {
-
-		if (plugin.getConfigManager().worldBlacklist) {
-			for (World w : plugin.getConfigManager().worlds) {
-				if (w != null) {
-					if (event.getEntity().getWorld() == w) {
-						return;
-					}
-				}
-			}
-		}
+		if (!Util.isWorldAllowed(event.getEntity().getWorld()))
+			return;
 
 		if ((plugin.getDataManager().isTrainer(event.getEntity())) && event.getEntity() instanceof HumanEntity) {
 			event.setDamage(0);
 			event.setCancelled(true);
 			return;
 		}
+		
 		if ((event.getEntity() instanceof Player)) {
 			DCPlayer dCPlayer = plugin.getDataManager().find((Player) event.getEntity());
 			double damage = event.getDamage();
@@ -345,16 +315,8 @@ public class DCEntityListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.LOW)
 	public void onEntityDeath(EntityDeathEvent event) {
-
-		if (plugin.getConfigManager().worldBlacklist) {
-			for (World w : plugin.getConfigManager().worlds) {
-				if (w != null) {
-					if (event.getEntity().getWorld() == w) {
-						return;
-					}
-				}
-			}
-		}
+		if (!Util.isWorldAllowed(event.getEntity().getWorld()))
+			return;
 
 		Entity deadThing = event.getEntity();
 		if (deadThing instanceof Player)
