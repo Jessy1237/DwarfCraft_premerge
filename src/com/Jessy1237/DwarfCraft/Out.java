@@ -61,7 +61,7 @@ public class Out {
 
 	public boolean effectInfo(CommandSender sender, DCPlayer dCPlayer, Effect effect) {
 		sendMessage(sender, effect.describeLevel(dCPlayer), "&6[&5" + effect.getId() + "&6] ");
-		sendMessage(sender, effect.describeGeneral(), "&6[&5" + effect.getId() + "&6] ");
+		sendMessage(sender, effect.describeGeneral(dCPlayer), "&6[&5" + effect.getId() + "&6] ");
 		return true;
 	}
 

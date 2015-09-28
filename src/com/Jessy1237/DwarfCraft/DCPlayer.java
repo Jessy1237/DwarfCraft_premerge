@@ -9,8 +9,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import net.minecraft.server.v1_8_R3.Entity;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -269,11 +267,6 @@ public class DCPlayer {
 
 	public String getRace() {
 		return race;
-	}
-
-	public static float getYaw(Player p) {
-		Entity e = (Entity) p;
-		return e.yaw;
 	}
 
 	public void setRace(String race) {

@@ -306,7 +306,7 @@ public final class ConfigManager {
 			Iterator<CSVRecord> records = csv.getRecords();
 			while (records.hasNext()) {
 				CSVRecord item = records.next();
-				Effect effect = new Effect(item);
+				Effect effect = new Effect(item, plugin);
 				Skill skill = skillsArray.get(effect.getId() / 10);
 				if (skill != null) {
 					skill.getEffects().add(effect);

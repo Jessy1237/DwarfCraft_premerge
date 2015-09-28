@@ -99,9 +99,7 @@ public final class DwarfTrainer {
 		else
 			mHeldItem = plugin.getConfigManager().getGenericSkill(skillId).getTrainerHeldMaterial();
 
-		assert (mHeldItem != null);
-
-		if (mHeldItem != Material.AIR)
+		if (mHeldItem != Material.AIR && mHeldItem != null)
 			((LivingEntity) mEntity.getEntity()).getEquipment().setItemInHand(new ItemStack(mHeldItem, 1));
 
 	}

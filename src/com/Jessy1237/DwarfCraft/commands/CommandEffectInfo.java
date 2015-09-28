@@ -42,7 +42,7 @@ public class CommandEffectInfo extends Command {
 				List<Object> outputList = null;
 
 				DCPlayer dCPlayer = new DCPlayer(plugin, null);
-				Effect effect = new Effect(null);
+				Effect effect = new Effect(null, plugin);
 				desiredArguments.add(dCPlayer);
 				desiredArguments.add(effect);
 				try {

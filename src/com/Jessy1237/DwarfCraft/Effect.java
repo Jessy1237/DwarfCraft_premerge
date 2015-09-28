@@ -47,6 +47,7 @@ import org.jbls.LexManos.CSV.CSVRecord;
 
 @SuppressWarnings("deprecation")
 public class Effect {
+	private DwarfCraft plugin;
 	private int mID;
 	private double mBase;
 	private double mLevelIncrease;
@@ -67,7 +68,7 @@ public class Effect {
 
 	private EntityType mCreature;
 
-	public Effect(CSVRecord record) {
+	public Effect(CSVRecord record, DwarfCraft plugin) {
 		if (record == null)
 			return;
 		mID = record.getInt("ID");
@@ -99,6 +100,8 @@ public class Effect {
 			for (int x = 0; x < stools.length; x++)
 				mTools[x] = Integer.parseInt(stools[x]);
 		}
+
+		this.plugin = plugin;
 	}
 
 	/**
@@ -106,7 +109,7 @@ public class Effect {
 	 * 
 	 * @return
 	 */
-	protected String describeGeneral() {
+	protected String describeGeneral(DCPlayer dCPlayer) {
 		String description;
 		String initiator = Util.getCleanName(mInitiator);
 		if (initiator.equalsIgnoreCase("AIR"))
@@ -114,9 +117,9 @@ public class Effect {
 		String output = Util.getCleanName(mOutput);
 		if (output.equalsIgnoreCase("AIR"))
 			output = "None";
-		double effectAmountLow = getEffectAmount(0);
-		double effectAmountHigh = getEffectAmount(30);
-		double elfAmount = getEffectAmount(-1);
+		double effectAmountLow = getEffectAmount(0, dCPlayer);
+		double effectAmountHigh = getEffectAmount(30, dCPlayer);
+		double elfAmount = getEffectAmount(-1, dCPlayer);
 		String toolType = toolType();
 		description = String.format("Effect Block Trigger: %s Block Output: %s . " + "Effect value ranges from %.2f - %.2f for levels 0 to 30. " + "Elves have the effect %.2f , as if they were level %d . " + "Tools affected: %s. " + (mRequireTool ? "Tool needed." : "Tool not needed."), initiator,
 				output, effectAmountLow, effectAmountHigh, elfAmount, mNormalLevel, toolType);
@@ -140,7 +143,7 @@ public class Effect {
 		String output = Util.getCleanName(mOutput);
 
 		double effectAmount = getEffectAmount(dCPlayer);
-		double elfAmount = getEffectAmount(mNormalLevel);
+		double elfAmount = getEffectAmount(mNormalLevel, dCPlayer);
 		boolean moreThanOne = (effectAmount > 1);
 		String effectLevelColor = effectLevelColor(dCPlayer.getSkill(this).getLevel());
 		String toolType = toolType();
@@ -263,14 +266,14 @@ public class Effect {
 	 * @return
 	 */
 	public double getEffectAmount(DCPlayer dCPlayer) {
-		return getEffectAmount(dCPlayer.isElf() ? -1 : dCPlayer.skillLevel(this.mID / 10));
+		return getEffectAmount(dCPlayer.isElf() ? -1 : dCPlayer.skillLevel(this.mID / 10), dCPlayer);
 	}
 
 	/**
 	 * Used for getting the effect amount at a particular skill level. Where
 	 * possible use getEffectAmount(Dwarf), which checks for Dwarf vs. Elf.
 	 */
-	private double getEffectAmount(int skillLevel) {
+	private double getEffectAmount(int skillLevel, DCPlayer dCPlayer) {
 		double effectAmount = mBase;
 		if (skillLevel == -1)
 			skillLevel = mNormalLevel;
@@ -279,7 +282,7 @@ public class Effect {
 		effectAmount = Math.min(effectAmount, mMax);
 		effectAmount = Math.max(effectAmount, mMin);
 
-		if (mException && skillLevel <= mExceptionHigh && skillLevel >= mExceptionLow)
+		if (mException && skillLevel <= mExceptionHigh && skillLevel >= mExceptionLow && !(skillLevel == 5 && plugin.getConfigManager().getAllSkills(dCPlayer.getRace()).contains(plugin.getConfigManager().getAllSkills().get(mID / 10))))
 			effectAmount = mExceptionValue;
 
 		if (DwarfCraft.debugMessagesThreshold < 1) {
