@@ -4,7 +4,7 @@ ID,Name,Item1,Item1Base,Item1Max,Item2,Item2Base,Item2Max,Item3,Item3Base,Item3M
 2,Shovel Use,3,20,2304,0,0,0,0,0,0,256
 3,Axe Durability,17,8,2304,0,0,0,0,0,0,258
 4,Seed Gatherer,295,1,128,0,0,0,0,0,0,295
-5,Melon Farmer,360,3,300,0,0,0,0,0,0,0
+5,Melon Farmer,360,3,300,0,0,0,0,0,0,360
 6,Fisher Man,349,1,1000,0,0,0,0,0,0,346
 7,Stone Shaper,272,1,36,274,1,36,275,1,36,4
 8,Smelter,327,1,100,263,1,2304,0,0,0,327
@@ -35,7 +35,7 @@ ID,Name,Item1,Item1Base,Item1Max,Item2,Item2Base,Item2Max,Item3,Item3Base,Item3M
 65,Railworker,343,1,36,0,0,0,0,0,0,343
 66,Baker Man,354,1,36,0,0,0,0,0,0,354
 67,Fletcher,288,2,1152,318,2,1152,0,0,0,262
-68,Grillardin,
+68,Grillardin,320,1,864,364,1,864,350,1,864,354
 71,Sailor,337,3,2304,0,0,0,0,0,0,333
 72,Climber,86,1,2304,0,0,0,0,0,0,65
 73,Survivalist,39,0.5,1152,40,0.5,1152,0,0,0,282

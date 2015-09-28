@@ -236,6 +236,18 @@ public class Effect {
 				initiator = Util.getCleanName(new ItemStack(Material.IRON_ORE));
 			} else if (mInitiator.getTypeId() == 266) {
 				initiator = Util.getCleanName(new ItemStack(Material.GOLD_ORE));
+			} else if (mInitiator.getTypeId() == 320) {
+				initiator = Util.getCleanName(new ItemStack(Material.PORK));
+			} else if (mInitiator.getTypeId() == 350) {
+				initiator = Util.getCleanName(new ItemStack(Material.COOKED_FISH));
+			} else if (mInitiator.getTypeId() == 366) {
+				initiator = Util.getCleanName(new ItemStack(Material.RAW_CHICKEN));
+			} else if (mInitiator.getTypeId() == 412) {
+				initiator = Util.getCleanName(new ItemStack(Material.RAW_FISH));
+			} else if (mInitiator.getTypeId() == 424) {
+				initiator = Util.getCleanName(new ItemStack(Material.MUTTON));
+			} else if (mInitiator.getTypeId() == 364) {
+				initiator = Util.getCleanName(new ItemStack(Material.RAW_BEEF));
 			}
 			description = String.format("&6Smelt a &2%s &6and %s%.2f &2%s&6 are created as well", initiator, effectLevelColor, effectAmount, output);
 			break;

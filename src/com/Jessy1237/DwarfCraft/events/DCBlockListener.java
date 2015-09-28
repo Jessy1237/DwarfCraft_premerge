@@ -158,7 +158,7 @@ public class DCBlockListener implements Listener {
 							}
 						} else if (event.getBlock().getTypeId() == 162) {
 							final ItemStack old = item;
-							item = new ItemStack(Material.LOG, old.getAmount());
+							item = new ItemStack(Material.LOG_2, old.getAmount());
 							if (block.getData() == 0 || block.getData() == 4 || block.getData() == 8 || block.getData() == 12) {
 								item.setDurability((short) 0);
 							}
