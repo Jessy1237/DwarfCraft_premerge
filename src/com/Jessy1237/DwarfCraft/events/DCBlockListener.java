@@ -4,6 +4,7 @@ package com.Jessy1237.DwarfCraft.events;
  * Original Authors: smartaleq, LexManos and RCarretta
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -23,6 +24,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
@@ -38,6 +40,7 @@ import com.Jessy1237.DwarfCraft.Util;
 
 public class DCBlockListener implements Listener {
 	private final DwarfCraft plugin;
+	private HashMap<Block, Player> crops = new HashMap<Block, Player>();
 
 	public DCBlockListener(final DwarfCraft plugin) {
 		this.plugin = plugin;
@@ -55,10 +58,22 @@ public class DCBlockListener implements Listener {
 					|| event.getToBlock().getType() == Material.COCOA || event.getToBlock().getType() == Material.NETHER_WARTS && (event.getBlock().getType() == Material.WATER || event.getBlock().getType() == Material.STATIONARY_WATER)) {
 				event.getToBlock().setType(Material.AIR, true);
 				event.setCancelled(true);
-			} else if (event.getToBlock().getType() == Material.CACTUS || (event.getToBlock().getType() == Material.AIR && event.getBlock().getType() == Material.AIR)) {
-				if (!checkCacti(event.getToBlock().getWorld(), event.getToBlock().getLocation())) {
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onBlockGrow(BlockGrowEvent event) {
+		if (plugin.getConfigManager().disableCacti) {
+			if (!Util.isWorldAllowed(event.getBlock().getWorld()))
+				return;
+
+			Block b = event.getBlock();
+			if (b.getType() == Material.CACTUS) {
+				Location l = b.getLocation();
+				l.setY(l.getY() + 1);
+				if (!checkCacti(b.getWorld(), l)) {
 					event.setCancelled(true);
-					event.getToBlock().setType(Material.AIR, true);
 				}
 			}
 		}
@@ -111,6 +126,21 @@ public class DCBlockListener implements Listener {
 					if (effect.getInitiatorId() == 115) {
 						if (meta != 3)
 							return;
+					}
+
+					// Checks for cactus/sugar cane blocks above the one broken
+					// to apply the dwarfcraft blocks in the block physics
+					// event.
+					if (block.getType() == Material.CACTUS) {
+						for (int i = 1; block.getWorld().getBlockAt(block.getX(), block.getY() + i, block.getZ()).getType() == Material.CACTUS; i++) {
+							crops.put(block.getWorld().getBlockAt(block.getX(), block.getY() + i, block.getZ()), event.getPlayer());
+						}
+					}
+
+					if (block.getType() == Material.SUGAR_CANE_BLOCK) {
+						for (int i = 1; block.getWorld().getBlockAt(block.getX(), block.getY() + i, block.getZ()).getType() == Material.SUGAR_CANE_BLOCK; i++) {
+							crops.put(block.getWorld().getBlockAt(block.getX(), block.getY() + i, block.getZ()), event.getPlayer());
+						}
 					}
 
 					if (effect.checkTool(tool)) {
@@ -388,6 +418,76 @@ public class DCBlockListener implements Listener {
 				World world = event.getBlock().getWorld();
 				Location loc = event.getBlock().getLocation();
 				if (!(checkCacti(world, loc))) {
+					int x = loc.getBlockX();
+					int y = loc.getBlockY();
+					int z = loc.getBlockZ();
+
+					boolean remove = false;
+					ArrayList<Block> removal = new ArrayList<Block>();
+					for (Block b : crops.keySet()) {
+						if (b != null) {
+							if (b.getX() == x && b.getY() == y && b.getZ() == z) {
+								DCPlayer dCPlayer = plugin.getDataManager().find(crops.get(b));
+								for (Skill s : dCPlayer.getSkills().values()) {
+									for (Effect e : s.getEffects()) {
+										if (e.getEffectType() == EffectType.BLOCKDROP && e.checkInitiator(new ItemStack(Material.CACTUS))) {
+											int amount = Util.randomAmount(e.getEffectAmount(dCPlayer));
+											if (amount != 0) {
+												world.dropItemNaturally(loc, new ItemStack(Material.CACTUS, amount));
+											}
+										}
+									}
+								}
+								removal.add(b);
+								remove = true;
+							}
+						}
+					}
+
+					for (Block b : removal) {
+						if (b != null) {
+							crops.remove(b);
+						}
+					}
+					if (remove) {
+						event.getBlock().setTypeId(0, true);
+						event.setCancelled(true);
+					}
+				}
+			} else if (event.getBlock().getType() == Material.SUGAR_CANE_BLOCK) {
+				World world = event.getBlock().getWorld();
+				Location loc = event.getBlock().getLocation();
+				int x = loc.getBlockX();
+				int y = loc.getBlockY();
+				int z = loc.getBlockZ();
+
+				boolean remove = false;
+				ArrayList<Block> removal = new ArrayList<Block>();
+				for (Block b : crops.keySet()) {
+					if (b != null) {
+						if (b.getX() == x && b.getY() == y && b.getZ() == z) {
+							DCPlayer dCPlayer = plugin.getDataManager().find(crops.get(b));
+							for (Skill s : dCPlayer.getSkills().values()) {
+								for (Effect e : s.getEffects()) {
+									if (e.getEffectType() == EffectType.BLOCKDROP && e.checkInitiator(new ItemStack(Material.SUGAR_CANE_BLOCK))) {
+										int amount = Util.randomAmount(e.getEffectAmount(dCPlayer));
+										if (amount != 0) {
+											world.dropItemNaturally(loc, new ItemStack(Material.SUGAR_CANE, amount));
+										}
+									}
+								}
+							}
+							removal.add(b);
+						}
+					}
+				}
+
+				for (Block b : removal) {
+					if (b != null) {
+						crops.remove(b);
+					}
+				}
+				if (remove) {
 					event.getBlock().setTypeId(0, true);
 					event.setCancelled(true);
 				}
@@ -414,7 +514,7 @@ public class DCBlockListener implements Listener {
 		if (plugin.getConfigManager().disableCacti) {
 			if (!Util.isWorldAllowed(event.getBlock().getWorld()))
 				return;
-			
+
 			Material[] mats = { Material.COCOA, Material.CACTUS, Material.CROPS, Material.POTATO, Material.CARROT, Material.NETHER_WARTS, Material.MELON_BLOCK, Material.SUGAR_CANE_BLOCK };
 			if (removeCrops(event.getBlocks(), mats))
 				event.setCancelled(true);
@@ -477,8 +577,9 @@ public class DCBlockListener implements Listener {
 			return false;
 
 		Material base = world.getBlockAt(x, y - 1, z).getType();
+		Material above = world.getBlockAt(x, y + 1, z).getType();
 
-		return (base == Material.CACTUS) || (base == Material.SAND);
+		return (base == Material.CACTUS) || (base == Material.SAND) || (above == Material.CACTUS);
 	}
 
 	// Bukkit really needs to implement access to Material.isBuildable()
