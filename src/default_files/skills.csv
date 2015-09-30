@@ -29,9 +29,9 @@ ID,Name,Item1,Item1Base,Item1Max,Item2,Item2Base,Item2Max,Item3,Item3Base,Item3M
 52,Glass Worker,20,2,2304,0,0,0,0,0,0,20
 53,Wood Crafter,5,2,1152,280,2,1152,0,0,0,324
 61,Book Maker,339,0.5,1152,340,0.5,1152,0,0,0,340
-62,Brickmaker,336,0.5,1152,45,0.5,1152,0,0,0,336
+62,Brick Maker,336,0.5,1152,45,0.5,1152,0,0,0,336
 63,Demolitionist,289,0.5,1152,46,0.5,1152,0,0,0,46
-64,Firestarter,259,1,36,0,0,0,0,0,0,259
+64,Fire Starter,259,1,36,0,0,0,0,0,0,259
 65,Railworker,343,1,36,0,0,0,0,0,0,343
 66,Baker Man,354,1,36,0,0,0,0,0,0,354
 67,Fletcher,288,2,1152,318,2,1152,0,0,0,262

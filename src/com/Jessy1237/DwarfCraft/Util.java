@@ -97,6 +97,8 @@ public class Util {
 			return "NULL";
 		switch (item.getType()) {
 		case SAPLING:
+			if(Util.checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
+				return "Sapling";
 			switch (item.getData().getData()) {
 			case 0:
 				return "Oak Sapling";
@@ -123,6 +125,8 @@ public class Util {
 				return "Sand";
 			}
 		case RAW_FISH:
+			if(Util.checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
+				return "Raw Fish";
 			switch (item.getData().getData()) {
 			case 0:
 				return "Raw Fish";
@@ -137,6 +141,8 @@ public class Util {
 			}
 
 		case LOG:
+			if(Util.checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
+				return "Log";
 			switch (item.getData().getData()) {
 			case 0:
 				return "Oak Log";
@@ -150,6 +156,8 @@ public class Util {
 				return "Log";
 			}
 		case LOG_2:
+			if(Util.checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
+				return "Log";
 			switch (item.getData().getData()) {
 			case 0:
 				return "Acacia Log";
@@ -159,6 +167,8 @@ public class Util {
 				return "Log";
 			}
 		case LEAVES:
+			if(Util.checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
+				return "Leaves";
 			switch (item.getData().getData()) {
 			case 0:
 				return "Oak Leaves";
@@ -172,6 +182,8 @@ public class Util {
 				return "Leaves";
 			}
 		case LEAVES_2:
+			if(Util.checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
+				return "Leaves";
 			switch (item.getData().getData()) {
 			case 0:
 				return "Acacia Leaves";
@@ -181,8 +193,47 @@ public class Util {
 				return "Leaves";
 			}
 		case WOOL:
-			return "Wool";
+			if(Util.checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
+				return "Wool";
+			switch (item.getData().getData()) {
+			case 0:
+				return "White Wool";
+			case 1:
+				return "Orange Dye";
+			case 2:
+				return "Magenta Dye";
+			case 3:
+				return "Light Blue Dye";
+			case 4:
+				return "Dandelion Yellow";
+			case 5:
+				return "Lime Dye";
+			case 6:
+				return "Pink Dye";
+			case 7:
+				return "Gray Dye";
+			case 8:
+				return "Light Gray Dye";
+			case 9:
+				return "Cyan Dye";
+			case 10:
+				return "Purple Dye";
+			case 11:
+				return "Lapis Lazuli";
+			case 12:
+				return "Cocoa Beans";
+			case 13:
+				return "Cactus Green";
+			case 14:
+				return "Rose Red";
+			case 15:
+				return "Ink Sac";
+			default:
+				return String.format("Unknown Dye(%d)", item.getData().getData());
+			}
 		case DOUBLE_STEP:
+			if(Util.checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
+				return "Slab";
 			switch (item.getData().getData()) {
 			case 15:
 				return "Tile Quartz Double Slab";
@@ -219,6 +270,8 @@ public class Util {
 				return String.format("Crop");
 			}
 		case COAL:
+			if(Util.checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
+				return "Coal";
 			switch (item.getData().getData()) {
 			case 0:
 				return "Coal";
@@ -242,6 +295,8 @@ public class Util {
 		case CARROT:
 			return "Carrot_Crop";
 		case INK_SACK:
+			if(Util.checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
+				return "Dye";
 			switch (item.getData().getData()) {
 			case 15:
 				return "Bone Meal";

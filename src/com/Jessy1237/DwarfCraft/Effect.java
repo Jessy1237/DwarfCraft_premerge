@@ -248,6 +248,22 @@ public class Effect {
 				initiator = Util.getCleanName(new ItemStack(Material.MUTTON));
 			} else if (mInitiator.getTypeId() == 364) {
 				initiator = Util.getCleanName(new ItemStack(Material.RAW_BEEF));
+			} else if (mInitiator.getTypeId() == 20) {
+				initiator = Util.getCleanName(new ItemStack(Material.SAND));
+			} else if (mInitiator.getTypeId() == 393) {
+				initiator = Util.getCleanName(new ItemStack(Material.POTATO_ITEM));
+			} else if (mInitiator.getTypeId() == 263) {
+				initiator = Util.getCleanName(new ItemStack(Material.LOG));
+			} else if (mInitiator.getTypeId() == 1) {
+				initiator = Util.getCleanName(new ItemStack(Material.COBBLESTONE));
+			} else if (mInitiator.getTypeId() == 336) {
+				initiator = Util.getCleanName(new ItemStack(Material.CLAY_BALL));
+			} else if (mInitiator.getTypeId() == 405) {
+				initiator = Util.getCleanName(new ItemStack(Material.NETHERRACK));
+			} else if (mInitiator.getTypeId() == 172) {
+				initiator = Util.getCleanName(new ItemStack(Material.CLAY));
+			} else if (mInitiator.getTypeId() == 351) {
+				initiator = Util.getCleanName(new ItemStack(Material.CACTUS));
 			}
 			description = String.format("&6Smelt a &2%s &6and %s%.2f &2%s&6 are created as well", initiator, effectLevelColor, effectAmount, output);
 			break;
