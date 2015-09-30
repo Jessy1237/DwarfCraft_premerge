@@ -68,10 +68,9 @@ public class DCBlockListener implements Listener {
 			if (!Util.isWorldAllowed(event.getBlock().getWorld()))
 				return;
 
-			Block b = event.getBlock();
+			Block b = event.getNewState().getBlock();
 			if (b.getType() == Material.CACTUS) {
 				Location l = b.getLocation();
-				l.setY(l.getY() + 1);
 				if (!checkCacti(b.getWorld(), l)) {
 					event.setCancelled(true);
 				}
@@ -423,6 +422,7 @@ public class DCBlockListener implements Listener {
 					int z = loc.getBlockZ();
 
 					boolean remove = false;
+					boolean checked = false;
 					ArrayList<Block> removal = new ArrayList<Block>();
 					for (Block b : crops.keySet()) {
 						if (b != null) {
@@ -440,6 +440,7 @@ public class DCBlockListener implements Listener {
 								}
 								removal.add(b);
 								remove = true;
+								checked = true;
 							}
 						}
 					}
@@ -450,6 +451,9 @@ public class DCBlockListener implements Listener {
 						}
 					}
 					if (remove) {
+						event.getBlock().setTypeId(0, true);
+						event.setCancelled(true);
+					} else if (!checked) {
 						event.getBlock().setTypeId(0, true);
 						event.setCancelled(true);
 					}
@@ -577,9 +581,8 @@ public class DCBlockListener implements Listener {
 			return false;
 
 		Material base = world.getBlockAt(x, y - 1, z).getType();
-		Material above = world.getBlockAt(x, y + 1, z).getType();
 
-		return (base == Material.CACTUS) || (base == Material.SAND) || (above == Material.CACTUS);
+		return (base == Material.CACTUS) || (base == Material.SAND);
 	}
 
 	// Bukkit really needs to implement access to Material.isBuildable()
