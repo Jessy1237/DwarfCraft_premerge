@@ -4,8 +4,8 @@ ID,Name,Item1,Item1Base,Item1Max,Item2,Item2Base,Item2Max,Item3,Item3Base,Item3M
 2,Shovel Use,3,20,2304,0,0,0,0,0,0,256
 3,Axe Durability,17,8,2304,0,0,0,0,0,0,258
 4,Seed Gatherer,295,1,128,0,0,0,0,0,0,295
-5,Melon Farmer,360,3,300,0,0,0,0,0,0,360
-6,Fisher Man,349,1,1000,0,0,0,0,0,0,346
+5,Melon Farmer,360,1,1152,0,0,0,0,0,0,360
+6,Fisher Man,349,1,1728,0,0,0,0,0,0,346
 7,Stone Shaper,272,1,36,274,1,36,275,1,36,4
 8,Smelter,327,1,100,263,1,2304,0,0,0,327
 9,Iron Forger,267,1,36,257,1,36,258,1,36,265
@@ -41,7 +41,8 @@ ID,Name,Item1,Item1Base,Item1Max,Item2,Item2Base,Item2Max,Item3,Item3Base,Item3M
 73,Survivalist,39,0.5,1152,40,0.5,1152,0,0,0,282
 74,Florist,37,1,1152,38,1,1152,0,0,0,38
 75,Dungeon Delver,329,1,36,0,0,0,0,0,0,48
-80,Shearer,359,1,30,0,0,0,0,0,0,359
+76,Nether Hunter,369,1,288,0,0,0,0,0,0,369
+80,Shearer,359,1,15,35,1,864,0,0,0,359
 81,Animal Hunter,319,1,30,334,1,128,35,2,256,334
 82,Monster Hunter,287,1.5,1152,289,1.5,1152,0,0,0,287
 83,Scout,299,1,36,0,0,0,0,0,0,299

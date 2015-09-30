@@ -239,11 +239,11 @@ public class Effect {
 			} else if (mInitiator.getTypeId() == 320) {
 				initiator = Util.getCleanName(new ItemStack(Material.PORK));
 			} else if (mInitiator.getTypeId() == 350) {
-				initiator = Util.getCleanName(new ItemStack(Material.COOKED_FISH));
+				initiator = Util.getCleanName(new ItemStack(Material.RAW_FISH));
 			} else if (mInitiator.getTypeId() == 366) {
 				initiator = Util.getCleanName(new ItemStack(Material.RAW_CHICKEN));
 			} else if (mInitiator.getTypeId() == 412) {
-				initiator = Util.getCleanName(new ItemStack(Material.RAW_FISH));
+				initiator = Util.getCleanName(new ItemStack(Material.RABBIT));
 			} else if (mInitiator.getTypeId() == 424) {
 				initiator = Util.getCleanName(new ItemStack(Material.MUTTON));
 			} else if (mInitiator.getTypeId() == 364) {
