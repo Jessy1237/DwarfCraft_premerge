@@ -122,6 +122,13 @@ public class DwarfCraft extends JavaPlugin {
 
 		if (perms == null)
 			return false;
+		
+		if(name.equalsIgnoreCase("SS"))
+			name = "SkillSheet";
+		if(name.equalsIgnoreCase("EI"))
+			name = "EffectInfo";
+		if(name.equalsIgnoreCase("SI"))
+			name = "SkillInfo";
 
 		if (sender instanceof Player) {
 			if (type.equals("op")) {
@@ -169,7 +176,7 @@ public class DwarfCraft extends JavaPlugin {
 			if (hasNorm || hasAll) {
 				cmd = new CommandDCCommands(this);
 			}
-		} else if (name.equalsIgnoreCase("SkillInfo")) {
+		} else if (name.equalsIgnoreCase("SkillInfo") || name.equalsIgnoreCase("SI")) {
 			if (hasNorm || hasAll) {
 				cmd = new CommandSkillInfo(this);
 			}
@@ -177,7 +184,7 @@ public class DwarfCraft extends JavaPlugin {
 			if (hasNorm || hasAll) {
 				cmd = new CommandRace(this);
 			}
-		} else if (name.equalsIgnoreCase("EffectInfo")) {
+		} else if (name.equalsIgnoreCase("EffectInfo") || name.equalsIgnoreCase("EI")) {
 			if (hasNorm || hasAll) {
 				cmd = new CommandEffectInfo(this);
 			}

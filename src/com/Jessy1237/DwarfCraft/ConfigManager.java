@@ -141,6 +141,8 @@ public final class ConfigManager {
 			cfgRaceFile = "races.config";
 		if (cfgBlockGroupsFile == null)
 			cfgBlockGroupsFile = "block-groups.config";
+		if (defaultRace == null)
+			defaultRace = "NULL";
 	}
 
 	private void checkFiles(String path) {
@@ -204,7 +206,7 @@ public final class ConfigManager {
 					continue;
 				}
 				String[] theline = line.split(":");
-				if (theline.length > 2) {
+				if (theline.length != 2) {
 					line = br.readLine();
 					continue;
 				}
@@ -380,7 +382,12 @@ public final class ConfigManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		if (defaultRace == null) {
+			defaultRace = "NULL";
+		} else {
+			if (!checkRace(defaultRace))
+				defaultRace = "NULL";
+		}
 		return true;
 	}
 
@@ -525,7 +532,6 @@ public final class ConfigManager {
 
 				for (int i = 0; i < ints.length; i++) {
 					blocks.add(Integer.parseInt(ints[i].trim()));
-					System.out.println("Adding " + ints[i].trim() + " to " + split[0].trim());
 				}
 
 				blockgroups.put(split[0].trim(), blocks);
@@ -545,6 +551,17 @@ public final class ConfigManager {
 
 	public ArrayList<Race> getRaceList() {
 		return raceList;
+	}
+
+	public boolean checkRace(String name) {
+		for (Race r : raceList) {
+			if (r != null) {
+				if (r.getName().equalsIgnoreCase(name)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public int getTrainDelay() {

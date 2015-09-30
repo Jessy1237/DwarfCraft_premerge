@@ -185,6 +185,12 @@ public final class DwarfTrainer {
 		Player player = dCPlayer.getPlayer();
 		String tag = String.format("&6[Train &b%d&6] ", skill.getId());
 
+		if(dCPlayer.getRace().equalsIgnoreCase("NULL")) {
+			plugin.getOut().sendMessage(player, "&cPlease choose a race!");
+			setWait(false);
+			return;
+		}
+		
 		if (skill == null) {
 			plugin.getOut().sendMessage(player, "&cYour race doesn't have this skill!", tag);
 			setWait(false);

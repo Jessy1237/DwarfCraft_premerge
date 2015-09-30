@@ -143,7 +143,7 @@ public class Effect {
 		String output = Util.getCleanName(mOutput);
 
 		double effectAmount = getEffectAmount(dCPlayer);
-		double elfAmount = getEffectAmount(mNormalLevel, dCPlayer);
+		double elfAmount = getEffectAmount(mNormalLevel, null);
 		boolean moreThanOne = (effectAmount > 1);
 		String effectLevelColor = effectLevelColor(dCPlayer.getSkill(this).getLevel());
 		String toolType = toolType();
@@ -310,8 +310,9 @@ public class Effect {
 		effectAmount = Math.min(effectAmount, mMax);
 		effectAmount = Math.max(effectAmount, mMin);
 
-		if (mException && skillLevel <= mExceptionHigh && skillLevel >= mExceptionLow && !(skillLevel == 5 && plugin.getConfigManager().getAllSkills(dCPlayer.getRace()).contains(plugin.getConfigManager().getAllSkills().get(mID / 10))))
-			effectAmount = mExceptionValue;
+		if (dCPlayer != null)
+			if (mException && skillLevel <= mExceptionHigh && skillLevel >= mExceptionLow && !(skillLevel == 5 && plugin.getConfigManager().getAllSkills(dCPlayer.getRace()).contains(plugin.getConfigManager().getAllSkills().get(mID / 10))))
+				effectAmount = mExceptionValue;
 
 		if (DwarfCraft.debugMessagesThreshold < 1) {
 			System.out.println(String.format("DC1: GetEffectAmmount ID: %d Level: %d Base: %.2f Increase: %.2f Novice: %.2f Max: %.2f Min: %.2f " + "Exception: %s Exctpion Low: %.2f Exception High: %.2f Exception Value: %.2f Floor Result: %s", mID, skillLevel, mBase, mLevelIncrease,

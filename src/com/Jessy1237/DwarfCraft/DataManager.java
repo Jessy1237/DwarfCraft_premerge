@@ -239,7 +239,7 @@ public class DataManager {
 					}
 				}
 			}
-			
+
 			try {
 				rs = statement.executeQuery("select type from trainers");
 			} catch (Exception e) {
@@ -513,7 +513,7 @@ public class DataManager {
 		}
 		return;
 	}
-	
+
 	public void updateTrainerType(DwarfTrainer trainer, String type) {
 		try {
 			PreparedStatement prep = mDBCon.prepareStatement("UPDATE trainers SET type=? WHERE uniqueId=?;");
