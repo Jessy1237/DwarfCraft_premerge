@@ -370,7 +370,6 @@ public class Util {
 		return null;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static String getCleanName(EntityType mCreature) {
 		if (mCreature == null)
 			return "NULL";
@@ -395,7 +394,7 @@ public class Util {
 		case OCELOT:
 			return "Ocelot";
 		default:
-			return cleanEnumString(mCreature.name().toString());
+			return cleanEnumString(mCreature.toString());
 		}
 	}
 	
