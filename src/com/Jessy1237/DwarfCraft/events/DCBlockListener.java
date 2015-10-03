@@ -232,6 +232,10 @@ public class DCBlockListener implements Listener {
 									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.REDSTONE_ORE, 1);
 									break;
+								case GLOWSTONE:
+									item.setAmount(item.getAmount() - 3);
+									item1 = new ItemStack(Material.GLOWSTONE, 1);
+									break;
 								case GRASS:
 									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.GRASS, 1);
@@ -263,6 +267,9 @@ public class DCBlockListener implements Listener {
 								case REDSTONE_ORE:
 									item = new ItemStack(Material.REDSTONE_ORE, 1);
 									break;
+								case GLOWSTONE:
+									item = new ItemStack(Material.GLOWSTONE, 1);
+									break;
 								case GRASS:
 									item = new ItemStack(Material.GRASS, 1);
 									break;
@@ -278,7 +285,7 @@ public class DCBlockListener implements Listener {
 						// Checks for Fortune tools and adds it to the
 						// Dwarfcraft drops
 						Material type = block.getType();
-						if (type == Material.DIAMOND_ORE || type == Material.COAL_ORE || type == Material.REDSTONE_ORE || type == Material.EMERALD_ORE || type == Material.QUARTZ_ORE || type == Material.GRASS || type == Material.STONE || type == Material.LAPIS_ORE) {
+						if (type == Material.DIAMOND_ORE || type == Material.COAL_ORE || type == Material.REDSTONE_ORE || type == Material.EMERALD_ORE || type == Material.QUARTZ_ORE || type == Material.GRASS || type == Material.STONE || type == Material.LAPIS_ORE || type == Material.GLOWSTONE) {
 							if (tool.containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
 								int lvl = tool.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
 								Random r = new Random();
