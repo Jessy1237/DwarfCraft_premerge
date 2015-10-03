@@ -206,13 +206,7 @@ public class DCPlayer {
 	public HashMap<Integer, Skill> getSkills() {
 		return skills;
 	}
-
-	protected boolean isElf() {
-		if (skills.size() == 0)
-			return true;
-		return false;
-	}
-
+	
 	/**
 	 * Calculates the Dwarf's total Level
 	 * 

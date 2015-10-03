@@ -62,8 +62,6 @@ public class DCPlayerListener implements Listener {
 
 		if (data == null)
 			data = dm.createDwarf(player);
-		if (!dm.getDwarfData(data))
-			dm.createDwarfData(data);
 		if (!plugin.getConfigManager().sendGreeting)
 			return;
 

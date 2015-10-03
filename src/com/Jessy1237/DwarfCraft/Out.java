@@ -246,11 +246,6 @@ public class Out {
 		message1 = ("&6Printing Skill Sheet for &9" + (displayName == null ? dCPlayer.getPlayer().getName() : displayName) + " " + dCPlayer.getRace() + " &6Level is &3" + dCPlayer.getDwarfLevel());
 		sendMessage(sender, message1, prefix1);
 
-		if (dCPlayer.isElf()) {
-			message2 = ("&fElves &6don't have skills, numbskull");
-			sendMessage(sender, message2, prefix2);
-			return;
-		}
 		boolean odd = true;
 		String untrainedSkills = "&6Untrained Skills: ";
 		for (Skill s : dCPlayer.getSkills().values()) {

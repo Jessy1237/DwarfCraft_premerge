@@ -318,8 +318,6 @@ public class DwarfCraft extends JavaPlugin {
 			DCPlayer dCPlayer = getDataManager().find(player);
 			if (dCPlayer == null)
 				dCPlayer = getDataManager().createDwarf(player);
-			if (!getDataManager().getDwarfData(dCPlayer))
-				getDataManager().createDwarfData(dCPlayer);
 		}
 
 		if (pm.getPlugin("LogBlock") != null) {

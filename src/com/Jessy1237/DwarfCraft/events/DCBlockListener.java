@@ -52,8 +52,8 @@ public class DCBlockListener implements Listener {
 			if (!Util.isWorldAllowed(event.getBlock().getWorld()))
 				return;
 
-			// Code to prevent water from normally breaking crops // Added due
-			// to players being able to bypass DC skill restrictions
+			// Code to prevent water from normally breaking crops
+			// Added due to players being able to bypass DC skill restrictions
 			if (event.getToBlock().getType() == Material.CROPS || event.getToBlock().getType() == Material.POTATO || event.getToBlock().getType() == Material.CARROT || event.getToBlock().getType() == Material.SUGAR_CANE_BLOCK || event.getToBlock().getType() == Material.CACTUS
 					|| event.getToBlock().getType() == Material.COCOA || event.getToBlock().getType() == Material.NETHER_WARTS && (event.getBlock().getType() == Material.WATER || event.getBlock().getType() == Material.STATIONARY_WATER)) {
 				event.getToBlock().setType(Material.AIR, true);
@@ -62,6 +62,7 @@ public class DCBlockListener implements Listener {
 		}
 	}
 
+	// Checks when a cactus grows to see if it trying to my auto farmed
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockGrow(BlockGrowEvent event) {
 		if (plugin.getConfigManager().disableCacti) {
@@ -70,9 +71,22 @@ public class DCBlockListener implements Listener {
 
 			Block b = event.getNewState().getBlock();
 			if (b.getType() == Material.CACTUS) {
-				Location l = b.getLocation();
-				if (!checkCacti(b.getWorld(), l)) {
+				if (!checkCacti(b.getWorld(), b.getLocation())) {
+					b.setType(Material.AIR);
 					event.setCancelled(true);
+				}
+			} else {
+				b = event.getBlock();
+				if (!checkCacti(b.getWorld(), b.getLocation())) {
+					b.setType(Material.AIR);
+					event.setCancelled(true);
+				} else {
+					Location l = b.getLocation();
+					l.setY(l.getBlockY() + 1);
+					if (!checkCacti(b.getWorld(), l)) {
+						b.getWorld().getBlockAt(l).setType(Material.AIR);
+						event.setCancelled(true);
+					}
 				}
 			}
 		}
@@ -207,41 +221,33 @@ public class DCBlockListener implements Listener {
 							// replaces one of the items drop in the stack, if
 							// not acts as vanilla and no DC drops
 							if (plugin.getConfigManager().silkTouch) {
+								item.setAmount(item.getAmount() - Util.randomAmount(effect.getEffectAmount(effect.getNormalLevel(), player)));
 								switch (block.getType()) {
 								case STONE:
-									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.STONE, 1);
 									break;
 								case DIAMOND_ORE:
-									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.DIAMOND_ORE, 1);
 									break;
 								case EMERALD_ORE:
-									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.EMERALD_ORE, 1);
 									break;
 								case QUARTZ_ORE:
-									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.QUARTZ_ORE, 1);
 									break;
 								case COAL_ORE:
-									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.COAL_ORE, 1);
 									break;
 								case REDSTONE_ORE:
-									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.REDSTONE_ORE, 1);
 									break;
 								case GLOWSTONE:
-									item.setAmount(item.getAmount() - 3);
 									item1 = new ItemStack(Material.GLOWSTONE, 1);
 									break;
 								case GRASS:
-									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.GRASS, 1);
 									break;
 								case LAPIS_ORE:
-									item.setAmount(item.getAmount() - 1);
 									item1 = new ItemStack(Material.LAPIS_ORE, 1);
 									break;
 								default:

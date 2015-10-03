@@ -294,14 +294,10 @@ public class Effect {
 	 * @return
 	 */
 	public double getEffectAmount(DCPlayer dCPlayer) {
-		return getEffectAmount(dCPlayer.isElf() ? -1 : dCPlayer.skillLevel(this.mID / 10), dCPlayer);
+		return getEffectAmount(dCPlayer.skillLevel(this.mID / 10), dCPlayer);
 	}
 
-	/**
-	 * Used for getting the effect amount at a particular skill level. Where
-	 * possible use getEffectAmount(Dwarf), which checks for Dwarf vs. Elf.
-	 */
-	private double getEffectAmount(int skillLevel, DCPlayer dCPlayer) {
+	public double getEffectAmount(int skillLevel, DCPlayer dCPlayer) {
 		double effectAmount = mBase;
 		if (skillLevel == -1)
 			skillLevel = mNormalLevel;
@@ -499,6 +495,10 @@ public class Effect {
 
 	public EntityType getCreature() {
 		return mCreature;
+	}
+	
+	public int getNormalLevel() {
+		return mNormalLevel;
 	}
 
 	public boolean checkTool(ItemStack tool) {

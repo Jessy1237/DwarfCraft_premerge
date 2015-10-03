@@ -172,22 +172,6 @@ public class DataManager {
 		return newDwarf;
 	}
 
-	public void createDwarfData(DCPlayer dCPlayer) {
-		createDwarfData(dCPlayer.getPlayer().getName(), dCPlayer.isElf());
-	}
-
-	protected void createDwarfData(String name, boolean isElf) {
-		try {
-			PreparedStatement prep = mDBCon.prepareStatement("insert into players(name, race) values(?,?);");
-			prep.setString(1, name);
-			prep.setString(2, isElf ? "Elf" : "Dwarf");
-			prep.execute();
-			prep.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	private void dbInitialize() {
 		try {
 			Class.forName("org.sqlite.JDBC");
