@@ -334,7 +334,7 @@ public class Util {
 				return String.format("Unknown Dye(%d)", item.getData().getData());
 			}
 		default:
-			return item.getType().toString();
+			return cleanEnumString(item.getType().toString());
 		}
 	}
 
@@ -395,8 +395,21 @@ public class Util {
 		case OCELOT:
 			return "Ocelot";
 		default:
-			return mCreature.getName();
+			return cleanEnumString(mCreature.name().toString());
 		}
+	}
+	
+	public static String cleanEnumString(String enumStr) {
+		String enumString = enumStr.toLowerCase();
+		String[] enumWords = enumString.split("_");
+	    
+	    StringBuffer sb = new StringBuffer();
+	    for (String word : enumWords) {
+	        sb.append(word.substring(0, 1).toUpperCase() + word.substring(1));
+	        sb.append(" ");
+	    }
+		
+		return sb.toString().trim();
 	}
 
 	public enum FoodLevel {
