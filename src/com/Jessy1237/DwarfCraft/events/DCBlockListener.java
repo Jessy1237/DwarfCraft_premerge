@@ -46,7 +46,7 @@ public class DCBlockListener implements Listener {
 		this.plugin = plugin;
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockFromTo(BlockFromToEvent event) {
 		if (plugin.getConfigManager().disableCacti) {
 			if (!Util.isWorldAllowed(event.getBlock().getWorld()))
@@ -63,7 +63,7 @@ public class DCBlockListener implements Listener {
 	}
 
 	// Checks when a cactus grows to see if it trying to my auto farmed
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockGrow(BlockGrowEvent event) {
 		if (plugin.getConfigManager().disableCacti) {
 			if (!Util.isWorldAllowed(event.getBlock().getWorld()))
@@ -74,18 +74,18 @@ public class DCBlockListener implements Listener {
 				if (!checkCacti(b.getWorld(), b.getLocation())) {
 					b.setType(Material.AIR);
 					event.setCancelled(true);
-				}
-			} else {
-				b = event.getBlock();
-				if (!checkCacti(b.getWorld(), b.getLocation())) {
-					b.setType(Material.AIR);
-					event.setCancelled(true);
 				} else {
-					Location l = b.getLocation();
-					l.setY(l.getBlockY() + 1);
-					if (!checkCacti(b.getWorld(), l)) {
-						b.getWorld().getBlockAt(l).setType(Material.AIR);
+					b = event.getBlock();
+					if (!checkCacti(b.getWorld(), b.getLocation())) {
+						b.setType(Material.AIR);
 						event.setCancelled(true);
+					} else {
+						Location l = b.getLocation();
+						l.setY(l.getBlockY() + 1);
+						if (!checkCacti(b.getWorld(), l)) {
+							b.getWorld().getBlockAt(l).setType(Material.AIR);
+							event.setCancelled(true);
+						}
 					}
 				}
 			}
@@ -93,7 +93,7 @@ public class DCBlockListener implements Listener {
 	}
 
 	@SuppressWarnings("deprecation")
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (!Util.isWorldAllowed(event.getPlayer().getWorld()))
 			return;
@@ -411,7 +411,7 @@ public class DCBlockListener implements Listener {
 	// Code to check for farm automation i.e. (breaking the
 	// block below, cacti farms, etc)
 	@SuppressWarnings("deprecation")
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockPhysics(BlockPhysicsEvent event) {
 		if (plugin.getConfigManager().disableCacti) {
 			if (!Util.isWorldAllowed(event.getBlock().getWorld()))
@@ -513,7 +513,7 @@ public class DCBlockListener implements Listener {
 	}
 
 	// Checks to see if pistons are breaking crop related blocks
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockPistonExtend(BlockPistonExtendEvent event) {
 		if (plugin.getConfigManager().disableCacti) {
 			if (!Util.isWorldAllowed(event.getBlock().getWorld()))
@@ -526,7 +526,7 @@ public class DCBlockListener implements Listener {
 	}
 
 	// Checks to see if pistons are breaking crop related blocks
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockPistonRetract(BlockPistonRetractEvent event) {
 		if (plugin.getConfigManager().disableCacti) {
 			if (!Util.isWorldAllowed(event.getBlock().getWorld()))
