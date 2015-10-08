@@ -446,6 +446,10 @@ public class Out {
 	public void race(CommandSender sender, Player player) {
 		sendMessage(sender, "You are a " + plugin.getDataManager().find(player).getRace());
 	}
+	
+	public void adminRace(CommandSender sender, Player player) {
+		sendMessage(sender, player.getDisplayName() + " is a " + plugin.getDataManager().find(player).getRace());
+	}
 
 	public void alreadyRace(CommandSender sender, DCPlayer dCPlayer, String newRace) {
 		sendMessage(sender, "You are already a " + newRace);

@@ -2,7 +2,7 @@ name: DwarfCraft
 description: A skills and progression plugin for character development in RPG worlds.
 author: Jessy1237
 main: com.Jessy1237.DwarfCraft.DwarfCraft
-version: 2.5.10.4
+version: 2.5.11
 depend: [Vault, Citizens]
 commands: 
    renamenpc: 
@@ -62,14 +62,14 @@ commands:
              Example: /skillinfo 11 - Prints details about Excavation skill
              Example: /skillinfo Dirt_Digging - Prints details about Dirt Digging skill
              Example: /skill smartaleq 3 - Prints details about Smartaleq's Axe use skill
-      aliases: [skill]
+      aliases: [skill, si]
    effectinfo: 
       description: 
       usage: |       
              Displays a description of a dwarf's effect information
              /<command> <player name> [EffectID]
              Example: /effect smartaleq 131 - Prints details about Smartaleq's effect 131
-      aliases: [effect]
+      aliases: [effect, ei]
    race: 
       description: Checks a players race information, or changes it.
       usage: |

@@ -30,9 +30,9 @@ public class CommandRace extends Command {
 		} else if ((!(sender instanceof Player) || plugin.perms.has(sender, "dwarfcraft.op.race")) && args.length == 1) {
 			Player p = plugin.getServer().getPlayer(args[0]);
 			if (p == null) {
-				plugin.getOut().sendMessage(sender, "Not a valid player name.");
+				plugin.getOut().sendMessage(sender, CommandInformation.Usage.RACE.getUsage());
 			} else {
-				plugin.getOut().race(sender, p);
+				plugin.getOut().adminRace(sender, p);
 			}
 		} else if (args.length < 2) {
 			plugin.getOut().sendMessage(sender, CommandInformation.Usage.RACE.getUsage());
@@ -41,7 +41,14 @@ public class CommandRace extends Command {
 		} else if (args.length == 3) {
 			String newRace = args[1];
 			String name = args[0];
-			DCPlayer dCPlayer = plugin.getDataManager().find(plugin.getServer().getPlayer(name));
+			Player p = plugin.getServer().getPlayer(args[0]);
+			DCPlayer dCPlayer = null;
+			if (p == null) {
+				plugin.getOut().sendMessage(sender, "Not a valid Player Name.");
+				return true;
+			} else {
+				dCPlayer = plugin.getDataManager().find(p);
+			}
 			boolean confirmed = false;
 			if (args[2] != null) {
 				if (args[2].equalsIgnoreCase("confirm")) {
