@@ -325,7 +325,7 @@ public class DataManager {
 
 	protected DCPlayer findOffline(String name) {
 		DCPlayer dCPlayer = createDwarf(null);
-		if (getDwarfData(dCPlayer, name))
+		if (checkDwarfData(dCPlayer, name))
 			return dCPlayer;
 		else {
 			// No dwarf or data found
@@ -333,8 +333,8 @@ public class DataManager {
 		}
 	}
 
-	public boolean getDwarfData(DCPlayer player) {
-		return getDwarfData(player, player.getPlayer().getName());
+	public boolean checkDwarfData(DCPlayer player) {
+		return checkDwarfData(player, player.getPlayer().getName());
 	}
 
 	/**
@@ -343,7 +343,7 @@ public class DataManager {
 	 * @param player
 	 * @param name
 	 */
-	private boolean getDwarfData(DCPlayer player, String name) {
+	private boolean checkDwarfData(DCPlayer player, String name) {
 		try {
 			PreparedStatement prep = mDBCon.prepareStatement("select * from players WHERE name = ?;");
 			prep.setString(1, name);
@@ -353,9 +353,6 @@ public class DataManager {
 				return false;
 
 			player.setRace(rs.getString("race"));
-
-			// System.out.println("DC: PlayerJoin success for " +
-			// player.getPlayer().getName() + " id " + rs.getInt("id"));
 
 			int id = rs.getInt("id");
 			rs.close();
@@ -379,6 +376,9 @@ public class DataManager {
 			rs.close();
 			prep.close();
 
+			if(!dwarves.contains(player))
+				dwarves.add(player);
+			
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
