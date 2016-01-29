@@ -243,10 +243,12 @@ public class DCPlayer {
 	}
 
 	public void changeRace(String race) {
+		final String oldRace = this.race;
 		this.race = race;
 		skills = plugin.getConfigManager().getAllSkills();
 		Skill[] dCSkills = new Skill[skills.size()];
-
+		
+		//Resets the players skills
 		int I = 0;
 		for (Skill skill : skills.values()) {
 			skill.setLevel(0);
@@ -256,6 +258,12 @@ public class DCPlayer {
 			dCSkills[I] = skill;
 			I++;
 		}
+		
+		//Resets the players prefix
+		if(plugin.isChatEnabled())
+			if(plugin.getChat().getPlayerPrefix(getPlayer()).contains(Util.getPlayerPrefix(oldRace)))
+				plugin.getChat().setPlayerPrefix(getPlayer(), plugin.getChat().getPlayerPrefix(getPlayer()).replace(Util.getPlayerPrefix(oldRace), Util.getPlayerPrefix(this)));
+		
 		plugin.getDataManager().saveDwarfData(this, dCSkills);
 	}
 

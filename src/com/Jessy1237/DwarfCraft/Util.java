@@ -370,6 +370,16 @@ public class Util {
 		return null;
 	}
 
+	public static String getPlayerPrefix(DCPlayer player) {
+		String race = player.getRace().substring(0, 1).toUpperCase() + player.getRace().substring(1);
+		return plugin.getConfigManager().getPrefix().replace("%racename%", race);
+	}
+	
+	public static String getPlayerPrefix(String race) {
+		String raceStr = race.substring(0, 1).toUpperCase() + race.substring(1);
+		return plugin.getConfigManager().getPrefix().replace("%racename%", raceStr);
+	}
+	
 	public static String getCleanName(EntityType mCreature) {
 		if (mCreature == null)
 			return "NULL";

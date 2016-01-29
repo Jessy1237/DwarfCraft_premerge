@@ -63,9 +63,15 @@ public class DCPlayerListener implements Listener {
 		if (data == null)
 			data = dm.createDwarf(player);
 		plugin.getDataManager().checkDwarfData(data);
+		
+		if(plugin.isChatEnabled() && plugin.getConfigManager().prefix) {
+			if(!plugin.getChat().getPlayerPrefix(player).contains(Util.getPlayerPrefix(data)))
+				plugin.getChat().setPlayerPrefix(player, Util.getPlayerPrefix(data) + " " + plugin.getChat().getPlayerPrefix(player));
+		}
+		
 		if (!plugin.getConfigManager().sendGreeting)
 			return;
-
+		
 		plugin.getOut().welcome(plugin.getServer(), data);
 	}
 

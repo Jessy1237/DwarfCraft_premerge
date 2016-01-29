@@ -9,6 +9,7 @@ import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.TraitInfo;
+import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.command.Command;
@@ -79,6 +80,8 @@ public class DwarfCraft extends JavaPlugin {
 	private Out out;
 	private Consumer consumer = null;
 	private Util util;
+	private Permission perms = null;
+	private Chat chat = null;
 
 	public static int debugMessagesThreshold = 10;
 
@@ -110,12 +113,28 @@ public class DwarfCraft extends JavaPlugin {
 		return entityListener;
 	}
 
-	public Permission perms = null;
-
 	private boolean setupPermissions() {
 		RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
 		perms = rsp.getProvider();
 		return perms != null;
+	}
+	
+	public Permission getPermission() {
+		return perms;
+	}
+	
+    private boolean setupChat() {
+        RegisteredServiceProvider<Chat> rsp = getServer().getServicesManager().getRegistration(Chat.class);
+        chat = rsp.getProvider();
+        return chat != null;
+    }
+	
+	public boolean isChatEnabled() {
+		return chat != null;
+	}
+	
+	public Chat getChat() {
+		return chat;
 	}
 
 	private boolean checkPermission(CommandSender sender, String name, String type) {
@@ -272,6 +291,7 @@ public class DwarfCraft extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		setupPermissions();
+		setupChat();
 		PluginManager pm = getServer().getPluginManager();
 
 		pm.registerEvents(playerListener, this);

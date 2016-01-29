@@ -41,6 +41,7 @@ public final class ConfigManager {
 	private String dbpath;
 	private int trainDelay;
 	private String vanillaRace;
+	private String prefixStr;
 
 	private HashMap<Integer, Skill> skillsArray = new HashMap<Integer, Skill>();
 	public ArrayList<World> worlds = new ArrayList<World>();
@@ -55,6 +56,7 @@ public final class ConfigManager {
 	public boolean silkTouch = true;
 	public boolean vanilla = true;
 	public boolean buildingblocks = true;
+	public boolean prefix = false;
 
 	protected ConfigManager(DwarfCraft plugin, String directory, String paramsFileName) {
 		this.plugin = plugin;
@@ -244,6 +246,10 @@ public final class ConfigManager {
 					vanilla = Boolean.parseBoolean(theline[1].trim());
 				if (theline[0].equalsIgnoreCase("Vanilla Race"))
 					vanillaRace = theline[1].trim();
+				if(theline[0].equalsIgnoreCase("Prefix Enabled"))
+					prefix = Boolean.parseBoolean(theline[1].trim());
+				if(theline[0].equalsIgnoreCase("Prefix"))
+					prefixStr = theline[1].trim();
 
 				line = br.readLine();
 			}
@@ -562,6 +568,10 @@ public final class ConfigManager {
 			}
 		}
 		return false;
+	}
+	
+	public String getPrefix() {
+		return prefixStr;
 	}
 
 	public int getTrainDelay() {
