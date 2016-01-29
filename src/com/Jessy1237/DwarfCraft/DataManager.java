@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import net.citizensnpcs.api.npc.NPC;
 
@@ -70,7 +71,7 @@ public class DataManager {
 
 			rs = statement.executeQuery("select * from sqlite_master WHERE name = 'players';");
 			if (!rs.next()) {
-				statement.executeUpdate("create table players ( id INTEGER PRIMARY KEY, name, race );");
+				statement.executeUpdate("create table players ( id INTEGER PRIMARY KEY, uuid, race );");
 			}
 			rs.close();
 
@@ -80,66 +81,11 @@ public class DataManager {
 			}
 			rs.close();
 
-			rs = statement.executeQuery("select name from sqlite_master WHERE name LIKE 'dwarf%';");
-			while (rs.next()) {
-				convertOld(rs.getString("name"));
-				statement.execute("DROP TABLE " + rs.getString("name") + ";");
-			}
-			rs.close();
-
 		} catch (SQLException e) {
 			System.out.println("[SEVERE]DB not built successfully");
 			e.printStackTrace();
 			plugin.getServer().getPluginManager().disablePlugin(plugin);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		}
-	}
-
-	private void convertOld(String name) throws SQLException, ClassNotFoundException {
-		ResultSet rs = mDBCon.createStatement().executeQuery("SELECT * FROM " + name + ";");
-		System.out.println("DC Init: Converting old table: " + name + " (may lag a little wait for complete message)");
-
-		mDBCon.setAutoCommit(false);
-		while (rs.next()) {
-			String playerName = rs.getString("playername");
-			int id = getPlayerID(playerName);
-
-			if (id == -1) {
-				PreparedStatement prep = mDBCon.prepareStatement("insert into players(name, race) values(?,?);");
-				prep.setString(1, playerName);
-				prep.setString(2, (rs.getBoolean("iself") ? "Elf" : "Dwarf"));
-				prep.execute();
-				prep.close();
-				id = getPlayerID(playerName);
-			}
-			assert (id == -1);
-			System.out.println(String.format("Converting %s id %d", playerName, id));
-
-			PreparedStatement prep = mDBCon.prepareStatement("INSERT INTO skills(player, id, level, " + "deposit1, deposit2, deposit3) " + "values(?,?,?,?,?,?);");
-			HashMap<Integer, Skill> skills = plugin.getConfigManager().getAllSkills();
-			for (Skill skill : skills.values()) {
-
-				prep.setInt(1, id);
-				prep.setInt(2, skill.getId());
-				try {
-					prep.setInt(3, rs.getInt(skill.toString()));
-					System.out.println(String.format("\t%s\t\t%d", skill.toString(), rs.getInt(skill.toString())));
-				} catch (SQLException e) {
-					prep.setInt(3, 0);
-					System.out.println(String.format("\t%s\t\t0 - Default", skill.toString()));
-				}
-				prep.setInt(4, 0);
-				prep.setInt(5, 0);
-				prep.setInt(6, 0);
-				prep.addBatch();
-			}
-			prep.executeBatch();
-			prep.close();
-		}
-		mDBCon.setAutoCommit(true);
-		System.out.println("DC Init: Converting of " + name + " complete");
-		rs.close();
 	}
 
 	public boolean checkTrainersInChunk(Chunk chunk) {
@@ -172,6 +118,7 @@ public class DataManager {
 		return newDwarf;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void dbInitialize() {
 		try {
 			Class.forName("org.sqlite.JDBC");
@@ -192,9 +139,57 @@ public class DataManager {
 			}
 
 			try {
+				rs = statement.executeQuery("select uuid from players");
+			} catch (Exception e) {
+				System.out.println("DC Init: Converting Player DB (may lag a little wait for completion message).");
+				mDBCon.setAutoCommit(false);
+				HashMap<UUID, String> dcplayers = new HashMap<UUID, String>();
+
+				for (Race race : plugin.getConfigManager().getRaceList()) {
+					try {
+						boolean ran = false;
+						PreparedStatement prep = mDBCon.prepareStatement("SELECT * FROM players WHERE race = ?;");
+						prep.setString(1, race.getName());
+						rs = prep.executeQuery();
+							
+						while (rs.next()) {
+							ran = true;
+							dcplayers.put(plugin.getServer().getOfflinePlayer(rs.getString("name")).getUniqueId(), rs.getString("race"));
+						}
+						
+						if(!ran) {
+							PreparedStatement prep1 = mDBCon.prepareStatement("SELECT * FROM players WHERE race = ?;");
+							prep1.setString(1, race.getName().toLowerCase());
+							rs = prep1.executeQuery();
+								
+							while (rs.next()) {
+								dcplayers.put(plugin.getServer().getOfflinePlayer(rs.getString("name")).getUniqueId(), rs.getString("race"));
+							}
+						}
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				}
+				statement.executeUpdate("DROP TABLE players");
+				statement.executeUpdate("create table players ( id INTEGER PRIMARY KEY, uuid, race );");
+				for (UUID uuid : dcplayers.keySet()) {
+					if (uuid != null) {
+						PreparedStatement prep = mDBCon.prepareStatement("insert into players(uuid, race) values(?,?);");
+						prep.setString(1, uuid.toString());
+						prep.setString(2, dcplayers.get(uuid));
+						prep.execute();
+						prep.close();
+					} else {
+						System.out.println("NULL UUID");
+					}
+				}
+				System.out.println("DC Init: Finished Converting the Players DB.");
+			}
+
+			try {
 				rs = statement.executeQuery("select minSkill from trainers");
 			} catch (Exception e) {
-				System.out.println("DC Init: Converting Trainer DB (may lag a little wait for complete message).");
+				System.out.println("DC Init: Converting Trainer DB (may lag a little wait for completion message).");
 				mDBCon.setAutoCommit(false);
 				ArrayList<DwarfTrainer> trainers = new ArrayList<DwarfTrainer>();
 
@@ -216,8 +211,8 @@ public class DataManager {
 								trainers.add(trainer);
 							}
 						}
-						rs.close();
 						prep.close();
+						System.out.println("DC Init: Finished Converting the Trainer DB.");
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
@@ -227,7 +222,7 @@ public class DataManager {
 			try {
 				rs = statement.executeQuery("select type from trainers");
 			} catch (Exception e) {
-				System.out.println("DC Init: Converting Trainer DB to include Trainer Types (may lag a little wait for complete message).");
+				System.out.println("DC Init: Converting Trainer DB to include Trainer Types (may lag a little wait for completion message).");
 				mDBCon.setAutoCommit(false);
 				ArrayList<DwarfTrainer> trainers = new ArrayList<DwarfTrainer>();
 
@@ -250,6 +245,7 @@ public class DataManager {
 							}
 						}
 						rs.close();
+						mDBCon.setAutoCommit(true);
 						prep.close();
 					} catch (Exception e1) {
 						e1.printStackTrace();
@@ -323,9 +319,9 @@ public class DataManager {
 		return null;
 	}
 
-	protected DCPlayer findOffline(String name) {
+	protected DCPlayer findOffline(UUID uuid) {
 		DCPlayer dCPlayer = createDwarf(null);
-		if (checkDwarfData(dCPlayer, name))
+		if (checkDwarfData(dCPlayer, uuid))
 			return dCPlayer;
 		else {
 			// No dwarf or data found
@@ -333,8 +329,20 @@ public class DataManager {
 		}
 	}
 
+	public void createDwarfData(DCPlayer dCPlayer) {
+		try {
+			PreparedStatement prep = mDBCon.prepareStatement("insert into players(uuid, race) values(?,?);");
+			prep.setString(1, dCPlayer.getPlayer().getUniqueId().toString());
+			prep.setString(2, plugin.getConfigManager().getDefaultRace());
+			prep.execute();
+			prep.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public boolean checkDwarfData(DCPlayer player) {
-		return checkDwarfData(player, player.getPlayer().getName());
+		return checkDwarfData(player, player.getPlayer().getUniqueId());
 	}
 
 	/**
@@ -343,10 +351,10 @@ public class DataManager {
 	 * @param player
 	 * @param name
 	 */
-	private boolean checkDwarfData(DCPlayer player, String name) {
+	private boolean checkDwarfData(DCPlayer player, UUID uuid) {
 		try {
-			PreparedStatement prep = mDBCon.prepareStatement("select * from players WHERE name = ?;");
-			prep.setString(1, name);
+			PreparedStatement prep = mDBCon.prepareStatement("select * from players WHERE uuid = ?;");
+			prep.setString(1, uuid.toString());
 			ResultSet rs = prep.executeQuery();
 
 			if (!rs.next())
@@ -376,9 +384,9 @@ public class DataManager {
 			rs.close();
 			prep.close();
 
-			if(!dwarves.contains(player))
+			if (!dwarves.contains(player))
 				dwarves.add(player);
-			
+
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -560,7 +568,7 @@ public class DataManager {
 		}
 		trainerList.remove(trainer);
 	}
-	
+
 	public void removeTrainerByName(String name) {
 		DwarfTrainer trainer = getTrainerByName(name);
 
@@ -587,10 +595,10 @@ public class DataManager {
 		}
 	}
 
-	private int getPlayerID(String name) {
+	private int getPlayerID(UUID uuid) {
 		try {
-			PreparedStatement prep = mDBCon.prepareStatement("select id from players WHERE name = ?;");
-			prep.setString(1, name);
+			PreparedStatement prep = mDBCon.prepareStatement("select id from players WHERE uuid = ?;");
+			prep.setString(1, uuid.toString());
 			ResultSet rs = prep.executeQuery();
 
 			if (!rs.next())
@@ -601,22 +609,22 @@ public class DataManager {
 			prep.close();
 			return id;
 		} catch (Exception e) {
-			System.out.println("DC: Failed to get player ID: " + name);
+			System.out.println("DC: Failed to get player ID: " + uuid.toString());
 		}
 		return -1;
 	}
 
 	public boolean saveDwarfData(DCPlayer dCPlayer, Skill[] skills) {
 		try {
-			PreparedStatement prep = mDBCon.prepareStatement("UPDATE players SET race=? WHERE name=?;");
+			PreparedStatement prep = mDBCon.prepareStatement("UPDATE players SET race=? WHERE uuid=?;");
 			prep.setString(1, dCPlayer.getRace());
-			prep.setString(2, dCPlayer.getPlayer().getName());
+			prep.setString(2, dCPlayer.getPlayer().getUniqueId().toString());
 			prep.execute();
 			prep.close();
 
 			prep = mDBCon.prepareStatement("REPLACE INTO skills(player, id, level, " + "deposit1, deposit2, deposit3) " + "values(?,?,?,?,?,?);");
 
-			int id = getPlayerID(dCPlayer.getPlayer().getName());
+			int id = getPlayerID(dCPlayer.getPlayer().getUniqueId());
 			for (Skill skill : skills) {
 				prep.setInt(1, id);
 				prep.setInt(2, skill.getId());
