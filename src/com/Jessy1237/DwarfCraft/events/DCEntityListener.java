@@ -76,7 +76,7 @@ public class DCEntityListener implements Listener {
 		if (trainer != null) {
 			if (event.getClicker() instanceof Player) {
 				if (plugin.getDataManager().getTrainerRemove().contains(event.getClicker())) {
-					plugin.getDataManager().removeTrainer(trainer.getName());
+					plugin.getDataManager().removeTrainer(trainer.getEntity());
 					plugin.getDataManager().getTrainerRemove().remove(event.getClicker());
 				} else if (plugin.getDataManager().getTrainerLookAt().contains((Player) event.getClicker())) {
 					trainer.lookAt((Player) event.getClicker());
@@ -142,7 +142,7 @@ public class DCEntityListener implements Listener {
 			event.setDamage(0);
 			return;
 		}
-		
+
 		if (!(event.getDamager() instanceof Player)) {
 			return;
 		}
@@ -238,7 +238,7 @@ public class DCEntityListener implements Listener {
 		if (event.getEntity() instanceof EnderCrystal) {
 			return;
 		}
-		
+
 		LivingEntity hitThing = (LivingEntity) event.getEntity();
 
 		double hp = hitThing.getHealth();
@@ -277,7 +277,7 @@ public class DCEntityListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-		
+
 		if ((event.getEntity() instanceof Player)) {
 			DCPlayer dCPlayer = plugin.getDataManager().find((Player) event.getEntity());
 			double damage = event.getDamage();
@@ -324,14 +324,15 @@ public class DCEntityListener implements Listener {
 
 		boolean changed = false;
 
-		List<ItemStack> items = event.getDrops();
-
-		ItemStack[] normal = new ItemStack[items.size()];
-		items.toArray(normal);
-
-		items.clear();
-
 		if (killMap.containsKey(deadThing)) {
+			
+			List<ItemStack> items = event.getDrops();
+
+			ItemStack[] normal = new ItemStack[items.size()];
+			items.toArray(normal);
+
+			items.clear();
+			
 			DCPlayer killer = killMap.get(deadThing);
 			for (Skill skill : killer.getSkills().values()) {
 				for (Effect effect : skill.getEffects()) {
@@ -345,13 +346,20 @@ public class DCEntityListener implements Listener {
 							if (DwarfCraft.debugMessagesThreshold < 5) {
 								System.out.println(String.format("DC5: killed a %s effect called: %d created %d of %s\r\n", deadThing.getClass().getSimpleName(), effect.getId(), output.getAmount(), output.getType().name()));
 							}
-
-							if (output.getAmount() > 0)
-								items.add(output);
+							
 							if (changed == false) {
 								for (ItemStack i : normal)
 									items.add(i);
 							}
+							
+							if (output.getAmount() > 0) {
+								for(ItemStack i : normal) {
+									if(i.getTypeId() == output.getTypeId())
+										items.remove(i);
+								}
+								items.add(output);
+							}
+							
 							changed = true;
 						} else if (effect.getCreature() == null) {
 							ItemStack output = effect.getOutput(killer);
@@ -363,15 +371,17 @@ public class DCEntityListener implements Listener {
 								System.out.println(String.format("DC5: killed a %s effect called: %d created %d of %s\r\n", deadThing.getClass().getSimpleName(), effect.getId(), output.getAmount(), output.getType().name()));
 							}
 
+							boolean added = false;
 							for (ItemStack i : normal) {
 								if (i.getTypeId() == output.getTypeId()) {
+									if(!added){
 									if (output.getAmount() > 0) {
-										if (changed == false) {
-											items.add(output);
-										} else {
+										while(items.contains(i)) {
 											items.remove(i);
-											items.add(output);
 										}
+											items.add(output);
+											added = true;
+									}
 									}
 								} else if (changed == false) {
 									items.add(i);
@@ -388,7 +398,8 @@ public class DCEntityListener implements Listener {
 					items.add(i);
 			}
 		}
-
+		
+		killMap.remove(deadThing);
 	}
 
 	public void onNPCLeftClickEvent(NPCLeftClickEvent event) {

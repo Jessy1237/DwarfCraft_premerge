@@ -41,7 +41,7 @@ public class CommandCreateTrainer extends Command {
 				CommandParser parser = new CommandParser(plugin, sender, args);
 				List<Object> desiredArguments = new ArrayList<Object>();
 				List<Object> outputList = null;
-				
+
 				String uniqueId = "UniqueIdAdd";
 				String name = "Name";
 				Skill skill = new Skill(0, null, 0, null, null, null, null, null);
@@ -82,16 +82,15 @@ public class CommandCreateTrainer extends Command {
 				}
 
 				Player p = (Player) sender;
-								if(plugin.getNPCRegistry().getById(Integer.parseInt(uniqueId)) != null ){
+				if (plugin.getNPCRegistry().getById(Integer.parseInt(uniqueId)) != null) {
 					plugin.getOut().sendMessage(sender, "An NPC with that ID already exsists! Try another ID.");
-					return false;
+					return true;
 				}
 				DwarfTrainer d = new DwarfTrainer(plugin, p.getLocation(), Integer.parseInt(uniqueId), name, skill.getId(), maxSkill, minSkill, null, false, false, 0, type);
 				plugin.getDataManager().insertTrainer(d);
 			} catch (DCCommandException e) {
 				e.describe(sender);
 				sender.sendMessage(CommandInformation.Usage.CREATETRAINER.getUsage());
-				return false;
 			}
 		}
 		return true;

@@ -545,8 +545,8 @@ public class DataManager {
 		return null;
 	}
 
-	public void removeTrainer(String str) {
-		DwarfTrainer trainer = getTrainerByName(str);
+	public void removeTrainer(NPC npc) {
+		DwarfTrainer trainer = getTrainer(npc);
 
 		plugin.despawnById(trainer.getUniqueId());
 
@@ -558,6 +558,23 @@ public class DataManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		trainerList.remove(trainer);
+	}
+	
+	public void removeTrainerByName(String name) {
+		DwarfTrainer trainer = getTrainerByName(name);
+
+		plugin.despawnById(trainer.getUniqueId());
+
+		try {
+			PreparedStatement prep = mDBCon.prepareStatement("DELETE FROM trainers WHERE uniqueId = ?;");
+			prep.setInt(1, trainer.getUniqueId());
+			prep.execute();
+			prep.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		trainerList.remove(trainer);
 	}
 
 	public void removeVehicle(Vehicle v) {

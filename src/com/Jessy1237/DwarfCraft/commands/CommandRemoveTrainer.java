@@ -40,7 +40,7 @@ public class CommandRemoveTrainer extends Command {
 				
 				desiredArguments.add("Name");
 				outputList = parser.parse(desiredArguments, false);
-				plugin.getDataManager().removeTrainer((String)outputList.get(0));
+				plugin.getDataManager().removeTrainerByName((String)outputList.get(0));
 				
 			} catch (DCCommandException e) {
 				e.describe(sender);
