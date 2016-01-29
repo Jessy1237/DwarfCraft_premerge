@@ -27,7 +27,7 @@ public class CommandRace extends Command {
 
 		if (args.length == 0) {
 			plugin.getOut().race(sender, (Player) sender);
-		} else if ((!(sender instanceof Player) || plugin.perms.has(sender, "dwarfcraft.op.race")) && args.length == 1) {
+		} else if ((!(sender instanceof Player) || plugin.getPermission().has(sender, "dwarfcraft.op.race")) && args.length == 1) {
 			Player p = plugin.getServer().getPlayer(args[0]);
 			if (p == null) {
 				plugin.getOut().sendMessage(sender, CommandInformation.Usage.RACE.getUsage());
@@ -56,7 +56,7 @@ public class CommandRace extends Command {
 				}
 			}
 			if (sender instanceof Player) {
-				if (plugin.perms.has(sender, "dwarfcraft.op.race")) {
+				if (plugin.getPermission().has(sender, "dwarfcraft.op.race")) {
 					race(newRace, confirmed, dCPlayer, (CommandSender) plugin.getServer().getPlayer(name));
 				}
 			} else {
@@ -83,7 +83,7 @@ public class CommandRace extends Command {
 			if (confirm) {
 				if (plugin.getConfigManager().getRace(newRace) != null) {
 					if (sender instanceof Player) {
-						if (plugin.perms.has((Player) sender, "dwarfcraft.norm.race." + newRace.toLowerCase())) {
+						if (plugin.getPermission().has((Player) sender, "dwarfcraft.norm.race." + newRace.toLowerCase())) {
 							plugin.getOut().changedRace(sender, dCPlayer, plugin.getConfigManager().getRace(newRace).getName());
 							dCPlayer.changeRace(newRace);
 						} else {
