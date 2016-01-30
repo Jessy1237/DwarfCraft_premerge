@@ -33,12 +33,8 @@ public class DataManager {
 	private List<DwarfVehicle> vehicleList = new ArrayList<DwarfVehicle>();
 	public HashMap<Integer, DwarfTrainer> trainerList = new HashMap<Integer, DwarfTrainer>();
 	private HashMap<String, GreeterMessage> greeterMessageList = new HashMap<String, GreeterMessage>();
-	private HashMap<Player, String> Rename = new HashMap<Player, String>();
 	private final ConfigManager configManager;
 	private final DwarfCraft plugin;
-	private List<Player> trainerRemove = new ArrayList<Player>();
-	private HashMap<Player, String> Type = new HashMap<Player, String>();
-	private List<Player> trainerLookAt = new ArrayList<Player>();
 	private Connection mDBCon;
 
 	protected DataManager(DwarfCraft plugin, ConfigManager cm) {
@@ -523,21 +519,5 @@ public class DataManager {
 			e.printStackTrace();
 			return false;
 		}
-	}
-
-	public List<Player> getTrainerRemove() {
-		return trainerRemove;
-	}
-
-	public List<Player> getTrainerLookAt() {
-		return trainerLookAt;
-	}
-
-	public HashMap<Player, String> getRename() {
-		return Rename;
-	}
-
-	public HashMap<Player, String> getType() {
-		return Type;
-	}
+	} 
 }

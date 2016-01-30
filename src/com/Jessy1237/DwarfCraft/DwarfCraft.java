@@ -19,7 +19,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.Jessy1237.DwarfCraft.commands.CommandChangeType;
 import com.Jessy1237.DwarfCraft.commands.CommandCreateGreeter;
 import com.Jessy1237.DwarfCraft.commands.CommandCreateTrainer;
 import com.Jessy1237.DwarfCraft.commands.CommandDCCommands;
@@ -29,19 +28,13 @@ import com.Jessy1237.DwarfCraft.commands.CommandEffectInfo;
 import com.Jessy1237.DwarfCraft.commands.CommandHelp;
 import com.Jessy1237.DwarfCraft.commands.CommandInfo;
 import com.Jessy1237.DwarfCraft.commands.CommandListTrainers;
-import com.Jessy1237.DwarfCraft.commands.CommandLookAtNext;
 import com.Jessy1237.DwarfCraft.commands.CommandRace;
 import com.Jessy1237.DwarfCraft.commands.CommandRaces;
-import com.Jessy1237.DwarfCraft.commands.CommandRemoveNext;
-import com.Jessy1237.DwarfCraft.commands.CommandRemoveTrainer;
-import com.Jessy1237.DwarfCraft.commands.CommandRenameNPC;
-import com.Jessy1237.DwarfCraft.commands.CommandRenameNext;
 import com.Jessy1237.DwarfCraft.commands.CommandRules;
 import com.Jessy1237.DwarfCraft.commands.CommandSetSkill;
 import com.Jessy1237.DwarfCraft.commands.CommandSkillInfo;
 import com.Jessy1237.DwarfCraft.commands.CommandSkillSheet;
 import com.Jessy1237.DwarfCraft.commands.CommandTutorial;
-import com.Jessy1237.DwarfCraft.commands.CommandTypeNext;
 import com.Jessy1237.DwarfCraft.events.DCBlockListener;
 import com.Jessy1237.DwarfCraft.events.DCEntityListener;
 import com.Jessy1237.DwarfCraft.events.DCInventoryListener;
@@ -200,18 +193,6 @@ public class DwarfCraft extends JavaPlugin {
 			if (hasNorm || hasAll) {
 				cmd = new CommandEffectInfo(this);
 			}
-		} else if (name.equalsIgnoreCase("RemoveNext")) {
-			if (hasOp || hasAll) {
-				cmd = new CommandRemoveNext(this);
-			}
-		} else if (name.equalsIgnoreCase("RenameNext")) {
-			if (hasOp || hasAll) {
-				cmd = new CommandRenameNext(this);
-			}
-		} else if (name.equalsIgnoreCase("RenameNPC")) {
-			if (hasOp || hasAll) {
-				cmd = new CommandRenameNPC(this);
-			}
 		} else if (name.equalsIgnoreCase("DCDebug")) {
 			if (hasOp || hasAll) {
 				cmd = new CommandDebug(this);
@@ -219,10 +200,6 @@ public class DwarfCraft extends JavaPlugin {
 		} else if (name.equalsIgnoreCase("ListTrainers")) {
 			if (hasOp || hasAll) {
 				cmd = new CommandListTrainers(this);
-			}
-		} else if (name.equalsIgnoreCase("RemoveTrainer")) {
-			if (hasOp || hasAll) {
-				cmd = new CommandRemoveTrainer(this);
 			}
 		} else if (name.equalsIgnoreCase("SetSkill")) {
 			if (hasOp || hasAll) {
@@ -236,10 +213,6 @@ public class DwarfCraft extends JavaPlugin {
 			if (hasOp || hasAll) {
 				cmd = new CommandCreateTrainer(this);
 			}
-		} else if (name.equalsIgnoreCase("LookAtNext")) {
-			if (hasOp || hasAll) {
-				cmd = new CommandLookAtNext(this);
-			}
 		} else if (name.equalsIgnoreCase("DMem")) {
 			if (hasOp || hasAll) {
 				cmd = new CommandDMem(this);
@@ -247,14 +220,6 @@ public class DwarfCraft extends JavaPlugin {
 		} else if (name.equalsIgnoreCase("Races")) {
 			if (hasNorm || hasAll) {
 				cmd = new CommandRaces(this);
-			}
-		} else if (name.equalsIgnoreCase("ChangeType")) {
-			if (hasOp || hasAll) {
-				cmd = new CommandChangeType(this);
-			}
-		} else if (name.equalsIgnoreCase("TypeNext")) {
-			if (hasOp || hasAll) {
-				cmd = new CommandTypeNext(this);
 			}
 		} else {
 			isCmd = false;

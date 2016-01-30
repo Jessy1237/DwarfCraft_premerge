@@ -11,7 +11,6 @@ import net.citizensnpcs.api.npc.AbstractNPC;
 
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -232,10 +231,6 @@ public final class DwarfTrainer {
 		setWait(false);
 	}
 
-	public void setDisplayName(String name) {
-		this.mEntity.setName(name);
-	}
-
 	public boolean isWaiting() {
 		return this.wait;
 	}
@@ -250,20 +245,6 @@ public final class DwarfTrainer {
 	
 	public void setLastTrain(long lastTrain) {
 		this.lastTrain = lastTrain;
-	}
-
-	public void lookAt(Player p) {
-		this.mEntity.faceLocation(p.getLocation());
-	}
-
-
-	@SuppressWarnings("deprecation")
-	public void setType(String type) {
-		if (type.equalsIgnoreCase("PLAYER")) {
-			this.mEntity.setBukkitEntityType(EntityType.PLAYER);
-		} else {
-			this.mEntity.setBukkitEntityType(EntityType.fromName(type));
-		}
 	}
 
 	public String getType() {

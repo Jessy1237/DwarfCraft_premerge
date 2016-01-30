@@ -75,28 +75,14 @@ public class DCEntityListener implements Listener {
 		DwarfTrainer trainer = plugin.getDataManager().getTrainer(event.getNPC());
 		if (trainer != null) {
 			if (event.getClicker() instanceof Player) {
-				if (plugin.getDataManager().getTrainerRemove().contains(event.getClicker())) {
-					plugin.getDataManager().removeTrainer(trainer.getEntity());
-					plugin.getDataManager().getTrainerRemove().remove(event.getClicker());
-				} else if (plugin.getDataManager().getTrainerLookAt().contains((Player) event.getClicker())) {
-					trainer.lookAt((Player) event.getClicker());
-					plugin.getDataManager().getTrainerLookAt().remove(event.getClicker());
-				} else if (plugin.getDataManager().getRename().containsKey((Player) event.getClicker())) {
-					trainer.setDisplayName(plugin.getDataManager().getRename().get((Player) event.getClicker()));
-					plugin.getDataManager().getRename().remove((Player) event.getClicker());
-				} else if (plugin.getDataManager().getType().containsKey((Player) event.getClicker())) {
-					trainer.setType(plugin.getDataManager().getType().get((Player) event.getClicker()));
-					plugin.getDataManager().getType().remove((Player) event.getClicker());
+				// in business, left click
+				if (trainer.isGreeter()) {
+					trainer.printLeftClick((Player) (event.getClicker()));
 				} else {
-					// in business, left click
-					if (trainer.isGreeter()) {
-						trainer.printLeftClick((Player) (event.getClicker()));
-					} else {
-						Player player = (Player) event.getClicker();
-						DCPlayer dCPlayer = plugin.getDataManager().find(player);
-						Skill skill = dCPlayer.getSkill(trainer.getSkillTrained());
-						plugin.getOut().printSkillInfo(player, skill, dCPlayer, trainer.getMaxSkill());
-					}
+					Player player = (Player) event.getClicker();
+					DCPlayer dCPlayer = plugin.getDataManager().find(player);
+					Skill skill = dCPlayer.getSkill(trainer.getSkillTrained());
+					plugin.getOut().printSkillInfo(player, skill, dCPlayer, trainer.getMaxSkill());
 				}
 			}
 			return true;
@@ -325,14 +311,14 @@ public class DCEntityListener implements Listener {
 		boolean changed = false;
 
 		if (killMap.containsKey(deadThing)) {
-			
+
 			List<ItemStack> items = event.getDrops();
 
 			ItemStack[] normal = new ItemStack[items.size()];
 			items.toArray(normal);
 
 			items.clear();
-			
+
 			DCPlayer killer = killMap.get(deadThing);
 			for (Skill skill : killer.getSkills().values()) {
 				for (Effect effect : skill.getEffects()) {
@@ -346,20 +332,20 @@ public class DCEntityListener implements Listener {
 							if (DwarfCraft.debugMessagesThreshold < 5) {
 								System.out.println(String.format("DC5: killed a %s effect called: %d created %d of %s\r\n", deadThing.getClass().getSimpleName(), effect.getId(), output.getAmount(), output.getType().name()));
 							}
-							
+
 							if (changed == false) {
 								for (ItemStack i : normal)
 									items.add(i);
 							}
-							
+
 							if (output.getAmount() > 0) {
-								for(ItemStack i : normal) {
-									if(i.getTypeId() == output.getTypeId())
+								for (ItemStack i : normal) {
+									if (i.getTypeId() == output.getTypeId())
 										items.remove(i);
 								}
 								items.add(output);
 							}
-							
+
 							changed = true;
 						} else if (effect.getCreature() == null) {
 							ItemStack output = effect.getOutput(killer);
@@ -374,14 +360,14 @@ public class DCEntityListener implements Listener {
 							boolean added = false;
 							for (ItemStack i : normal) {
 								if (i.getTypeId() == output.getTypeId()) {
-									if(!added){
-									if (output.getAmount() > 0) {
-										while(items.contains(i)) {
-											items.remove(i);
-										}
+									if (!added) {
+										if (output.getAmount() > 0) {
+											while (items.contains(i)) {
+												items.remove(i);
+											}
 											items.add(output);
 											added = true;
-									}
+										}
 									}
 								} else if (changed == false) {
 									items.add(i);
@@ -398,7 +384,7 @@ public class DCEntityListener implements Listener {
 					items.add(i);
 			}
 		}
-		
+
 		killMap.remove(deadThing);
 	}
 
