@@ -10,8 +10,6 @@ public class CommandInformation {
 		
 		DEBUG("Sets the debug message threshold in console, from -10(everthing) to +10(critical only)."),
 		DCHELP("Displays general help information. Use /help <command> for command specific info."),
-		RENAMENEXT("Renames the next trainer/greeter you hit."),
-		RENAMENPC("Renames the trainer/greeter to the new name."),
 		INFO("Displays general information about the DwarfCraft plugin."),
 		RULES("Displays server rules defined in the DwarfCraft messages config file."),
 		TUTORIAL("Displays a series of guide messages to instruct in the basics of DwarfCraft."),
@@ -23,14 +21,9 @@ public class CommandInformation {
 		SETSKILL("Admin command to change a players skill level manually."),
 		CREATEGREETER("Creates a new greeter where you are standing."),
 		CREATETRAINER("Creates a new trainer where you are standing."),
-		REMOVETRAINER("Removes the trainer specified."),
 		LISTTRAINERS("Displays a list of trainers and greeters on the server."),
-		REMOVENEXT("Removes the next trainer you hit."),
-		LOOKATNEXT("The next trainer you hit will look at you."),
 		RACES("Displays a list of the races with descriptions"),
-		DMEM("Displays a list of what type, and how many entites are loaded on the server."), 
-		TYPECHANGE("Changes the entity type of a trainer/greeter."),
-		TYPENEXT("Changes the entity type of the next trainer/greeter you hit");
+		DMEM("Displays a list of what type, and how many entites are loaded on the server.");
 		
 		private String Desc;
 
@@ -46,8 +39,6 @@ public class CommandInformation {
 	public enum Usage{
 		DEBUG("/<command> [debug level]\nExample: /<command> 2 - sets the console debug printing threshold to 2"),
 		DCHELP("/<command> <command name> Displays general help information. Use /help <command> for command specific info."),
-		RENAMENEXT("/<command> <command name> Renames the next trainer/greeter you hit."),
-		RENAMENPC("/<command> [Original Name] [New Name] Renames the trainer/greeter to the new name."),
 		INFO("/<command> Displays general information about the DwarfCraft plugin."),
 		RULES("/rules Displays server rules defined in the DwarfCraft messages config file."),
 		TUTORIAL(" Displays a series of guide messages to instruct in the basics of DwarfCraft\n/tutorial <page number>\nExample: /tutorial 2 - Prints the second tutorial section"),
@@ -59,14 +50,9 @@ public class CommandInformation {
 		SETSKILL("/<command> <player name> [Skill ID or Skill Name or All] [new skill level]"),
 		CREATEGREETER("/<command> <id> <DisplayName> <MessageId>"),
 		CREATETRAINER("/<command> <id> <DisplayName> <Skill ID or Skill Name> <Max Skill Level> <Min Skill Level> <EntityType>"),
-		REMOVETRAINER("/<command> <DisplayName>"),
 		LISTTRAINERS("/<command> [PageNumber]"),
-		REMOVENEXT("/removenext"),
-		LOOKATNEXT("/lookatnext"),
 		RACES("/races"),
-		DMEM("/dmem"),
-		TYPECHANGE("/<command> <DisplayName> <EntityType>"), 
-		TYPENEXT("/<command> <EntityType>");
+		DMEM("/dmem");
 		
 		private String Usage;
 

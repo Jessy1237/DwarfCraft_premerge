@@ -124,8 +124,8 @@ public final class DwarfTrainer {
 			return;
 		}
 
-		if (skill.getLevel() >= 30) {
-			plugin.getOut().sendMessage(player, "&cYour skill is max level (30)!", tag);
+		if (skill.getLevel() >= plugin.getConfigManager().getMaxSkillLevel()) {
+			plugin.getOut().sendMessage(player, "&cYour skill is max level (" + plugin.getConfigManager().getMaxSkillLevel() + ")!", tag);
 			setWait(false);
 			return;
 		}

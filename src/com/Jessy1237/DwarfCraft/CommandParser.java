@@ -6,7 +6,6 @@ package com.Jessy1237.DwarfCraft;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -78,17 +77,18 @@ public final class CommandParser {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	private DCPlayer parseDwarf(int argNumber) throws DCCommandException {
 		Player player;
 		DCPlayer dCPlayer = null;
 		try {
 			String dwarf = input[argNumber];
-			player = sender.getServer().getPlayer(UUID.fromString(dwarf));
+			player = sender.getServer().getPlayer(dwarf);
 			if (player != null && player.isOnline())
 				dCPlayer = plugin.getDataManager().find(player);
 			else if (player == null || !player.isOnline()) {
 				System.out.println("looking for offline player");
-				dCPlayer = plugin.getDataManager().findOffline(UUID.fromString(dwarf));
+				dCPlayer = plugin.getDataManager().findOffline(plugin.getServer().getOfflinePlayer(dwarf).getUniqueId());
 			}
 			if (dCPlayer == null) {
 				throw new DCCommandException(plugin, Type.PARSEDWARFFAIL);
@@ -148,7 +148,7 @@ public final class CommandParser {
 		String name = input[arrayIterator];
 		return name;
 	}
-	
+
 	private Object parseType(int arrayIterator) {
 		String type = input[arrayIterator];
 		return type;

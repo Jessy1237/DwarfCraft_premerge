@@ -39,7 +39,8 @@ public final class ConfigManager {
 	private String cfgRaceFile;
 	private String cfgBlockGroupsFile;
 	private String dbpath;
-	private int trainDelay;
+	private Integer trainDelay;
+	private Integer maxLevel;
 	private String vanillaRace;
 	private String prefixStr;
 
@@ -145,6 +146,10 @@ public final class ConfigManager {
 			cfgBlockGroupsFile = "block-groups.config";
 		if (defaultRace == null)
 			defaultRace = "NULL";
+		if(trainDelay == null)
+			trainDelay = 2;
+		if(maxLevel == null)
+			maxLevel = 30;
 	}
 
 	private void checkFiles(String path) {
@@ -250,6 +255,8 @@ public final class ConfigManager {
 					prefix = Boolean.parseBoolean(theline[1].trim());
 				if(theline[0].equalsIgnoreCase("Prefix"))
 					prefixStr = theline[1].trim();
+				if(theline[0].equalsIgnoreCase("Max Skill Level"))
+					maxLevel = Integer.parseInt(theline[1].trim());
 
 				line = br.readLine();
 			}
@@ -576,6 +583,10 @@ public final class ConfigManager {
 
 	public int getTrainDelay() {
 		return trainDelay;
+	}
+	
+	public int getMaxSkillLevel() {
+		return maxLevel;
 	}
 
 	public HashMap<String, ArrayList<Integer>> getBlockGroups() {

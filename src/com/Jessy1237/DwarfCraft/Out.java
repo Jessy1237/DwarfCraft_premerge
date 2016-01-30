@@ -210,7 +210,7 @@ public class Out {
 		}
 
 		// training lines
-		if (skill.getLevel() == 30) {
+		if (skill.getLevel() == plugin.getConfigManager().getMaxSkillLevel()) {
 			sendMessage(sender, "&6---This skill is maximum level, no training available---");
 			return true;
 		}

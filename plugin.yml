@@ -5,18 +5,6 @@ main: com.Jessy1237.DwarfCraft.DwarfCraft
 version: 2.6
 depend: [Vault, Citizens]
 commands: 
-   renamenpc: 
-      description: Renames the trainer/greeter.
-      usage: |
-           /<command> [UniqueId] [New Name] Renames the trainer/greeter to the new name.
-           Example: /<command> 10  Steve - renames the trainer you hit.
-      aliases: []
-   renamenext: 
-      description: Renames the next trainer/greeter you hit.
-      usage: |
-           /<command> [Name] <command name> Renames the next trainer/greeter you hit.
-           Example: /<command> Joe - renames the trainer you hit.
-      aliases: []
    dcdebug: 
       description: Sets the debug message threshold in console, from -10(everthing) to +10(critical only).
       usage: |
@@ -91,28 +79,12 @@ commands:
       usage: |
              /<command> <ID> <DisplayName> <Skill ID or Skill Name> <Max Skill Level> <Min Skill Level>
       aliases: [ct]
-   removetrainer: 
-      description: 
-      usage:
-      aliases: [removegreeter]
    listtrainers: 
       description: Displays a list of trainers and greeters on the server.
       usage: |
              /<command> [PageNumber]
       aliases: [listtrainer, lt]
-   removenext: 
-      description: 
-      usage: 
-   lookatnext: 
-      description: 
-      usage: 
    races:
-      description:
-      usage:
-   changetype:
-      description:
-      usage:
-   typenext:
       description:
       usage:
    dmem: 
