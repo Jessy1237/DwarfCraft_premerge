@@ -6,17 +6,21 @@ package com.Jessy1237.DwarfCraft.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
+import net.citizensnpcs.api.npc.AbstractNPC;
 
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import com.Jessy1237.DwarfCraft.CommandInformation;
 import com.Jessy1237.DwarfCraft.CommandParser;
 import com.Jessy1237.DwarfCraft.DCCommandException;
 import com.Jessy1237.DwarfCraft.DwarfCraft;
-import com.Jessy1237.DwarfCraft.DwarfTrainer;
+import com.Jessy1237.DwarfCraft.DwarfTrainerTrait;
 
 public class CommandCreateGreeter extends Command {
 	private final DwarfCraft plugin;
@@ -26,6 +30,7 @@ public class CommandCreateGreeter extends Command {
 		this.plugin = plugin;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean execute(CommandSender sender, String commandLabel, String[] args) {
 		if (DwarfCraft.debugMessagesThreshold < 1)
@@ -60,8 +65,15 @@ public class CommandCreateGreeter extends Command {
 					plugin.getOut().sendMessage(sender, "An NPC with that ID already exsists! Try another ID.");
 					return false;
 				}
-				DwarfTrainer d = new DwarfTrainer(plugin, location, Integer.parseInt(uniqueId), name, null, null, null, greeterMessage, true, false, 0, type);
-				plugin.getDataManager().insertTrainer(d);
+				AbstractNPC npc;
+				if(type.equalsIgnoreCase("PLAYER")) {
+					npc = (AbstractNPC) plugin.getNPCRegistry().createNPC(EntityType.PLAYER, UUID.randomUUID(), Integer.parseInt(uniqueId), name);
+				} else {
+					npc = (AbstractNPC) plugin.getNPCRegistry().createNPC(EntityType.fromName(type), UUID.randomUUID(), Integer.parseInt(uniqueId), name);
+				}
+				npc.spawn(location);
+				npc.addTrait(new DwarfTrainerTrait(plugin, Integer.parseInt(uniqueId),null, null, null, true, greeterMessage));
+				npc.setProtected(true);
 			} catch (DCCommandException e) {
 				e.describe(sender);
 				sender.sendMessage(CommandInformation.Usage.CREATEGREETER.getUsage());

@@ -6,102 +6,27 @@ package com.Jessy1237.DwarfCraft;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import net.citizensnpcs.api.npc.AbstractNPC;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public final class DwarfTrainer {
 	private AbstractNPC mEntity;
-	private Integer mSkillID;
-	private Integer mMaxLevel;
-	private Integer mMinLevel;
-	private boolean mIsGreeter;
-	private String mMsgID;
-	private World mWorld;
-	private Material mHeldItem;
-	private String mName;
-	private String type;
-	private int mID;
 	private final DwarfCraft plugin;
 	private boolean wait;
 	private long lastTrain;
 
-	public DwarfTrainer(final DwarfCraft plugin, Location location, int id, String name, Integer skillId, Integer maxSkill, Integer minSkill, String greeterMessage, boolean isGreeter, boolean wait, long lastTrain) {
+	public DwarfTrainer(final DwarfCraft plugin, AbstractNPC mEntity) {
 		this.plugin = plugin;
-		this.mSkillID = skillId;
-		this.mMaxLevel = maxSkill;
-		this.mMinLevel = minSkill;
-		this.mMsgID = greeterMessage;
-		this.mIsGreeter = isGreeter;
-		this.mWorld = location.getWorld();
-		this.mName = name;
-		this.type = "PLAYER";
-		this.mEntity = (AbstractNPC) plugin.getNPCRegistry().createNPC(EntityType.PLAYER, UUID.randomUUID(), id, name);
-		mEntity.spawn(location);
-		mEntity.addTrait(DwarfTrainerTrait.class);
-		mEntity.setProtected(true);
-		this.wait = wait;
-		this.lastTrain = lastTrain;
-		this.mID = mEntity.getId();
-		this.wait = wait;
-		this.lastTrain = lastTrain;
-
-		if (mIsGreeter)
-			mHeldItem = Material.AIR;
-		else
-			mHeldItem = plugin.getConfigManager().getGenericSkill(skillId).getTrainerHeldMaterial();
-
-		assert (mHeldItem != null);
-
-		if (mHeldItem != Material.AIR)
-			((LivingEntity) mEntity.getEntity()).getEquipment().setItemInHand(new ItemStack(mHeldItem, 1));
-
-	}
-
-	@SuppressWarnings("deprecation")
-	public DwarfTrainer(final DwarfCraft plugin, Location location, int id, String name, Integer skillId, Integer maxSkill, Integer minSkill, String greeterMessage, boolean isGreeter, boolean wait, long lastTrain, String type) {
-		this.plugin = plugin;
-		this.mSkillID = skillId;
-		this.mMaxLevel = maxSkill;
-		this.mMinLevel = minSkill;
-		this.mMsgID = greeterMessage;
-		this.mIsGreeter = isGreeter;
-		this.mWorld = location.getWorld();
-		this.mName = name;
-		this.type = type;
-
-		if (type.equalsIgnoreCase("PLAYER")) {
-			this.mEntity = (AbstractNPC) plugin.getNPCRegistry().createNPC(EntityType.PLAYER, UUID.randomUUID(), id, name);
-		} else {
-			this.mEntity = (AbstractNPC) plugin.getNPCRegistry().createNPC(EntityType.fromName(type), UUID.randomUUID(), id, name);
-		}
-
-		mEntity.spawn(location);
-		mEntity.addTrait(DwarfTrainerTrait.class);
-		mEntity.setProtected(true);
-		this.wait = wait;
-		this.lastTrain = lastTrain;
-		this.mID = mEntity.getId();
-		this.wait = wait;
-		this.lastTrain = lastTrain;
-
-		if (mIsGreeter)
-			mHeldItem = Material.AIR;
-		else
-			mHeldItem = plugin.getConfigManager().getGenericSkill(skillId).getTrainerHeldMaterial();
-
-		if (mHeldItem != Material.AIR && mHeldItem != null)
-			((LivingEntity) mEntity.getEntity()).getEquipment().setItemInHand(new ItemStack(mHeldItem, 1));
-
+		this.mEntity = mEntity;
+		this.wait = false;
+		this.lastTrain = 0;
 	}
 
 	@Override
@@ -121,58 +46,55 @@ public final class DwarfTrainer {
 		return mEntity.getStoredLocation();
 	}
 
-	@SuppressWarnings("deprecation")
 	protected int getMaterial() {
-		if (mHeldItem != null)
-			return mHeldItem.getId();
-		else
-			return (Material.AIR.getId());
+		return mEntity.getTrait(DwarfTrainerTrait.class).getMaterial();
 	}
 
-	public Integer getMaxSkill() {
-		return mMaxLevel;
+	public World getWorld() {
+		return mEntity.getStoredLocation().getWorld();
+	}
+	
+	public int getMaxSkill() {
+		return mEntity.getTrait(DwarfTrainerTrait.class).getMaxSkill();
 	}
 
 	public Integer getMinSkill() {
-		return mMinLevel;
+		return mEntity.getTrait(DwarfTrainerTrait.class).getMinSkill();
 	}
 
 	protected String getMessage() {
-		return mMsgID;
+		return mEntity.getTrait(DwarfTrainerTrait.class).getMessage();
 	}
 
 	public String getName() {
-		return mName;
+		return mEntity.getName();
 	}
 
-	public Integer getSkillTrained() {
-		return mSkillID;
+	public int getSkillTrained() {
+		return mEntity.getTrait(DwarfTrainerTrait.class).getSkillTrained();
 	}
 
 	public int getUniqueId() {
-		return mID;
+		return mEntity.getId();
 	}
 
-	protected World getWorld() {
-		return mWorld;
-	}
 
 	public boolean isGreeter() {
-		return mIsGreeter;
+		return mEntity.getTrait(DwarfTrainerTrait.class).isGreeter();
 	}
 
 	public void printLeftClick(Player player) {
-		GreeterMessage msg = plugin.getDataManager().getGreeterMessage(mMsgID);
+		GreeterMessage msg = plugin.getDataManager().getGreeterMessage(getMessage());
 		if (msg != null) {
 			plugin.getOut().sendMessage(player, msg.getLeftClickMessage());
 		} else {
-			System.out.println(String.format("[DC] Error: Greeter %s has no left click message. Check your configuration file for message ID %d", getUniqueId(), mMsgID));
+			System.out.println(String.format("[DC] Error: Greeter %s has no left click message. Check your configuration file for message ID %d", getUniqueId(), getMessage()));
 		}
 		return;
 	}
 
 	public void printRightClick(Player player) {
-		GreeterMessage msg = plugin.getDataManager().getGreeterMessage(mMsgID);
+		GreeterMessage msg = plugin.getDataManager().getGreeterMessage(getMessage());
 		if (msg != null) {
 			plugin.getOut().sendMessage(player, msg.getRightClickMessage());
 		}
@@ -181,7 +103,7 @@ public final class DwarfTrainer {
 
 	@SuppressWarnings({ "unused", "deprecation" })
 	public void trainSkill(DCPlayer dCPlayer) {
-		Skill skill = dCPlayer.getSkill(mSkillID);
+		Skill skill = dCPlayer.getSkill(getSkillTrained());
 		Player player = dCPlayer.getPlayer();
 		String tag = String.format("&6[Train &b%d&6] ", skill.getId());
 
@@ -209,13 +131,13 @@ public final class DwarfTrainer {
 			return;
 		}
 
-		if (skill.getLevel() >= mMaxLevel) {
+		if (skill.getLevel() >= getMaxSkill()) {
 			plugin.getOut().sendMessage(player, "&cI can't teach you any more, find a higher level trainer", tag);
 			setWait(false);
 			return;
 		}
 
-		if (skill.getLevel() < mMinLevel) {
+		if (skill.getLevel() < getMinSkill()) {
 			plugin.getOut().sendMessage(player, "&cI can't teach a low level like you, find a lower level trainer", tag);
 			setWait(false);
 			return;
@@ -312,43 +234,39 @@ public final class DwarfTrainer {
 
 	public void setDisplayName(String name) {
 		this.mEntity.setName(name);
-		this.mName = name;
-		plugin.getDataManager().renameTrainer(this, name);
 	}
 
 	public boolean isWaiting() {
 		return this.wait;
 	}
-
-	public void setWait(boolean wait) {
-		this.wait = wait;
-	}
-
+	
 	public long getLastTrain() {
 		return this.lastTrain;
 	}
-
+	
+	public void setWait(boolean wait) {
+		this.wait = wait;
+	}
+	
 	public void setLastTrain(long lastTrain) {
 		this.lastTrain = lastTrain;
 	}
 
 	public void lookAt(Player p) {
 		this.mEntity.faceLocation(p.getLocation());
-		plugin.getDataManager().updateTrainerLocation(this, this.getLocation().getYaw(), this.getLocation().getPitch());
 	}
+
 
 	@SuppressWarnings("deprecation")
 	public void setType(String type) {
-		this.type = type;
 		if (type.equalsIgnoreCase("PLAYER")) {
 			this.mEntity.setBukkitEntityType(EntityType.PLAYER);
 		} else {
 			this.mEntity.setBukkitEntityType(EntityType.fromName(type));
 		}
-		plugin.getDataManager().updateTrainerType(this, type);
 	}
 
 	public String getType() {
-		return this.type;
+		return mEntity.getEntity().getType().toString();
 	}
 }

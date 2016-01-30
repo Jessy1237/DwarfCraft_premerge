@@ -279,10 +279,6 @@ public class DwarfCraft extends JavaPlugin {
 	 */
 	@Override
 	public void onDisable() {
-		for (DwarfTrainer trainer : getDataManager().trainerList.values()) {
-			trainer.getEntity().despawn(DespawnReason.PLUGIN);
-			getNPCRegistry().deregister(trainer.getEntity());
-		}
 	}
 
 	/**
@@ -317,6 +313,9 @@ public class DwarfCraft extends JavaPlugin {
 		npcr = CitizensAPI.getNPCRegistry();
 		cm = new ConfigManager(this, getDataFolder().getAbsolutePath(), "DwarfCraft.config");
 		dm = new DataManager(this, cm);
+		
+		dm.dbInitialize();
+		
 		out = new Out(this);
 		util = new Util(this);
 
