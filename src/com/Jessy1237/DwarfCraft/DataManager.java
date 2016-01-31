@@ -130,39 +130,28 @@ public class DataManager {
 				System.out.println("DC Init: Converting Player DB (may lag a little wait for completion message).");
 				mDBCon.setAutoCommit(false);
 				HashMap<UUID, String> dcplayers = new HashMap<UUID, String>();
+				HashMap<UUID, Integer> ids = new HashMap<UUID, Integer>();
 
-				for (Race race : plugin.getConfigManager().getRaceList()) {
-					try {
-						boolean ran = false;
-						PreparedStatement prep = mDBCon.prepareStatement("SELECT * FROM players WHERE race = ?;");
-						prep.setString(1, race.getName());
-						rs = prep.executeQuery();
+				try {
+					PreparedStatement prep = mDBCon.prepareStatement("SELECT * FROM players");
+					rs = prep.executeQuery();
 
-						while (rs.next()) {
-							ran = true;
-							dcplayers.put(plugin.getServer().getOfflinePlayer(rs.getString("name")).getUniqueId(), rs.getString("race"));
-						}
-
-						if (!ran) {
-							PreparedStatement prep1 = mDBCon.prepareStatement("SELECT * FROM players WHERE race = ?;");
-							prep1.setString(1, race.getName().toLowerCase());
-							rs = prep1.executeQuery();
-
-							while (rs.next()) {
-								dcplayers.put(plugin.getServer().getOfflinePlayer(rs.getString("name")).getUniqueId(), rs.getString("race"));
-							}
-						}
-					} catch (Exception e1) {
-						e1.printStackTrace();
+					while (rs.next()) {
+						dcplayers.put(plugin.getServer().getOfflinePlayer(rs.getString("name")).getUniqueId(), rs.getString("race"));
+						ids.put(plugin.getServer().getOfflinePlayer(rs.getString("name")).getUniqueId(), rs.getInt("id"));
 					}
+
+				} catch (Exception e1) {
+					e1.printStackTrace();
 				}
 				statement.executeUpdate("DROP TABLE players");
 				statement.executeUpdate("create table players ( id INTEGER PRIMARY KEY, uuid, race );");
 				for (UUID uuid : dcplayers.keySet()) {
 					if (uuid != null) {
-						PreparedStatement prep = mDBCon.prepareStatement("insert into players(uuid, race) values(?,?);");
-						prep.setString(1, uuid.toString());
-						prep.setString(2, dcplayers.get(uuid));
+						PreparedStatement prep = mDBCon.prepareStatement("insert into players(id, uuid, race) values(?,?,?);");
+						prep.setInt(1, ids.get(uuid));
+						prep.setString(2, uuid.toString());
+						prep.setString(3, dcplayers.get(uuid));
 						prep.execute();
 						prep.close();
 					}
@@ -519,5 +508,5 @@ public class DataManager {
 			e.printStackTrace();
 			return false;
 		}
-	} 
+	}
 }

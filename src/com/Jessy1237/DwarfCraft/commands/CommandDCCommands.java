@@ -23,7 +23,7 @@ public class CommandDCCommands extends Command {
 		if (DwarfCraft.debugMessagesThreshold < 1) {
 			System.out.println("DC1: started command 'dchelp'");
 		}
-		sender.sendMessage("DwarfCraft commands: dcdebug, dchelp, dcinfo, dcrules, tutorial, " + "dccommands, skillsheet, skillinfo, effectinfo, " + "race, setskill, creategreeter, createtrainer, removetrainer, listtrainers, removenext, lookatnext, dmem, renamenext, renamenpc");
+		sender.sendMessage("DwarfCraft commands: dcdebug, dchelp, dcinfo, dcrules, tutorial, " + "dccommands, skillsheet, skillinfo, effectinfo, " + "race, races, setskill, creategreeter, createtrainer, listtrainers, dmem,");
 		return true;
 	}
 }
