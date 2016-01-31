@@ -40,7 +40,10 @@ public final class ConfigManager {
 	private String cfgBlockGroupsFile;
 	private String dbpath;
 	private Integer trainDelay;
+	private Integer announcementInterval;
+	private String announcementMessage;
 	private Integer maxLevel;
+	private Integer raceLevelLimit;
 	private String vanillaRace;
 	private String prefixStr;
 
@@ -58,6 +61,7 @@ public final class ConfigManager {
 	public boolean vanilla = true;
 	public boolean buildingblocks = true;
 	public boolean prefix = false;
+	public boolean announce = false;
 
 	protected ConfigManager(DwarfCraft plugin, String directory, String paramsFileName) {
 		this.plugin = plugin;
@@ -146,10 +150,18 @@ public final class ConfigManager {
 			cfgBlockGroupsFile = "block-groups.config";
 		if (defaultRace == null)
 			defaultRace = "NULL";
-		if(trainDelay == null)
+		if (trainDelay == null)
 			trainDelay = 2;
-		if(maxLevel == null)
+		if (maxLevel == null)
 			maxLevel = 30;
+		if (raceLevelLimit == null)
+			raceLevelLimit = 5;
+		if (announcementInterval == null)
+			announcementInterval = 5;
+		if(prefixStr == null)
+			prefixStr = "[%racename%]";
+		if(announcementMessage == null)
+			announcementMessage = "%playername% has just leveled %skillname% to level %level%!";
 	}
 
 	private void checkFiles(String path) {
@@ -251,12 +263,20 @@ public final class ConfigManager {
 					vanilla = Boolean.parseBoolean(theline[1].trim());
 				if (theline[0].equalsIgnoreCase("Vanilla Race"))
 					vanillaRace = theline[1].trim();
-				if(theline[0].equalsIgnoreCase("Prefix Enabled"))
+				if (theline[0].equalsIgnoreCase("Prefix Enabled"))
 					prefix = Boolean.parseBoolean(theline[1].trim());
-				if(theline[0].equalsIgnoreCase("Prefix"))
+				if (theline[0].equalsIgnoreCase("Prefix"))
 					prefixStr = theline[1].trim();
-				if(theline[0].equalsIgnoreCase("Max Skill Level"))
+				if (theline[0].equalsIgnoreCase("Max Skill Level"))
 					maxLevel = Integer.parseInt(theline[1].trim());
+				if(theline[0].equalsIgnoreCase("Race Level Limit"))
+					raceLevelLimit = Integer.parseInt(theline[1].trim());
+				if(theline[0].equalsIgnoreCase("Announce Level Up"))
+					announce = Boolean.parseBoolean(theline[1].trim());
+				if(theline[0].equalsIgnoreCase("Announcement Interval"))
+					announcementInterval = Integer.parseInt(theline[1].trim());
+				if(theline[0].equalsIgnoreCase("Announcement Message"))
+					announcementMessage = theline[1].trim();
 
 				line = br.readLine();
 			}
@@ -576,7 +596,7 @@ public final class ConfigManager {
 		}
 		return false;
 	}
-	
+
 	public String getPrefix() {
 		return prefixStr;
 	}
@@ -584,9 +604,21 @@ public final class ConfigManager {
 	public int getTrainDelay() {
 		return trainDelay;
 	}
-	
+
 	public int getMaxSkillLevel() {
 		return maxLevel;
+	}
+	
+	public int getRaceLevelLimit() {
+		return raceLevelLimit;
+	}
+	
+	public int getAnnouncementInterval() {
+		return announcementInterval;
+	}
+	
+	public String getAnnouncementMessage() {
+		return announcementMessage;
 	}
 
 	public HashMap<String, ArrayList<Integer>> getBlockGroups() {

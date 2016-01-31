@@ -1,4 +1,4 @@
-package com.Jessy1237.DwarfCraft.events;
+package com.Jessy1237.DwarfCraft.listeners;
 
 /**
  * Original Authors: smartaleq, LexManos and RCarretta

@@ -15,6 +15,8 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.Jessy1237.DwarfCraft.events.DwarfCraftLevelUpEvent;
+
 public final class DwarfTrainer {
 	private AbstractNPC mEntity;
 	private final DwarfCraft plugin;
@@ -118,8 +120,8 @@ public final class DwarfTrainer {
 			return;
 		}
 
-		if (skill.getLevel() >= 5 && !plugin.getConfigManager().getAllSkills(dCPlayer.getRace()).contains(skill.getId())) {
-			plugin.getOut().sendMessage(player, "&cYour race doesn't specialize in this skill! Max level is (5)!");
+		if (skill.getLevel() >= plugin.getConfigManager().getRaceLevelLimit() && !plugin.getConfigManager().getAllSkills(dCPlayer.getRace()).contains(skill.getId())) {
+			plugin.getOut().sendMessage(player, "&cYour race doesn't specialize in this skill! Max level is (" + plugin.getConfigManager().getRaceLevelLimit() +")!");
 			setWait(false);
 			return;
 		}
@@ -220,6 +222,7 @@ public final class DwarfTrainer {
 			skill.setDeposit1(0);
 			skill.setDeposit2(0);
 			skill.setDeposit3(0);
+			plugin.getServer().getPluginManager().callEvent(new DwarfCraftLevelUpEvent(dCPlayer, this, skill));
 			plugin.getOut().sendMessage(player, "&6Training Successful!", tag);
 		}
 		if (deposited || hasMats) {

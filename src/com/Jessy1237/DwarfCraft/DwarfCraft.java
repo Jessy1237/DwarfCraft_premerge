@@ -35,11 +35,12 @@ import com.Jessy1237.DwarfCraft.commands.CommandSetSkill;
 import com.Jessy1237.DwarfCraft.commands.CommandSkillInfo;
 import com.Jessy1237.DwarfCraft.commands.CommandSkillSheet;
 import com.Jessy1237.DwarfCraft.commands.CommandTutorial;
-import com.Jessy1237.DwarfCraft.events.DCBlockListener;
-import com.Jessy1237.DwarfCraft.events.DCEntityListener;
-import com.Jessy1237.DwarfCraft.events.DCInventoryListener;
-import com.Jessy1237.DwarfCraft.events.DCPlayerListener;
-import com.Jessy1237.DwarfCraft.events.DCVehicleListener;
+import com.Jessy1237.DwarfCraft.listeners.DCBlockListener;
+import com.Jessy1237.DwarfCraft.listeners.DCEntityListener;
+import com.Jessy1237.DwarfCraft.listeners.DCInventoryListener;
+import com.Jessy1237.DwarfCraft.listeners.DCListener;
+import com.Jessy1237.DwarfCraft.listeners.DCPlayerListener;
+import com.Jessy1237.DwarfCraft.listeners.DCVehicleListener;
 
 import de.diddiz.LogBlock.Consumer;
 import de.diddiz.LogBlock.LogBlock;
@@ -67,6 +68,7 @@ public class DwarfCraft extends JavaPlugin {
 	private final DCEntityListener entityListener = new DCEntityListener(this);
 	private final DCVehicleListener vehicleListener = new DCVehicleListener(this);
 	private final DCInventoryListener inventoryListener = new DCInventoryListener(this);
+	private final DCListener dcListener = new DCListener(this);
 	private NPCRegistry npcr;
 	private ConfigManager cm;
 	private DataManager dm;
@@ -111,21 +113,21 @@ public class DwarfCraft extends JavaPlugin {
 		perms = rsp.getProvider();
 		return perms != null;
 	}
-	
+
 	public Permission getPermission() {
 		return perms;
 	}
-	
-    private boolean setupChat() {
-        RegisteredServiceProvider<Chat> rsp = getServer().getServicesManager().getRegistration(Chat.class);
-        chat = rsp.getProvider();
-        return chat != null;
-    }
-	
+
+	private boolean setupChat() {
+		RegisteredServiceProvider<Chat> rsp = getServer().getServicesManager().getRegistration(Chat.class);
+		chat = rsp.getProvider();
+		return chat != null;
+	}
+
 	public boolean isChatEnabled() {
 		return chat != null;
 	}
-	
+
 	public Chat getChat() {
 		return chat;
 	}
@@ -265,6 +267,8 @@ public class DwarfCraft extends JavaPlugin {
 
 		pm.registerEvents(inventoryListener, this);
 
+		pm.registerEvents(dcListener, this);
+
 		if (getServer().getPluginManager().getPlugin("Citizens") == null || getServer().getPluginManager().getPlugin("Citizens").isEnabled() == false) {
 			System.out.println("DC Init: Couldn't find Citizens!");
 			System.out.println("DC Init: DwarfCraft now disabiling...");
@@ -278,9 +282,9 @@ public class DwarfCraft extends JavaPlugin {
 		npcr = CitizensAPI.getNPCRegistry();
 		cm = new ConfigManager(this, getDataFolder().getAbsolutePath(), "DwarfCraft.config");
 		dm = new DataManager(this, cm);
-		
+
 		dm.dbInitialize();
-		
+
 		out = new Out(this);
 		util = new Util(this);
 

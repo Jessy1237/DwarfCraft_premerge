@@ -304,7 +304,7 @@ public class Out {
 	 * Used to send messages to all players on a server with a prefix
 	 */
 	protected void sendBroadcast(Server server, String message, String prefix) {
-		Player[] playerArray = (Player[])server.getOnlinePlayers().toArray();
+		Player[] playerArray = server.getOnlinePlayers().toArray(new Player[server.getOnlinePlayers().size()]);
 		sendMessage(playerArray, message, prefix);
 	}
 
