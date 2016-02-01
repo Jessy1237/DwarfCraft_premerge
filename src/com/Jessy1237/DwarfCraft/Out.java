@@ -46,7 +46,7 @@ public class Out {
 	 */
 	private final int lineLength = 320; // pixels
 
-	private final int maxLines = 10;
+	private final int maxLines = 20;
 
 	private final DwarfCraft plugin;
 
@@ -267,13 +267,13 @@ public class Out {
 				interimLen = 124 - interimLen - numSpaces * 4;
 				// 4 possible cases - need 4, 5, 6, or 7
 				if (interimLen == 4)
-					interim = interim.concat("&0.| &b");
+					interim = interim.concat("&0 | &b");
 				else if (interimLen == 5)
-					interim = interim.concat("&0'| &b");
+					interim = interim.concat("&0 | &b");
 				else if (interimLen == 6)
 					interim = interim.concat("&0 | &b");
 				else if (interimLen == 7)
-					interim = interim.concat("&0'.| &b");
+					interim = interim.concat("&0 | &b");
 			}
 
 			message2 = message2.concat(interim);
