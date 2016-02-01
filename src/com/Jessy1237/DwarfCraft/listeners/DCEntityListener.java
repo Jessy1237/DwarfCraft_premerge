@@ -35,6 +35,7 @@ import com.Jessy1237.DwarfCraft.EffectType;
 import com.Jessy1237.DwarfCraft.Skill;
 import com.Jessy1237.DwarfCraft.TrainSkillSchedule;
 import com.Jessy1237.DwarfCraft.Util;
+import com.Jessy1237.DwarfCraft.events.DwarfCraftEffectEvent;
 
 public class DCEntityListener implements Listener {
 	private final DwarfCraft plugin;
@@ -193,7 +194,16 @@ public class DCEntityListener implements Listener {
 					if (damage >= hp && !killMap.containsKey(victim)) {
 						killMap.put(victim, attacker);
 					}
-					event.setDamage(damage);
+
+					DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(attacker, e, null, null, null, null, Origdamage, damage, victim, null, tool);
+					plugin.getServer().getPluginManager().callEvent(ev);
+
+					if (ev.isCancelled()) {
+						event.setDamage(Origdamage);
+						return;
+					}
+
+					event.setDamage(ev.getAlteredDamage());
 					if (DwarfCraft.debugMessagesThreshold < 6) {
 						System.out.println(String.format("DC6: PVE %s attacked %s for %.2f of %d doing %lf dmg of %lf hp" + " effect called: %d", attacker.getPlayer().getName(), victim.getClass().getSimpleName(), e.getEffectAmount(attacker), event.getDamage(), damage, hp, e.getId()));
 					}
@@ -201,7 +211,15 @@ public class DCEntityListener implements Listener {
 
 				if (e.getEffectType() == EffectType.PVPDAMAGE && isPVP && e.checkTool(tool)) {
 					damage = Util.randomAmount((e.getEffectAmount(attacker)) * damage);
-					event.setDamage(damage);
+
+					DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(attacker, e, null, null, null, null, Origdamage, damage, victim, null, tool);
+
+					if (ev.isCancelled()) {
+						event.setDamage(Origdamage);
+						return;
+					}
+
+					event.setDamage(ev.getAlteredDamage());
 					if (DwarfCraft.debugMessagesThreshold < 6) {
 						System.out.println(String.format("DC6: PVP %s attacked %s for %.2f of %d doing %lf dmg of %lf hp" + " effect called: %d", attacker.getPlayer().getName(), ((Player) victim).getName(), e.getEffectAmount(attacker), event.getDamage(), damage, hp, e.getId()));
 					}
@@ -241,8 +259,17 @@ public class DCEntityListener implements Listener {
 			attackDwarf = plugin.getDataManager().find((Player) attacker);
 			for (Skill skill : attackDwarf.getSkills().values()) {
 				for (Effect effect : skill.getEffects()) {
-					if (effect.getEffectType() == EffectType.BOWATTACK)
+					if (effect.getEffectType() == EffectType.BOWATTACK) {
 						damage = effect.getEffectAmount(attackDwarf);
+
+						DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(attackDwarf, effect, null, null, null, null, origDamage, damage, hitThing, null, null);
+						plugin.getServer().getPluginManager().callEvent(ev);
+
+						if (ev.isCancelled()) {
+							event.setDamage(origDamage);
+							return;
+						}
+					}
 				}
 			}
 		}
@@ -267,6 +294,7 @@ public class DCEntityListener implements Listener {
 		if ((event.getEntity() instanceof Player)) {
 			DCPlayer dCPlayer = plugin.getDataManager().find((Player) event.getEntity());
 			double damage = event.getDamage();
+			final double origDamage = event.getDamage();
 			for (Skill s : dCPlayer.getSkills().values()) {
 				for (Effect e : s.getEffects()) {
 					if (e.getEffectType() == EffectType.FALLDAMAGE && event.getCause() == DamageCause.FALL)
@@ -287,6 +315,16 @@ public class DCEntityListener implements Listener {
 							event.setCancelled(true);
 						}
 					}
+
+					DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(dCPlayer, e, null, null, null, null, origDamage, damage, null, null, null);
+					plugin.getServer().getPluginManager().callEvent(ev);
+
+					if (ev.isCancelled()) {
+						event.setDamage(origDamage);
+						return;
+					}
+
+					damage = ev.getAlteredDamage();
 				}
 			}
 			if (DwarfCraft.debugMessagesThreshold < 1) {
@@ -374,6 +412,20 @@ public class DCEntityListener implements Listener {
 								}
 							}
 							changed = true;
+						}
+						if(changed) {
+							DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(killer, effect, normal, items.toArray(new ItemStack[items.size()]).clone(), null, null, null, null, deadThing, null, null);
+							plugin.getServer().getPluginManager().callEvent(ev);
+							
+							if(ev.isCancelled())
+								return;
+							
+							items.clear();
+							for(ItemStack item : ev.getAlteredItems()) {
+								if(item != null) {
+									items.add(item);
+								}
+							}
 						}
 					}
 				}

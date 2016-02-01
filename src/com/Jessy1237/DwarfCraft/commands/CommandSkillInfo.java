@@ -44,16 +44,16 @@ public class CommandSkillInfo extends Command {
 				
 				DCPlayer dCPlayer = new DCPlayer(plugin, null);
 				Skill skill = new Skill(0, null, 0, null, null, null, null, null);
-				desiredArguments.add(dCPlayer);
 				desiredArguments.add(skill);
+				desiredArguments.add(dCPlayer);
 				
 				try {
 					outputList = parser.parse(desiredArguments, false);
 					if (args.length > outputList.size())
 						throw new DCCommandException(plugin, Type.TOOMANYARGS);
 					
-					skill = (Skill) outputList.get(1);
-					dCPlayer = (DCPlayer) outputList.get(0);
+					skill = (Skill) outputList.get(0);
+					dCPlayer = (DCPlayer) outputList.get(1);
 				} catch (DCCommandException dce) {
 					if (dce.getType() == Type.PARSEDWARFFAIL || dce.getType() == Type.TOOFEWARGS) {
 						desiredArguments.remove(0);

@@ -35,14 +35,14 @@ public class DwarfCraftLevelUpEvent extends Event implements Cancellable {
 
 	/**
 	 * The event for when a DCPlayer levels up their skill. This event is fired
-	 * after the skill is leveled but before the data is saved.
+	 * after the skill is levelled but before the data is saved.
 	 * 
-	 * @param DCPlayer
-	 *            player
-	 * @param DwarfTrainer
-	 *            trainer
-	 * @param Skill
-	 *            skill
+	 * @param player
+	 *            the player that levelled up a skill
+	 * @param trainer
+	 *            the trainer that was used to level up the skill
+	 * @param skill
+	 *            the skill that was levelled up
 	 */
 	public DwarfCraftLevelUpEvent(DCPlayer player, DwarfTrainer trainer, Skill skill) {
 		this.player = player;
@@ -51,7 +51,7 @@ public class DwarfCraftLevelUpEvent extends Event implements Cancellable {
 	}
 
 	/**
-	 * Gets the DCPlayer that leveled up a skill.
+	 * Gets the DCPlayer that levelled up a skill.
 	 * 
 	 * @return DCPlayer
 	 */
@@ -69,7 +69,7 @@ public class DwarfCraftLevelUpEvent extends Event implements Cancellable {
 	}
 
 	/**
-	 * Gets the skill that was leveled up.
+	 * Gets the skill that was levelled up.
 	 * 
 	 * @return Skill
 	 */

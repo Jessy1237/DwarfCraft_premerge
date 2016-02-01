@@ -5,6 +5,7 @@ package com.Jessy1237.DwarfCraft.listeners;
  */
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftBoat;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Player;
@@ -25,6 +26,7 @@ import com.Jessy1237.DwarfCraft.Effect;
 import com.Jessy1237.DwarfCraft.EffectType;
 import com.Jessy1237.DwarfCraft.Skill;
 import com.Jessy1237.DwarfCraft.Util;
+import com.Jessy1237.DwarfCraft.events.DwarfCraftEffectEvent;
 
 public class DCVehicleListener implements Listener {
 	private final DwarfCraft plugin;
@@ -57,11 +59,22 @@ public class DCVehicleListener implements Listener {
     				if (effect.getEffectType() == EffectType.VEHICLEDROP){
     					ItemStack drop = effect.getOutput(dcPlayer);
     					
+    					DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(dcPlayer, effect, new ItemStack[]{new ItemStack(Material.BOAT, 1)}, new ItemStack[]{drop}, null, null, null, null, event.getVehicle().getVehicle(), null, null);
+    					plugin.getServer().getPluginManager().callEvent(ev);
+    					
+    					if(ev.isCancelled())
+    						return;
+    					
     					if (DwarfCraft.debugMessagesThreshold < 6) 
                             System.out.println("Debug: dropped " + drop.toString());
     					
-    					if (drop.getAmount() > 0)
-    						loc.getWorld().dropItemNaturally(loc, drop);
+						for(ItemStack i : ev.getAlteredItems()) {
+							if(i != null) {
+								if(i.getAmount() > 0) {
+									loc.getWorld().dropItemNaturally(loc, i);
+								}
+							}
+						}
     					
     					dropChange = true;
     				}

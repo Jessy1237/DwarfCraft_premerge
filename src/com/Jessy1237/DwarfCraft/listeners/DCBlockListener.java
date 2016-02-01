@@ -37,6 +37,7 @@ import com.Jessy1237.DwarfCraft.Effect;
 import com.Jessy1237.DwarfCraft.EffectType;
 import com.Jessy1237.DwarfCraft.Skill;
 import com.Jessy1237.DwarfCraft.Util;
+import com.Jessy1237.DwarfCraft.events.DwarfCraftEffectEvent;
 
 public class DCBlockListener implements Listener {
 	private final DwarfCraft plugin;
@@ -323,16 +324,34 @@ public class DCBlockListener implements Listener {
 								}
 							}
 						}
+						DwarfCraftEffectEvent e;
+						ItemStack[] altered = new ItemStack[2];
+
+						if (item.getAmount() > 0)
+							altered[0] = item;
+						if (item1 != null)
+							altered[1] = item1;
+
+						ItemStack[] orig = new ItemStack[block.getDrops().size()];
+						block.getDrops().toArray(orig);
+
+						e = new DwarfCraftEffectEvent(player, effect, orig, altered, null, null, null, null, null, block, null);
+						plugin.getServer().getPluginManager().callEvent(e);
+
+						if (e.isCancelled())
+							return;
 
 						if (DwarfCraft.debugMessagesThreshold < 6)
 							System.out.println("Debug: dropped " + item.toString());
 
-						if (item.getAmount() > 0)
-							loc.getWorld().dropItemNaturally(loc, item);
-
-						if (item1 != null) {
-							loc.getWorld().dropItemNaturally(loc, item1);
+						for (ItemStack i : e.getAlteredItems()) {
+							if (i != null) {
+								if (i.getAmount() > 0) {
+									loc.getWorld().dropItemNaturally(loc, i);
+								}
+							}
 						}
+
 						if (event.getExpToDrop() != 0) {
 							((ExperienceOrb) loc.getWorld().spawn(loc, ExperienceOrb.class)).setExperience(event.getExpToDrop());
 						}
@@ -401,7 +420,13 @@ public class DCBlockListener implements Listener {
 
 					if (DwarfCraft.debugMessagesThreshold < 3)
 						System.out.println("DC3: Insta-mine occured. Block: " + materialId);
-
+					
+					DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(dCPlayer, e, null, null, null, null, null, null, null, event.getBlock(), null);
+					plugin.getServer().getPluginManager().callEvent(ev);
+					
+					if(ev.isCancelled())
+						return;
+					
 					event.setInstaBreak(true);
 				}
 			}
@@ -446,7 +471,27 @@ public class DCBlockListener implements Listener {
 										if (e.getEffectType() == EffectType.BLOCKDROP && e.checkInitiator(new ItemStack(Material.CACTUS))) {
 											int amount = Util.randomAmount(e.getEffectAmount(dCPlayer));
 											if (amount != 0) {
-												world.dropItemNaturally(loc, new ItemStack(Material.CACTUS, amount));
+
+												DwarfCraftEffectEvent ev;
+												ItemStack[] altered = new ItemStack[1];
+												altered[0] = new ItemStack(Material.CACTUS, amount);
+
+												ItemStack[] orig = new ItemStack[event.getBlock().getDrops().size()];
+												event.getBlock().getDrops().toArray(orig);
+
+												ev = new DwarfCraftEffectEvent(dCPlayer, e, orig, altered, null, null, null, null, null, event.getBlock(), null);
+												plugin.getServer().getPluginManager().callEvent(ev);
+
+												if (ev.isCancelled())
+													return;
+												
+												for (ItemStack i : ev.getAlteredItems()) {
+													if (i != null) {
+														if (i.getAmount() > 0) {
+															world.dropItemNaturally(loc, i);
+														}
+													}
+												}
 											}
 										}
 									}
@@ -489,7 +534,26 @@ public class DCBlockListener implements Listener {
 									if (e.getEffectType() == EffectType.BLOCKDROP && e.checkInitiator(new ItemStack(Material.SUGAR_CANE_BLOCK))) {
 										int amount = Util.randomAmount(e.getEffectAmount(dCPlayer));
 										if (amount != 0) {
-											world.dropItemNaturally(loc, new ItemStack(Material.SUGAR_CANE, amount));
+											DwarfCraftEffectEvent ev;
+											ItemStack[] altered = new ItemStack[1];
+											altered[0] = new ItemStack(Material.CACTUS, amount);
+
+											ItemStack[] orig = new ItemStack[event.getBlock().getDrops().size()];
+											event.getBlock().getDrops().toArray(orig);
+
+											ev = new DwarfCraftEffectEvent(dCPlayer, e, orig, altered, null, null, null, null, null, event.getBlock(), null);
+											plugin.getServer().getPluginManager().callEvent(ev);
+
+											if (ev.isCancelled())
+												return;
+											
+											for (ItemStack i : ev.getAlteredItems()) {
+												if (i != null) {
+													if (i.getAmount() > 0) {
+														world.dropItemNaturally(loc, i);
+													}
+												}
+											}
 										}
 									}
 								}

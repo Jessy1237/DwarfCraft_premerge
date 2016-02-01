@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -27,6 +28,7 @@ import com.Jessy1237.DwarfCraft.Effect;
 import com.Jessy1237.DwarfCraft.EffectType;
 import com.Jessy1237.DwarfCraft.Skill;
 import com.Jessy1237.DwarfCraft.Util;
+import com.Jessy1237.DwarfCraft.events.DwarfCraftEffectEvent;
 
 public class DCInventoryListener implements Listener {
 
@@ -37,11 +39,12 @@ public class DCInventoryListener implements Listener {
 		this.plugin = plugin;
 	}
 
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onFurnaceExtractEvent(FurnaceExtractEvent event) {
 		if (!Util.isWorldAllowed(event.getPlayer().getWorld()))
 			return;
-		
+
 		DCPlayer player = plugin.getDataManager().find(event.getPlayer());
 		HashMap<Integer, Skill> skills = player.getSkills();
 		Material item = event.getItemType();
@@ -52,17 +55,30 @@ public class DCInventoryListener implements Listener {
 				if (effect.getEffectType() == EffectType.SMELT && effect.checkInitiator(new ItemStack(item))) {
 					item = effect.getOutput().getType();
 					int newAmount = Util.randomAmount(amount * effect.getEffectAmount(player));
-					int i = 0;
-					while (i != newAmount) {
-						ItemStack itemstack;
-						if ((newAmount - i) < 64) {
-							itemstack = new ItemStack(item, (newAmount - i));
-							i = newAmount;
-						} else {
-							itemstack = new ItemStack(item, 64);
-							i = i + 64;
+
+					DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(player, effect, new ItemStack[] {}, new ItemStack[] { new ItemStack(item, newAmount, effect.getOutput().getData().getData()) }, null, null, null, null, null, event.getBlock(), null);
+					plugin.getServer().getPluginManager().callEvent(ev);
+
+					if (ev.isCancelled())
+						return;
+
+					for (ItemStack item1 : ev.getAlteredItems()) {
+						if (item1 != null) {
+							if (item1.getAmount() > 0) {
+								int i = 0;
+								while (i != item1.getAmount()) {
+									ItemStack itemstack;
+									if ((item1.getAmount() - i) < 64) {
+										itemstack = new ItemStack(item1.getType(), (item1.getAmount() - i), item1.getData().getData());
+										i = newAmount;
+									} else {
+										itemstack = new ItemStack(item1.getType(), 64, item1.getData().getData());
+										i = i + 64;
+									}
+									player.getPlayer().getWorld().dropItemNaturally(player.getPlayer().getLocation(), itemstack);
+								}
+							}
 						}
-						player.getPlayer().getWorld().dropItemNaturally(player.getPlayer().getLocation(), itemstack);
 					}
 				}
 			}
@@ -118,11 +134,24 @@ public class DCInventoryListener implements Listener {
 								check = toCraft;
 								modifier = (float) (output.getAmount() + 1) / 1.0f;
 							}
+							DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(dCPlayer, e, new ItemStack[] { check != null ? new ItemStack(output.getType(), 0, output.getData().getData()) : toCraft }, new ItemStack[] { output }, null, null, null, null, null, null, null);
+							plugin.getServer().getPluginManager().callEvent(ev);
+
+							if (ev.isCancelled())
+								return;
 
 							player.setCanPickupItems(false);
-
-							plugin.getServer().getScheduler().runTaskLater(plugin, new ShiftClickTask(dCPlayer, output, check, held, modifier, e), 5);
-
+							for (ItemStack item : ev.getAlteredItems()) {
+								if (item != null) {
+									if (item.getAmount() > 0) {
+										if (item.getType() == output.getType()) {
+											plugin.getServer().getScheduler().runTaskLater(plugin, new ShiftClickTask(dCPlayer, item, check, held, modifier, e), 5);
+										} else {
+											player.getLocation().getWorld().dropItemNaturally(player.getLocation(), item);
+										}
+									}
+								}
+							}
 						}
 					}
 				}
@@ -139,12 +168,25 @@ public class DCInventoryListener implements Listener {
 
 								final ItemStack output = e.getOutput(dCPlayer, (byte) toCraft.getData().getData());
 
-								if (output.getAmount() == 0)
-									toCraft = null;
-								else {
-									toCraft.setAmount(output.getAmount());
-									if (output.getData() != null)
-										toCraft.getData().setData(output.getData().getData());
+								DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(dCPlayer, e, new ItemStack[] { toCraft }, new ItemStack[] { output }, null, null, null, null, null, null, null);
+								plugin.getServer().getPluginManager().callEvent(ev);
+
+								if (ev.isCancelled())
+									return;
+
+								player.setCanPickupItems(false);
+								for (ItemStack item : ev.getAlteredItems()) {
+									if (item != null) {
+										if (item.getAmount() > 0) {
+											if (item.getType() == toCraft.getType()) {
+												toCraft.setAmount(item.getAmount());
+												if (output.getData() != null)
+													toCraft.getData().setData(output.getData().getData());
+											} else {
+												player.getLocation().getWorld().dropItemNaturally(player.getLocation(), item);
+											}
+										}
+									}
 								}
 							}
 						}
@@ -195,9 +237,25 @@ public class DCInventoryListener implements Listener {
 						if (extract.getTypeId() != output.getTypeId())
 							check = extract;
 
-						player.setCanPickupItems(false);
+						DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(dCPlayer, effect, new ItemStack[] { check != null ? new ItemStack(output.getType(), 0, output.getData().getData()) : extract }, new ItemStack[] { output }, null, null, null, null, null, ((BlockState) event.getInventory()
+								.getHolder()).getBlock(), null);
+						plugin.getServer().getPluginManager().callEvent(ev);
 
-						plugin.getServer().getScheduler().runTaskLater(plugin, new ShiftClickTask(dCPlayer, output, check, held, modifier, effect), 5);
+						if (ev.isCancelled())
+							return;
+
+						player.setCanPickupItems(false);
+						for (ItemStack item : ev.getAlteredItems()) {
+							if (item != null) {
+								if (item.getAmount() > 0) {
+									if (item.getType() == output.getType()) {
+										plugin.getServer().getScheduler().runTaskLater(plugin, new ShiftClickTask(dCPlayer, item, check, held, modifier, effect), 5);
+									} else {
+										player.getLocation().getWorld().dropItemNaturally(player.getLocation(), item);
+									}
+								}
+							}
+						}
 					}
 				}
 			}
@@ -219,7 +277,7 @@ public class DCInventoryListener implements Listener {
 	public void onInventoryClickEvent(InventoryClickEvent event) {
 		if (!Util.isWorldAllowed(event.getWhoClicked().getWorld()))
 			return;
-
+		
 		if (event.getInventory() != null && event.getSlotType() == SlotType.RESULT) {
 			switch (event.getInventory().getType()) {
 			case CRAFTING:
@@ -248,23 +306,40 @@ public class DCInventoryListener implements Listener {
 						for (Effect effect : s.getEffects()) {
 							if (effect.getEffectType() == EffectType.BREW && effect.checkInitiator(item)) {
 								int newAmount = (int) (amount * effect.getEffectAmount(player));
-								for (int n = 0; n != stack.length; n++) {
-									ItemStack it = stack[n];
-									if (it != null) {
-										int i = 1;
-										if (inv.getItem(3).getTypeId() != it.getTypeId()) {
-											while (i != newAmount) {
-												ItemStack itemstack;
-												if ((newAmount - i) < 64) {
-													itemstack = new ItemStack(it.getType(), (newAmount - i), it.getData().getData());
-													itemstack.setData(new MaterialData(it.getTypeId(), it.getData().getData()));
-													i = newAmount;
-												} else {
-													itemstack = new ItemStack(item.getType(), 64, item.getData().getData());
-													itemstack.setData(new MaterialData(it.getTypeId(), it.getData().getData()));
-													i = i + 64;
+
+								DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(player, effect, new ItemStack[] { item }, new ItemStack[] { new ItemStack(item.getType(), newAmount, item.getData().getData()) }, null, null, null, null, null, block.getBlock(), null);
+								plugin.getServer().getPluginManager().callEvent(ev);
+
+								if (ev.isCancelled())
+									return;
+
+								for (ItemStack item1 : ev.getAlteredItems()) {
+									if (item1 != null) {
+										if (item1.getAmount() > 0) {
+											for (int n = 0; n != stack.length; n++) {
+												ItemStack it = stack[n];
+												if (it != null) {
+													int i = 1;
+													if (inv.getItem(3).getTypeId() != it.getTypeId()) {
+														while (i != item1.getAmount()) {
+															ItemStack itemstack;
+															if (item1.getType() == it.getType()) {
+																if ((newAmount - i) < 64) {
+																	itemstack = new ItemStack(it.getType(), (item1.getAmount() - i), it.getData().getData());
+																	itemstack.setData(new MaterialData(it.getTypeId(), it.getData().getData()));
+																	i = item1.getAmount();
+																} else {
+																	itemstack = new ItemStack(it.getType(), 64, it.getData().getData());
+																	itemstack.setData(new MaterialData(it.getTypeId(), it.getData().getData()));
+																	i = i + 64;
+																}
+															} else {
+																itemstack = item1;
+															}
+															player.getPlayer().getWorld().dropItemNaturally(player.getPlayer().getLocation(), itemstack);
+														}
+													}
 												}
-												player.getPlayer().getWorld().dropItemNaturally(player.getPlayer().getLocation(), itemstack);
 											}
 										}
 									}

@@ -45,6 +45,8 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
 import org.jbls.LexManos.CSV.CSVRecord;
 
+import com.Jessy1237.DwarfCraft.events.DwarfCraftEffectEvent;
+
 @SuppressWarnings("deprecation")
 public class Effect {
 	private DwarfCraft plugin;
@@ -307,7 +309,7 @@ public class Effect {
 		effectAmount = Math.max(effectAmount, mMin);
 
 		if (dCPlayer != null)
-			if (mException && skillLevel <= mExceptionHigh && skillLevel >= mExceptionLow && !(skillLevel == 5 && plugin.getConfigManager().getAllSkills(dCPlayer.getRace()).contains(plugin.getConfigManager().getAllSkills().get(mID / 10))))
+			if (mException && skillLevel <= mExceptionHigh && skillLevel >= mExceptionLow && !(skillLevel == plugin.getConfigManager().getRaceLevelLimit() && plugin.getConfigManager().getAllSkills(dCPlayer.getRace()).contains(plugin.getConfigManager().getAllSkills().get(mID / 10))))
 				effectAmount = mExceptionValue;
 
 		if (DwarfCraft.debugMessagesThreshold < 1) {
@@ -545,8 +547,14 @@ public class Effect {
 		if (wear == base)
 			return; // This is normal wear, skip everything and let MC handle it
 					// internally.
-
-		tool.setDurability((short) (tool.getDurability() + wear - base));
+		
+		DwarfCraftEffectEvent e = new DwarfCraftEffectEvent(player, this, null, null, null, null, (double)base, (double)wear, null, null, tool);
+		plugin.getServer().getPluginManager().callEvent(e);
+		
+		if(e.isCancelled())
+			return;
+		
+		tool.setDurability((short) (tool.getDurability() + e.getAlteredDamage() - base));
 		// This may have the side effect of causing items to flicker when they
 		// are about to break
 		// If this becomes a issue, we need to cast to a CraftItemStack, then

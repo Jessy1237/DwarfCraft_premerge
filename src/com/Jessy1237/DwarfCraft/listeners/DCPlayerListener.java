@@ -36,6 +36,7 @@ import com.Jessy1237.DwarfCraft.Effect;
 import com.Jessy1237.DwarfCraft.EffectType;
 import com.Jessy1237.DwarfCraft.Skill;
 import com.Jessy1237.DwarfCraft.Util;
+import com.Jessy1237.DwarfCraft.events.DwarfCraftEffectEvent;
 
 public class DCPlayerListener implements Listener {
 	private final DwarfCraft plugin;
@@ -62,17 +63,17 @@ public class DCPlayerListener implements Listener {
 
 		if (data == null)
 			data = dm.createDwarf(player);
-		if(!dm.checkDwarfData(data))
+		if (!dm.checkDwarfData(data))
 			dm.createDwarfData(data);
-		
-		if(plugin.isChatEnabled() && plugin.getConfigManager().prefix) {
-			if(!plugin.getChat().getPlayerPrefix(player).contains(Util.getPlayerPrefix(data)))
+
+		if (plugin.isChatEnabled() && plugin.getConfigManager().prefix) {
+			if (!plugin.getChat().getPlayerPrefix(player).contains(Util.getPlayerPrefix(data)))
 				plugin.getChat().setPlayerPrefix(player, Util.getPlayerPrefix(data) + " " + plugin.getChat().getPlayerPrefix(player));
 		}
-		
+
 		if (!plugin.getConfigManager().sendGreeting)
 			return;
-		
+
 		plugin.getOut().welcome(plugin.getServer(), data);
 	}
 
@@ -123,11 +124,17 @@ public class DCPlayerListener implements Listener {
 						int foodLevel = Util.randomAmount((e.getEffectAmount(dcPlayer)));
 
 						if (block.getTypeId() == 92) {
-							if (((origFoodLevel - 2) + foodLevel) > 20) {
+							DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(dcPlayer, e, null, null, 2, foodLevel, null, null, null, block, null);
+							plugin.getServer().getPluginManager().callEvent(ev);
+
+							if (ev.isCancelled())
+								return;
+
+							if (((origFoodLevel - 2) + ev.getAlteredHunger()) > 20) {
 								event.getPlayer().setFoodLevel(20);
 								event.getPlayer().setSaturation(event.getPlayer().getSaturation() + 0.4f);
 							} else {
-								event.getPlayer().setFoodLevel((origFoodLevel - 2) + foodLevel);
+								event.getPlayer().setFoodLevel((origFoodLevel - 2) + ev.getAlteredHunger());
 								event.getPlayer().setSaturation(event.getPlayer().getSaturation() + 0.4f);
 							}
 						}
@@ -158,6 +165,13 @@ public class DCPlayerListener implements Listener {
 			for (Effect e : s.getEffects()) {
 				if (e.getEffectType() == EffectType.EAT && e.checkInitiator(item)) {
 					int foodLevel = Util.randomAmount((e.getEffectAmount(dcPlayer)));
+
+					DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(dcPlayer, e, null, null, lvl, foodLevel, null, null, null, null, item);
+					plugin.getServer().getPluginManager().callEvent(ev);
+
+					if (ev.isCancelled())
+						return;
+
 					player.setFoodLevel((player.getFoodLevel() - lvl) + foodLevel);
 				}
 			}
@@ -166,7 +180,7 @@ public class DCPlayerListener implements Listener {
 
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerShearEntityEvent(PlayerShearEntityEvent event) {		
+	public void onPlayerShearEntityEvent(PlayerShearEntityEvent event) {
 		if (!Util.isWorldAllowed(event.getPlayer().getWorld()))
 			return;
 
@@ -183,8 +197,23 @@ public class DCPlayerListener implements Listener {
 						Sheep sheep = (Sheep) entity;
 						if (!sheep.isSheared()) {
 							if (sheep.isAdult()) {
+
 								ItemStack item = e.getOutput(dcPlayer, sheep.getColor().getWoolData(), -1);
-								entity.getWorld().dropItemNaturally(entity.getLocation(), item);
+
+								DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(dcPlayer, e, new ItemStack[] { new ItemStack(item.getTypeId(), 2, sheep.getColor().getWoolData()) }, new ItemStack[] { item }, null, null, null, null, entity, null, player.getItemInHand());
+								plugin.getServer().getPluginManager().callEvent(ev);
+
+								if (ev.isCancelled())
+									return;
+
+								for(ItemStack i : ev.getAlteredItems()) {
+									if(i != null) {
+										if(i.getAmount() > 0) {
+											entity.getWorld().dropItemNaturally(entity.getLocation(), i);
+										}
+									}
+								}
+								
 								sheep.setSheared(true);
 								changed = true;
 							}
@@ -192,7 +221,14 @@ public class DCPlayerListener implements Listener {
 					} else if (entity.getType() == EntityType.MUSHROOM_COW && e.checkMob(entity)) {
 						MushroomCow mooshroom = (MushroomCow) entity;
 						if (mooshroom.isAdult()) {
+							ItemStack item = e.getOutput(dcPlayer);
 							
+							DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(dcPlayer, e, new ItemStack[] { new ItemStack(Material.RED_MUSHROOM, 5) }, new ItemStack[] { item }, null, null, null, null, entity, null, player.getItemInHand());
+							plugin.getServer().getPluginManager().callEvent(ev);
+
+							if (ev.isCancelled())
+								return;
+
 							Entity newE = entity.getWorld().spawnEntity(entity.getLocation(), EntityType.COW);
 							Cow cow = (Cow) newE;
 							cow.setAge(mooshroom.getAge());
@@ -204,11 +240,16 @@ public class DCPlayerListener implements Listener {
 							cow.setCustomNameVisible(mooshroom.isCustomNameVisible());
 							cow.setTicksLived(mooshroom.getTicksLived());
 							cow.setTarget(mooshroom.getTarget());
-							
-							ItemStack item = e.getOutput(dcPlayer);
-							entity.getWorld().dropItemNaturally(entity.getLocation(), item);
+
+							for(ItemStack i : ev.getAlteredItems()) {
+								if(i != null) {
+									if(i.getAmount() > 0) {
+										entity.getWorld().dropItemNaturally(entity.getLocation(), i);
+									}
+								}
+							}
 							changed = true;
-							
+
 							entity.remove();
 						}
 					}
@@ -232,7 +273,7 @@ public class DCPlayerListener implements Listener {
 	public void onPlayerFish(PlayerFishEvent event) {
 		if (!Util.isWorldAllowed(event.getPlayer().getWorld()))
 			return;
-		
+
 		if (event.isCancelled())
 			return;
 
@@ -247,8 +288,21 @@ public class DCPlayerListener implements Listener {
 					for (Effect effect : skill.getEffects()) {
 						if (effect.getEffectType() == EffectType.FISH) {
 							ItemStack drop = effect.getOutput(player, meta);
-							if (drop.getAmount() > 0)
-								loc.getWorld().dropItemNaturally(loc, drop);
+							
+							DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(player, effect, new ItemStack[]{item}, new ItemStack[]{drop}, null, null, null, null, null, null, tool);
+							plugin.getServer().getPluginManager().callEvent(ev);
+							
+							if(ev.isCancelled())
+								return;
+							
+							for(ItemStack i : ev.getAlteredItems()) {
+								if(i != null) {
+									if(i.getAmount() > 0) {
+										loc.getWorld().dropItemNaturally(loc, i);
+									}
+								}
+							}
+							item.setAmount(0);
 						}
 					}
 				}
@@ -263,6 +317,5 @@ public class DCPlayerListener implements Listener {
 				}
 			}
 		}
-
 	}
 }
