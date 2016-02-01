@@ -34,7 +34,6 @@ import com.Jessy1237.DwarfCraft.Effect;
 import com.Jessy1237.DwarfCraft.EffectType;
 import com.Jessy1237.DwarfCraft.Skill;
 import com.Jessy1237.DwarfCraft.TrainSkillSchedule;
-import com.Jessy1237.DwarfCraft.Util;
 import com.Jessy1237.DwarfCraft.events.DwarfCraftEffectEvent;
 
 public class DCEntityListener implements Listener {
@@ -48,7 +47,7 @@ public class DCEntityListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onEntityDamage(EntityDamageEvent event) {
-		if (!Util.isWorldAllowed(event.getEntity().getWorld()))
+		if (!plugin.getUtil().isWorldAllowed(event.getEntity().getWorld()))
 			return;
 
 		if (event.isCancelled())
@@ -122,7 +121,7 @@ public class DCEntityListener implements Listener {
 	}
 
 	public void onEntityAttack(EntityDamageByEntityEvent event) {
-		if (!Util.isWorldAllowed(event.getDamager().getWorld()))
+		if (!plugin.getUtil().isWorldAllowed(event.getDamager().getWorld()))
 			return;
 
 		if ((plugin.getDataManager().isTrainer(event.getEntity())) && event.getEntity() instanceof HumanEntity) {
@@ -190,7 +189,7 @@ public class DCEntityListener implements Listener {
 						event.setCancelled(true);
 						return;
 					}
-					damage = Util.randomAmount((e.getEffectAmount(attacker)) * damage);
+					damage = plugin.getUtil().randomAmount((e.getEffectAmount(attacker)) * damage);
 					if (damage >= hp && !killMap.containsKey(victim)) {
 						killMap.put(victim, attacker);
 					}
@@ -210,7 +209,7 @@ public class DCEntityListener implements Listener {
 				}
 
 				if (e.getEffectType() == EffectType.PVPDAMAGE && isPVP && e.checkTool(tool)) {
-					damage = Util.randomAmount((e.getEffectAmount(attacker)) * damage);
+					damage = plugin.getUtil().randomAmount((e.getEffectAmount(attacker)) * damage);
 
 					DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(attacker, e, null, null, null, null, Origdamage, damage, victim, null, tool);
 
@@ -229,7 +228,7 @@ public class DCEntityListener implements Listener {
 	}
 
 	public void onEntityDamageByProjectile(EntityDamageByEntityEvent event) {
-		if (!Util.isWorldAllowed(event.getDamager().getWorld()))
+		if (!plugin.getUtil().isWorldAllowed(event.getDamager().getWorld()))
 			return;
 
 		if ((plugin.getDataManager().isTrainer(event.getEntity())) && event.getEntity() instanceof HumanEntity) {
@@ -274,7 +273,7 @@ public class DCEntityListener implements Listener {
 			}
 		}
 
-		damage = Util.randomAmount((damage * mitigation) + (origDamage / 4));
+		damage = plugin.getUtil().randomAmount((damage * mitigation) + (origDamage / 4));
 		event.setDamage(damage);
 		if (damage >= hp && attacker instanceof Player && !killMap.containsKey(hitThing) && !(hitThing instanceof Player)) {
 			killMap.put(hitThing, attackDwarf);
@@ -282,7 +281,7 @@ public class DCEntityListener implements Listener {
 	}
 
 	public void onEntityDamagedByEnvirons(EntityDamageEvent event) {
-		if (!Util.isWorldAllowed(event.getEntity().getWorld()))
+		if (!plugin.getUtil().isWorldAllowed(event.getEntity().getWorld()))
 			return;
 
 		if ((plugin.getDataManager().isTrainer(event.getEntity())) && event.getEntity() instanceof HumanEntity) {
@@ -298,15 +297,15 @@ public class DCEntityListener implements Listener {
 			for (Skill s : dCPlayer.getSkills().values()) {
 				for (Effect e : s.getEffects()) {
 					if (e.getEffectType() == EffectType.FALLDAMAGE && event.getCause() == DamageCause.FALL)
-						damage = Util.randomAmount(e.getEffectAmount(dCPlayer) * damage);
+						damage = plugin.getUtil().randomAmount(e.getEffectAmount(dCPlayer) * damage);
 					else if (e.getEffectType() == EffectType.FIREDAMAGE && event.getCause() == DamageCause.FIRE)
-						damage = Util.randomAmount(e.getEffectAmount(dCPlayer) * damage);
+						damage = plugin.getUtil().randomAmount(e.getEffectAmount(dCPlayer) * damage);
 					else if (e.getEffectType() == EffectType.FIREDAMAGE && event.getCause() == DamageCause.FIRE_TICK)
-						damage = Util.randomAmount(e.getEffectAmount(dCPlayer) * damage);
+						damage = plugin.getUtil().randomAmount(e.getEffectAmount(dCPlayer) * damage);
 					else if (e.getEffectType() == EffectType.EXPLOSIONDAMAGE && event.getCause() == DamageCause.ENTITY_EXPLOSION)
-						damage = Util.randomAmount(e.getEffectAmount(dCPlayer) * damage);
+						damage = plugin.getUtil().randomAmount(e.getEffectAmount(dCPlayer) * damage);
 					else if (e.getEffectType() == EffectType.EXPLOSIONDAMAGE && event.getCause() == DamageCause.BLOCK_EXPLOSION)
-						damage = Util.randomAmount(e.getEffectAmount(dCPlayer) * damage);
+						damage = plugin.getUtil().randomAmount(e.getEffectAmount(dCPlayer) * damage);
 
 					if (e.getEffectType() == EffectType.FALLTHRESHOLD && event.getCause() == DamageCause.FALL) {
 						if (event.getDamage() <= e.getEffectAmount(dCPlayer)) {
@@ -339,7 +338,7 @@ public class DCEntityListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.LOW)
 	public void onEntityDeath(EntityDeathEvent event) {
-		if (!Util.isWorldAllowed(event.getEntity().getWorld()))
+		if (!plugin.getUtil().isWorldAllowed(event.getEntity().getWorld()))
 			return;
 
 		Entity deadThing = event.getEntity();

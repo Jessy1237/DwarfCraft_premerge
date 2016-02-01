@@ -28,7 +28,7 @@ public class DwarfCraftEffectEvent extends Event implements Cancellable {
 
 	/**
 	 * The event for when an Effect is fired. This event is fired after the
-	 * effect is fired but before any of the stats are applied to player/game.
+	 * effect is fired but before any of the stats are applied to the player/game.
 	 * 
 	 * @param player
 	 *            The player that fired the effect

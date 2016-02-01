@@ -261,8 +261,8 @@ public class DCPlayer {
 
 		// Resets the players prefix
 		if (plugin.isChatEnabled())
-			if (plugin.getChat().getPlayerPrefix(getPlayer()).contains(Util.getPlayerPrefix(oldRace)))
-				plugin.getChat().setPlayerPrefix(getPlayer(), plugin.getChat().getPlayerPrefix(getPlayer()).replace(Util.getPlayerPrefix(oldRace), Util.getPlayerPrefix(this)));
+			if (plugin.getChat().getPlayerPrefix(getPlayer()).contains(plugin.getUtil().getPlayerPrefix(oldRace)))
+				plugin.getChat().setPlayerPrefix(getPlayer(), plugin.getChat().getPlayerPrefix(getPlayer()).replace(plugin.getUtil().getPlayerPrefix(oldRace), plugin.getUtil().getPlayerPrefix(this)));
 
 		plugin.getDataManager().saveDwarfData(this, dCSkills);
 	}

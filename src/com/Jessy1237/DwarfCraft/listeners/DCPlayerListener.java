@@ -67,8 +67,8 @@ public class DCPlayerListener implements Listener {
 			dm.createDwarfData(data);
 
 		if (plugin.isChatEnabled() && plugin.getConfigManager().prefix) {
-			if (!plugin.getChat().getPlayerPrefix(player).contains(Util.getPlayerPrefix(data)))
-				plugin.getChat().setPlayerPrefix(player, Util.getPlayerPrefix(data) + " " + plugin.getChat().getPlayerPrefix(player));
+			if (!plugin.getChat().getPlayerPrefix(player).contains(plugin.getUtil().getPlayerPrefix(data)))
+				plugin.getChat().setPlayerPrefix(player, plugin.getUtil().getPlayerPrefix(data) + " " + plugin.getChat().getPlayerPrefix(player));
 		}
 
 		if (!plugin.getConfigManager().sendGreeting)
@@ -86,7 +86,7 @@ public class DCPlayerListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		if (!Util.isWorldAllowed(event.getPlayer().getWorld()))
+		if (!plugin.getUtil().isWorldAllowed(event.getPlayer().getWorld()))
 			return;
 
 		Player player = event.getPlayer();
@@ -121,7 +121,7 @@ public class DCPlayerListener implements Listener {
 				for (Effect e : s.getEffects()) {
 					if (e.getEffectType() == EffectType.EAT && e.checkInitiator(block.getTypeId(), block.getData())) {
 
-						int foodLevel = Util.randomAmount((e.getEffectAmount(dcPlayer)));
+						int foodLevel = plugin.getUtil().randomAmount((e.getEffectAmount(dcPlayer)));
 
 						if (block.getTypeId() == 92) {
 							DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(dcPlayer, e, null, null, 2, foodLevel, null, null, null, block, null);
@@ -147,7 +147,7 @@ public class DCPlayerListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
-		if (!Util.isWorldAllowed(event.getPlayer().getWorld()))
+		if (!plugin.getUtil().isWorldAllowed(event.getPlayer().getWorld()))
 			return;
 
 		Player player = event.getPlayer();
@@ -164,7 +164,7 @@ public class DCPlayerListener implements Listener {
 		for (Skill s : skills.values()) {
 			for (Effect e : s.getEffects()) {
 				if (e.getEffectType() == EffectType.EAT && e.checkInitiator(item)) {
-					int foodLevel = Util.randomAmount((e.getEffectAmount(dcPlayer)));
+					int foodLevel = plugin.getUtil().randomAmount((e.getEffectAmount(dcPlayer)));
 
 					DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(dcPlayer, e, null, null, lvl, foodLevel, null, null, null, null, item);
 					plugin.getServer().getPluginManager().callEvent(ev);
@@ -181,7 +181,7 @@ public class DCPlayerListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerShearEntityEvent(PlayerShearEntityEvent event) {
-		if (!Util.isWorldAllowed(event.getPlayer().getWorld()))
+		if (!plugin.getUtil().isWorldAllowed(event.getPlayer().getWorld()))
 			return;
 
 		Player player = event.getPlayer();
@@ -271,7 +271,7 @@ public class DCPlayerListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerFish(PlayerFishEvent event) {
-		if (!Util.isWorldAllowed(event.getPlayer().getWorld()))
+		if (!plugin.getUtil().isWorldAllowed(event.getPlayer().getWorld()))
 			return;
 
 		if (event.isCancelled())

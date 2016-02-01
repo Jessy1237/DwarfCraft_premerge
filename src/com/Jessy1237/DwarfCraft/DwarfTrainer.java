@@ -155,12 +155,12 @@ public final class DwarfTrainer {
 				continue;
 			}
 			if (costStack.getAmount() == 0) {
-				plugin.getOut().sendMessage(player, String.format("&aNo more &2%s &ais needed", Util.getCleanName(costStack)), tag);
+				plugin.getOut().sendMessage(player, String.format("&aNo more &2%s &ais needed", plugin.getUtil().getCleanName(costStack)), tag);
 				continue;
 			}
 			if (!player.getInventory().contains(costStack.getTypeId())) {
-				if (Util.checkEquivalentBuildBlocks(costStack.getTypeId(), -1) != null) {
-					ArrayList<Integer> i = Util.checkEquivalentBuildBlocks(costStack.getTypeId(), -1);
+				if (plugin.getUtil().checkEquivalentBuildBlocks(costStack.getTypeId(), -1) != null) {
+					ArrayList<Integer> i = plugin.getUtil().checkEquivalentBuildBlocks(costStack.getTypeId(), -1);
 					boolean contains = false;
 					for(int id : i) {
 						if(player.getInventory().contains(id)) {
@@ -169,12 +169,12 @@ public final class DwarfTrainer {
 					}
 					if(!contains) {
 						hasMats = false;
-						plugin.getOut().sendMessage(player, String.format("&cAn additional &2%d %s &cis required", costStack.getAmount(), Util.getCleanName(costStack)), tag);
+						plugin.getOut().sendMessage(player, String.format("&cAn additional &2%d %s &cis required", costStack.getAmount(), plugin.getUtil().getCleanName(costStack)), tag);
 						continue;
 					}
 				} else {
 					hasMats = false;
-					plugin.getOut().sendMessage(player, String.format("&cAn additional &2%d %s &cis required", costStack.getAmount(), Util.getCleanName(costStack)), tag);
+					plugin.getOut().sendMessage(player, String.format("&cAn additional &2%d %s &cis required", costStack.getAmount(), plugin.getUtil().getCleanName(costStack)), tag);
 					continue;
 				}
 			}
@@ -182,8 +182,8 @@ public final class DwarfTrainer {
 			for (ItemStack invStack : player.getInventory().getContents()) {
 				if (invStack == null)
 					continue;
-				if ((invStack.getTypeId() == costStack.getTypeId() && (invStack.getDurability() == costStack.getDurability() || (Util.isTool(invStack.getTypeId()) && invStack.getDurability() == invStack.getType().getMaxDurability())))
-						|| Util.checkEquivalentBuildBlocks(invStack.getTypeId(), costStack.getTypeId()) != null) {
+				if ((invStack.getTypeId() == costStack.getTypeId() && (invStack.getDurability() == costStack.getDurability() || (plugin.getUtil().isTool(invStack.getTypeId()) && invStack.getDurability() == invStack.getType().getMaxDurability())))
+						|| plugin.getUtil().checkEquivalentBuildBlocks(invStack.getTypeId(), costStack.getTypeId()) != null) {
 					deposited = true;
 					int inv = invStack.getAmount();
 					int cost = costStack.getAmount();
@@ -208,9 +208,9 @@ public final class DwarfTrainer {
 				}
 			}
 			if (costStack.getAmount() == 0) {
-				plugin.getOut().sendMessage(player, String.format("&aNo more &2%s &ais needed", Util.getCleanName(costStack)), tag);
+				plugin.getOut().sendMessage(player, String.format("&aNo more &2%s &ais needed", plugin.getUtil().getCleanName(costStack)), tag);
 			} else {
-				plugin.getOut().sendMessage(player, String.format("&cAn additional &2%d %s &c is required", costStack.getAmount(), Util.getCleanName(costStack)), tag);
+				plugin.getOut().sendMessage(player, String.format("&cAn additional &2%d %s &c is required", costStack.getAmount(), plugin.getUtil().getCleanName(costStack)), tag);
 				hasMats = false;
 				deposited = true;
 			}

@@ -270,12 +270,12 @@ public class DwarfCraft extends JavaPlugin {
 		pm.registerEvents(dcListener, this);
 
 		if (getServer().getPluginManager().getPlugin("Citizens") == null || getServer().getPluginManager().getPlugin("Citizens").isEnabled() == false) {
-			System.out.println("DC Init: Couldn't find Citizens!");
-			System.out.println("DC Init: DwarfCraft now disabiling...");
+			System.out.println("[DwarfCraft] Couldn't find Citizens!");
+			System.out.println("[DwarfCraft] DwarfCraft now disabiling...");
 			getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
-		System.out.println("DC Init: Hooked into Citizens!");
+		System.out.println("[DwarfCraft] Hooked into Citizens!");
 
 		CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(DwarfTrainerTrait.class).withName("DwarfTrainer"));
 
@@ -304,9 +304,9 @@ public class DwarfCraft extends JavaPlugin {
 
 		if (pm.getPlugin("LogBlock") != null) {
 			consumer = ((LogBlock) pm.getPlugin("LogBlock")).getConsumer();
-			System.out.println("DC Init: Hooked into LogBlock!");
+			System.out.println("[DwarfCraft] Hooked into LogBlock!");
 		} else {
-			System.out.println("DC Init: Couldn't find LogBlock!");
+			System.out.println("[DwarfCraft] Couldn't find LogBlock!");
 		}
 
 		System.out.println(getDescription().getName() + " version " + getDescription().getVersion() + " is enabled!");

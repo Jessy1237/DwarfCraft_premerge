@@ -13,15 +13,14 @@ import org.bukkit.inventory.ItemStack;
 
 public class Util {
 
-	private static DwarfCraft plugin;
-	
-	@SuppressWarnings("static-access")
+	private DwarfCraft plugin;
+
 	public Util(DwarfCraft plugin) {
 		this.plugin = plugin;
 	}
-	
+
 	// Stolen from nossr50
-	private static int charLength(char x) {
+	private int charLength(char x) {
 		if ("i.:,;|!".indexOf(x) != -1)
 			return 2;
 		else if ("l'".indexOf(x) != -1)
@@ -40,7 +39,7 @@ public class Util {
 			return -1;
 	}
 
-	protected static int msgLength(String str) {
+	protected int msgLength(String str) {
 		int len = 0;
 
 		for (int i = 0; i < str.length(); i++) {
@@ -53,7 +52,7 @@ public class Util {
 		return len;
 	}
 
-	public static int randomAmount(double input) {
+	public int randomAmount(double input) {
 		double rand = Math.random();
 		if (rand > input % 1)
 			return (int) Math.floor(input);
@@ -61,7 +60,7 @@ public class Util {
 			return (int) Math.ceil(input);
 	}
 
-	protected static String sanitize(String str) {
+	protected String sanitize(String str) {
 		String retval = "";
 		for (int i = 0; i < str.length(); i++) {
 			if ("abcdefghijlmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_".indexOf(str.charAt(i)) != -1)
@@ -71,7 +70,7 @@ public class Util {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static ItemStack parseItem(String info) {
+	public ItemStack parseItem(String info) {
 		String[] pts = info.split(":");
 		int data = (pts.length > 1 ? Integer.parseInt(pts[1]) : 0);
 		int item = -1;
@@ -92,12 +91,12 @@ public class Util {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static String getCleanName(ItemStack item) {
+	public String getCleanName(ItemStack item) {
 		if (item == null)
 			return "NULL";
 		switch (item.getType()) {
 		case SAPLING:
-			if(Util.checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
+			if (checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
 				return "Sapling";
 			switch (item.getData().getData()) {
 			case 0:
@@ -125,7 +124,7 @@ public class Util {
 				return "Sand";
 			}
 		case RAW_FISH:
-			if(Util.checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
+			if (checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
 				return "Raw Fish";
 			switch (item.getData().getData()) {
 			case 0:
@@ -141,7 +140,7 @@ public class Util {
 			}
 
 		case LOG:
-			if(Util.checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
+			if (checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
 				return "Log";
 			switch (item.getData().getData()) {
 			case 0:
@@ -156,7 +155,7 @@ public class Util {
 				return "Log";
 			}
 		case LOG_2:
-			if(Util.checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
+			if (checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
 				return "Log";
 			switch (item.getData().getData()) {
 			case 0:
@@ -167,7 +166,7 @@ public class Util {
 				return "Log";
 			}
 		case LEAVES:
-			if(Util.checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
+			if (checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
 				return "Leaves";
 			switch (item.getData().getData()) {
 			case 0:
@@ -182,7 +181,7 @@ public class Util {
 				return "Leaves";
 			}
 		case LEAVES_2:
-			if(Util.checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
+			if (checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
 				return "Leaves";
 			switch (item.getData().getData()) {
 			case 0:
@@ -193,7 +192,7 @@ public class Util {
 				return "Leaves";
 			}
 		case WOOL:
-			if(Util.checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
+			if (checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
 				return "Wool";
 			switch (item.getData().getData()) {
 			case 0:
@@ -232,7 +231,7 @@ public class Util {
 				return String.format("Unknown Dye(%d)", item.getData().getData());
 			}
 		case DOUBLE_STEP:
-			if(Util.checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
+			if (checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
 				return "Slab";
 			switch (item.getData().getData()) {
 			case 15:
@@ -270,7 +269,7 @@ public class Util {
 				return String.format("Crop");
 			}
 		case COAL:
-			if(Util.checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
+			if (checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
 				return "Coal";
 			switch (item.getData().getData()) {
 			case 0:
@@ -295,7 +294,7 @@ public class Util {
 		case CARROT:
 			return "Carrot_Crop";
 		case INK_SACK:
-			if(Util.checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
+			if (checkEquivalentBuildBlocks(item.getTypeId(), -1) != null)
 				return "Dye";
 			switch (item.getData().getData()) {
 			case 15:
@@ -340,25 +339,25 @@ public class Util {
 
 	// Checks the itemID to see if it is a tool. Excludes fishing rod and, flint
 	// and steel.
-	public static boolean isTool(int ID) {
+	public boolean isTool(int ID) {
 		if ((ID >= 256 && ID <= 258) || (ID >= 267 && ID <= 279) || (ID >= 283 && ID <= 286) || (ID >= 290 && ID <= 294) || ID == 359) {
 			return true;
 		}
 		return false;
 	}
-	
-	
-	//Checks the EquivalentBlock Groups of the ID and the compareID, returns the group of blocks that are equivalent if the compareID = -1
-	public static ArrayList<Integer> checkEquivalentBuildBlocks(int ID, int compareID) {	
-		if(!plugin.getConfigManager().buildingblocks)
+
+	// Checks the EquivalentBlock Groups of the ID and the compareID, returns
+	// the group of blocks that are equivalent if the compareID = -1
+	public ArrayList<Integer> checkEquivalentBuildBlocks(int ID, int compareID) {
+		if (!plugin.getConfigManager().buildingblocks)
 			return null;
-		
-		for(ArrayList<Integer> blocks : plugin.getConfigManager().getBlockGroups().values()) {
-			if(blocks != null && blocks.size() > 0) {
-				for(Integer i : blocks) {
-					if(ID == i) {
-						for(Integer i1 : blocks) {
-							if(compareID == i1 || compareID == -1) {
+
+		for (ArrayList<Integer> blocks : plugin.getConfigManager().getBlockGroups().values()) {
+			if (blocks != null && blocks.size() > 0) {
+				for (Integer i : blocks) {
+					if (ID == i) {
+						for (Integer i1 : blocks) {
+							if (compareID == i1 || compareID == -1) {
 								return blocks;
 							}
 						}
@@ -366,21 +365,21 @@ public class Util {
 				}
 			}
 		}
-		
+
 		return null;
 	}
 
-	public static String getPlayerPrefix(DCPlayer player) {
+	public String getPlayerPrefix(DCPlayer player) {
 		String race = player.getRace().substring(0, 1).toUpperCase() + player.getRace().substring(1);
 		return plugin.getConfigManager().getPrefix().replace("%racename%", race);
 	}
-	
-	public static String getPlayerPrefix(String race) {
+
+	public String getPlayerPrefix(String race) {
 		String raceStr = race.substring(0, 1).toUpperCase() + race.substring(1);
 		return plugin.getConfigManager().getPrefix().replace("%racename%", raceStr);
 	}
-	
-	public static String getCleanName(EntityType mCreature) {
+
+	public String getCleanName(EntityType mCreature) {
 		if (mCreature == null)
 			return "NULL";
 
@@ -407,51 +406,25 @@ public class Util {
 			return cleanEnumString(mCreature.toString());
 		}
 	}
-	
-	public static String cleanEnumString(String enumStr) {
+
+	public String cleanEnumString(String enumStr) {
 		String enumString = enumStr.toLowerCase();
 		String[] enumWords = enumString.split("_");
-	    
-	    StringBuffer sb = new StringBuffer();
-	    for (String word : enumWords) {
-	        sb.append(word.substring(0, 1).toUpperCase() + word.substring(1));
-	        sb.append(" ");
-	    }
-		
+
+		StringBuffer sb = new StringBuffer();
+		for (String word : enumWords) {
+			sb.append(word.substring(0, 1).toUpperCase() + word.substring(1));
+			sb.append(" ");
+		}
+
 		return sb.toString().trim();
 	}
 
 	public enum FoodLevel {
 
-		APPLE(260, 4, 2.4f),
-		BAKED_POTATO(393, 5, 7.2f),
-		BREAD(297, 5, 6f),
-		CAKE(92, 2, 2f),
-		CARROT(391, 3, 4.8f),
-		COOKED_CHICKEN(366, 6, 7.2f),
-		COOKED_FISH(350, 5, 6f),
-		COOKED_MUTTON(424, 6, 9.6f),
-		COOKED_PORKCHOP(320, 8, 12.8f),
-		COOKED_RABBIT(412, 5, 6f),
-		COOKIE(357, 2, 0.4f),
-		GOLDEN_APPLE(322, 4, 9.6f),
-		GOLDEN_CARROT(396, 6, 14.4f),
-		MELON(360, 2, 1.2f),
-		MUSHROOM_STEW(282, 6, 7.2f), 
-		POISONOUS_POTATO(394, 2, 1.2f),
-		POTATO(392, 1, 0.6f),
-		PUMPKIN_PIE(400, 8, 4.8f),
-		RABBIT_STEW(413, 10, 12f),
-		RAW_BEEF(363, 3, 1.8f),
-		RAW_CHICKEN(365, 2, 1.2f),
-		RAW_FISH(349, 2, 0.4f),
-		RAW_MUTTON(423, 2, 1.2f),
-		RAW_PORKCHOP(319, 3, 1.8f),
-		RAW_RABBIT(411, 2, 1.8f),
-		ROTTEN_FLESH(367, 4, 0.8f),
-		SPIDER_EYE(375, 2, 3.2f),
-		STEAK(364, 8, 12.8f)
-		;
+		APPLE(260, 4, 2.4f), BAKED_POTATO(393, 5, 7.2f), BREAD(297, 5, 6f), CAKE(92, 2, 2f), CARROT(391, 3, 4.8f), COOKED_CHICKEN(366, 6, 7.2f), COOKED_FISH(350, 5, 6f), COOKED_MUTTON(424, 6, 9.6f), COOKED_PORKCHOP(320, 8, 12.8f), COOKED_RABBIT(412, 5, 6f), COOKIE(357, 2, 0.4f), GOLDEN_APPLE(322,
+				4, 9.6f), GOLDEN_CARROT(396, 6, 14.4f), MELON(360, 2, 1.2f), MUSHROOM_STEW(282, 6, 7.2f), POISONOUS_POTATO(394, 2, 1.2f), POTATO(392, 1, 0.6f), PUMPKIN_PIE(400, 8, 4.8f), RABBIT_STEW(413, 10, 12f), RAW_BEEF(363, 3, 1.8f), RAW_CHICKEN(365, 2, 1.2f), RAW_FISH(349, 2, 0.4f), RAW_MUTTON(
+				423, 2, 1.2f), RAW_PORKCHOP(319, 3, 1.8f), RAW_RABBIT(411, 2, 1.8f), ROTTEN_FLESH(367, 4, 0.8f), SPIDER_EYE(375, 2, 3.2f), STEAK(364, 8, 12.8f);
 
 		private int lvl;
 		private int id;
@@ -486,7 +459,7 @@ public class Util {
 			return 0;
 		}
 
-		public static float getSat(int id) {
+		public float getSat(int id) {
 			for (FoodLevel f : FoodLevel.values()) {
 				if (f != null) {
 					if (f.getId() == id) {
@@ -497,8 +470,8 @@ public class Util {
 			return 0;
 		}
 	}
-	
-	public static boolean isWorldAllowed(World world) {
+
+	public boolean isWorldAllowed(World world) {
 		if (plugin.getConfigManager().worldBlacklist) {
 			for (World w : plugin.getConfigManager().worlds) {
 				if (w != null) {
@@ -508,7 +481,7 @@ public class Util {
 				}
 			}
 		}
-		
+
 		return true;
 	}
 }

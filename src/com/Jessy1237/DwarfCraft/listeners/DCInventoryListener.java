@@ -27,7 +27,6 @@ import com.Jessy1237.DwarfCraft.DwarfCraft;
 import com.Jessy1237.DwarfCraft.Effect;
 import com.Jessy1237.DwarfCraft.EffectType;
 import com.Jessy1237.DwarfCraft.Skill;
-import com.Jessy1237.DwarfCraft.Util;
 import com.Jessy1237.DwarfCraft.events.DwarfCraftEffectEvent;
 
 public class DCInventoryListener implements Listener {
@@ -42,7 +41,7 @@ public class DCInventoryListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onFurnaceExtractEvent(FurnaceExtractEvent event) {
-		if (!Util.isWorldAllowed(event.getPlayer().getWorld()))
+		if (!plugin.getUtil().isWorldAllowed(event.getPlayer().getWorld()))
 			return;
 
 		DCPlayer player = plugin.getDataManager().find(event.getPlayer());
@@ -54,7 +53,7 @@ public class DCInventoryListener implements Listener {
 			for (Effect effect : s.getEffects()) {
 				if (effect.getEffectType() == EffectType.SMELT && effect.checkInitiator(new ItemStack(item))) {
 					item = effect.getOutput().getType();
-					int newAmount = Util.randomAmount(amount * effect.getEffectAmount(player));
+					int newAmount = plugin.getUtil().randomAmount(amount * effect.getEffectAmount(player));
 
 					DwarfCraftEffectEvent ev = new DwarfCraftEffectEvent(player, effect, new ItemStack[] {}, new ItemStack[] { new ItemStack(item, newAmount, effect.getOutput().getData().getData()) }, null, null, null, null, null, event.getBlock(), null);
 					plugin.getServer().getPluginManager().callEvent(ev);
@@ -99,12 +98,12 @@ public class DCInventoryListener implements Listener {
 		if (player != null && hasItems(toCraft)) {
 
 			// Make sure they aren't duping when repairing tools
-			if (Util.isTool(toCraft.getTypeId())) {
+			if (plugin.getUtil().isTool(toCraft.getTypeId())) {
 				CraftingInventory ci = (CraftingInventory) event.getInventory();
 				if (ci.getRecipe() instanceof ShapelessRecipe) {
 					ShapelessRecipe r = (ShapelessRecipe) ci.getRecipe();
 					for (ItemStack i : r.getIngredientList()) {
-						if (Util.isTool(i.getTypeId()) && toCraft.getTypeId() == i.getTypeId()) {
+						if (plugin.getUtil().isTool(i.getTypeId()) && toCraft.getTypeId() == i.getTypeId()) {
 							return;
 						}
 					}
@@ -145,7 +144,7 @@ public class DCInventoryListener implements Listener {
 								if (item != null) {
 									if (item.getAmount() > 0) {
 										if (item.getType() == output.getType()) {
-											plugin.getServer().getScheduler().runTaskLater(plugin, new ShiftClickTask(dCPlayer, item, check, held, modifier, e), 5);
+											plugin.getServer().getScheduler().runTaskLater(plugin, new ShiftClickTask(plugin, dCPlayer, item, check, held, modifier, e), 5);
 										} else {
 											player.getLocation().getWorld().dropItemNaturally(player.getLocation(), item);
 										}
@@ -249,7 +248,7 @@ public class DCInventoryListener implements Listener {
 							if (item != null) {
 								if (item.getAmount() > 0) {
 									if (item.getType() == output.getType()) {
-										plugin.getServer().getScheduler().runTaskLater(plugin, new ShiftClickTask(dCPlayer, item, check, held, modifier, effect), 5);
+										plugin.getServer().getScheduler().runTaskLater(plugin, new ShiftClickTask(plugin, dCPlayer, item, check, held, modifier, effect), 5);
 									} else {
 										player.getLocation().getWorld().dropItemNaturally(player.getLocation(), item);
 									}
@@ -275,7 +274,7 @@ public class DCInventoryListener implements Listener {
 	@SuppressWarnings({ "deprecation", "incomplete-switch" })
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onInventoryClickEvent(InventoryClickEvent event) {
-		if (!Util.isWorldAllowed(event.getWhoClicked().getWorld()))
+		if (!plugin.getUtil().isWorldAllowed(event.getWhoClicked().getWorld()))
 			return;
 		
 		if (event.getInventory() != null && event.getSlotType() == SlotType.RESULT) {
@@ -388,8 +387,9 @@ class ShiftClickTask implements Runnable {
 	private ItemStack check;
 	private float modifier;
 	private Effect e;
+	private DwarfCraft plugin;
 
-	public ShiftClickTask(DCPlayer p, final ItemStack item, ItemStack check, int init, float modifier, Effect e) {
+	public ShiftClickTask(DwarfCraft plugin, DCPlayer p, final ItemStack item, ItemStack check, int init, float modifier, Effect e) {
 		this.p = p;
 		this.item = item;
 		if (check == null) {
@@ -400,6 +400,7 @@ class ShiftClickTask implements Runnable {
 		this.init = init;
 		this.modifier = modifier;
 		this.e = e;
+		this.plugin = plugin;
 	}
 
 	@SuppressWarnings({ "unchecked" })
@@ -420,7 +421,7 @@ class ShiftClickTask implements Runnable {
 
 		final int difference = held - init;
 		if (modifier > 1) {
-			final int amount = Util.randomAmount((modifier * difference - difference));
+			final int amount = plugin.getUtil().randomAmount((modifier * difference - difference));
 
 			// Added the amount from this effect into the limbo ItemStack
 
@@ -439,7 +440,7 @@ class ShiftClickTask implements Runnable {
 			// Takes away items from the inventory when the shift click crafts
 			// more than it should do
 		} else if (modifier < 1) {
-			int amount = Util.randomAmount((difference - modifier * difference));
+			int amount = plugin.getUtil().randomAmount((difference - modifier * difference));
 			p.getPlayer().getInventory().removeItem(new ItemStack(item.getType(), amount, item.getDurability()));
 		}
 		for (Skill s : p.getSkills().values()) {

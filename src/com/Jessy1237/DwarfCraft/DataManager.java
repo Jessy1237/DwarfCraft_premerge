@@ -127,7 +127,7 @@ public class DataManager {
 			try {
 				rs = statement.executeQuery("select uuid from players");
 			} catch (Exception e) {
-				System.out.println("DC Init: Converting Player DB (may lag a little wait for completion message).");
+				System.out.println("[DwarfCraft] Converting Player DB (may lag a little wait for completion message).");
 				mDBCon.setAutoCommit(false);
 				HashMap<UUID, String> dcplayers = new HashMap<UUID, String>();
 				HashMap<UUID, Integer> ids = new HashMap<UUID, Integer>();
@@ -156,13 +156,13 @@ public class DataManager {
 						prep.close();
 					}
 				}
-				System.out.println("DC Init: Finished Converting the Players DB.");
+				System.out.println("[DwarfCraft] Finished Converting the Players DB.");
 			}
 
 			try {
 				rs = statement.executeQuery("select * from sqlite_master WHERE name = 'trainers';");
 				if (rs.next()) {
-					System.out.println("DC Init: Transfering Trainer DB to citizens  (may lag a little wait for completion message).");
+					System.out.println("[DwarfCraft] Transfering Trainer DB to citizens  (may lag a little wait for completion message).");
 
 					rs = statement.executeQuery("select * from trainers;");
 
@@ -179,7 +179,7 @@ public class DataManager {
 					}
 				}
 				statement.execute("DROP TABLE trainers");
-				System.out.println("DC Init: Finished Transfering the Trainers DB.");
+				System.out.println("[DwarfCraft] Finished Transfering the Trainers DB.");
 			} catch (Exception e) {
 
 			}
@@ -187,7 +187,7 @@ public class DataManager {
 			 * Old conversion for Trainer tables based on old trainer code try {
 			 * rs = statement.executeQuery("select minSkill from trainers"); }
 			 * catch (Exception e) { System.out.println(
-			 * "DC Init: Converting Trainer DB (may lag a little wait for completion message)."
+			 * "[DwarfCraft] Converting Trainer DB (may lag a little wait for completion message)."
 			 * ); mDBCon.setAutoCommit(false); ArrayList<DwarfTrainer> trainers
 			 * = new ArrayList<DwarfTrainer>();
 			 * 
@@ -213,12 +213,12 @@ public class DataManager {
 			 * rs.getBoolean("isGreeter"), false, 0);
 			 * 
 			 * trainers.add(trainer); } } prep.close();
-			 * System.out.println("DC Init: Finished Converting the Trainer DB."
+			 * System.out.println("[DwarfCraft] Finished Converting the Trainer DB."
 			 * ); } catch (Exception e1) { e1.printStackTrace(); } } }
 			 * 
 			 * try { rs = statement.executeQuery("select type from trainers"); }
 			 * catch (Exception e) { System.out.println(
-			 * "DC Init: Converting Trainer DB to include Trainer Types (may lag a little wait for completion message)."
+			 * "[DwarfCraft] Converting Trainer DB to include Trainer Types (may lag a little wait for completion message)."
 			 * ); mDBCon.setAutoCommit(false); ArrayList<DwarfTrainer> trainers
 			 * = new ArrayList<DwarfTrainer>();
 			 * 
@@ -264,7 +264,7 @@ public class DataManager {
 			 * d.getLocation().getPitch()); prep.setString(15, d.getType());
 			 * prep.execute(); prep.close(); } } trainers.clear();
 			 * mDBCon.commit();
-			 * System.out.println("DC Init: Finished converting Trainer table!"
+			 * System.out.println("[DwarfCraft] Finished converting Trainer table!"
 			 * ); }
 			 */
 			rs.close();

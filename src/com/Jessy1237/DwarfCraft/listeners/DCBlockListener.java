@@ -36,7 +36,6 @@ import com.Jessy1237.DwarfCraft.DwarfCraft;
 import com.Jessy1237.DwarfCraft.Effect;
 import com.Jessy1237.DwarfCraft.EffectType;
 import com.Jessy1237.DwarfCraft.Skill;
-import com.Jessy1237.DwarfCraft.Util;
 import com.Jessy1237.DwarfCraft.events.DwarfCraftEffectEvent;
 
 public class DCBlockListener implements Listener {
@@ -50,7 +49,7 @@ public class DCBlockListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockFromTo(BlockFromToEvent event) {
 		if (plugin.getConfigManager().disableCacti) {
-			if (!Util.isWorldAllowed(event.getBlock().getWorld()))
+			if (!plugin.getUtil().isWorldAllowed(event.getBlock().getWorld()))
 				return;
 
 			// Code to prevent water from normally breaking crops
@@ -67,7 +66,7 @@ public class DCBlockListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockGrow(BlockGrowEvent event) {
 		if (plugin.getConfigManager().disableCacti) {
-			if (!Util.isWorldAllowed(event.getBlock().getWorld()))
+			if (!plugin.getUtil().isWorldAllowed(event.getBlock().getWorld()))
 				return;
 
 			Block b = event.getNewState().getBlock();
@@ -96,7 +95,7 @@ public class DCBlockListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockBreak(BlockBreakEvent event) {
-		if (!Util.isWorldAllowed(event.getPlayer().getWorld()))
+		if (!plugin.getUtil().isWorldAllowed(event.getPlayer().getWorld()))
 			return;
 
 		if (event.isCancelled())
@@ -222,7 +221,7 @@ public class DCBlockListener implements Listener {
 							// replaces one of the items drop in the stack, if
 							// not acts as vanilla and no DC drops
 							if (plugin.getConfigManager().silkTouch) {
-								item.setAmount(item.getAmount() - Util.randomAmount(effect.getEffectAmount(effect.getNormalLevel(), player)));
+								item.setAmount(item.getAmount() - plugin.getUtil().randomAmount(effect.getEffectAmount(effect.getNormalLevel(), player)));
 								switch (block.getType()) {
 								case STONE:
 									item1 = new ItemStack(Material.STONE, 1);
@@ -391,7 +390,7 @@ public class DCBlockListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockDamage(BlockDamageEvent event) {
-		if (!Util.isWorldAllowed(event.getPlayer().getWorld()))
+		if (!plugin.getUtil().isWorldAllowed(event.getPlayer().getWorld()))
 			return;
 
 		if (event.isCancelled())
@@ -415,7 +414,7 @@ public class DCBlockListener implements Listener {
 					if (DwarfCraft.debugMessagesThreshold < 2)
 						System.out.println("DC2: started instamine check");
 
-					if (Util.randomAmount(e.getEffectAmount(dCPlayer)) == 0)
+					if (plugin.getUtil().randomAmount(e.getEffectAmount(dCPlayer)) == 0)
 						return;
 
 					if (DwarfCraft.debugMessagesThreshold < 3)
@@ -439,7 +438,7 @@ public class DCBlockListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockPhysics(BlockPhysicsEvent event) {
 		if (plugin.getConfigManager().disableCacti) {
-			if (!Util.isWorldAllowed(event.getBlock().getWorld()))
+			if (!plugin.getUtil().isWorldAllowed(event.getBlock().getWorld()))
 				return;
 
 			if (event.getBlock().getType() == Material.CROPS || event.getBlock().getType() == Material.POTATO || event.getBlock().getType() == Material.CARROT) {
@@ -469,7 +468,7 @@ public class DCBlockListener implements Listener {
 								for (Skill s : dCPlayer.getSkills().values()) {
 									for (Effect e : s.getEffects()) {
 										if (e.getEffectType() == EffectType.BLOCKDROP && e.checkInitiator(new ItemStack(Material.CACTUS))) {
-											int amount = Util.randomAmount(e.getEffectAmount(dCPlayer));
+											int amount = plugin.getUtil().randomAmount(e.getEffectAmount(dCPlayer));
 											if (amount != 0) {
 
 												DwarfCraftEffectEvent ev;
@@ -532,7 +531,7 @@ public class DCBlockListener implements Listener {
 							for (Skill s : dCPlayer.getSkills().values()) {
 								for (Effect e : s.getEffects()) {
 									if (e.getEffectType() == EffectType.BLOCKDROP && e.checkInitiator(new ItemStack(Material.SUGAR_CANE_BLOCK))) {
-										int amount = Util.randomAmount(e.getEffectAmount(dCPlayer));
+										int amount = plugin.getUtil().randomAmount(e.getEffectAmount(dCPlayer));
 										if (amount != 0) {
 											DwarfCraftEffectEvent ev;
 											ItemStack[] altered = new ItemStack[1];
@@ -580,7 +579,7 @@ public class DCBlockListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockPistonExtend(BlockPistonExtendEvent event) {
 		if (plugin.getConfigManager().disableCacti) {
-			if (!Util.isWorldAllowed(event.getBlock().getWorld()))
+			if (!plugin.getUtil().isWorldAllowed(event.getBlock().getWorld()))
 				return;
 
 			Material[] mats = { Material.COCOA, Material.CACTUS, Material.CROPS, Material.POTATO, Material.CARROT, Material.NETHER_STALK, Material.MELON_BLOCK, Material.SUGAR_CANE_BLOCK };
@@ -593,7 +592,7 @@ public class DCBlockListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockPistonRetract(BlockPistonRetractEvent event) {
 		if (plugin.getConfigManager().disableCacti) {
-			if (!Util.isWorldAllowed(event.getBlock().getWorld()))
+			if (!plugin.getUtil().isWorldAllowed(event.getBlock().getWorld()))
 				return;
 
 			Material[] mats = { Material.COCOA, Material.CACTUS, Material.CROPS, Material.POTATO, Material.CARROT, Material.NETHER_WARTS, Material.MELON_BLOCK, Material.SUGAR_CANE_BLOCK };

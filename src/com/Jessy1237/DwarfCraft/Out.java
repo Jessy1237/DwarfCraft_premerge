@@ -175,14 +175,14 @@ public class Out {
 	 * commands
 	 */
 	private String playerLinePrinter(Player player, String message, String prefix) {
-		int messageSectionLength = lineLength - Util.msgLength(prefix);
+		int messageSectionLength = lineLength - plugin.getUtil().msgLength(prefix);
 		String currentLine = "";
 		String words[] = message.split(" ");
 		String lastColor = "";
 		int lineTotal = 0;
 
 		for (String word : words) {
-			if (Util.msgLength(currentLine) + Util.msgLength(word) <= messageSectionLength) {
+			if (plugin.getUtil().msgLength(currentLine) + plugin.getUtil().msgLength(word) <= messageSectionLength) {
 				currentLine = currentLine.concat(word + " ");
 			} else {
 				player.sendMessage(prefix.concat(lastColor + currentLine).trim());
@@ -230,7 +230,7 @@ public class Out {
 			if (r != null && t != null) {
 				int totalCost = t.getAmount();
 				int deposited = t.getAmount() - r.getAmount();
-				sendMessage(sender, String.format(" &2%d of %d %s&6  --", deposited, totalCost, Util.getCleanName(r)), " &6-- ");
+				sendMessage(sender, String.format(" &2%d of %d %s&6  --", deposited, totalCost, plugin.getUtil().getCleanName(r)), " &6-- ");
 			}
 
 		}
@@ -260,7 +260,7 @@ public class Out {
 			String interim = String.format("&6[&3%02d&6] &b%.18s", s.getLevel(), s.getDisplayName());
 
 			if (!odd) {
-				int interimLen = Util.msgLength(interim);
+				int interimLen = plugin.getUtil().msgLength(interim);
 				int numSpaces = ((124 - interimLen) / 4) - 1;
 				for (int i = 0; i < numSpaces; i++)
 					interim = interim.concat(" ");

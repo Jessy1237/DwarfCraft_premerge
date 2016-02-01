@@ -210,7 +210,7 @@ public final class ConfigManager {
 	@SuppressWarnings("resource")
 	private boolean readConfigFile() {
 		try {
-			System.out.println("DC Init: Reading Config File: " + configDirectory + configMainFileName);
+			System.out.println("[DwarfCraft] Reading Config File: " + configDirectory + configMainFileName);
 			getDefaultValues();
 			FileReader fr = new FileReader(configDirectory + configMainFileName);
 			BufferedReader br = new BufferedReader(fr);
@@ -297,7 +297,7 @@ public final class ConfigManager {
 
 	@SuppressWarnings("resource")
 	private boolean readWorldFile() {
-		System.out.println("DC Init: Reading world blacklist file: " + configDirectory + configWorldFileName);
+		System.out.println("[DwarfCraft] Reading world blacklist file: " + configDirectory + configWorldFileName);
 
 		FileReader fr;
 		try {
@@ -335,7 +335,7 @@ public final class ConfigManager {
 	}
 
 	private boolean readEffectsFile() {
-		System.out.println("DC Init: Reading effects file: " + configDirectory + configEffectsFileName);
+		System.out.println("[DwarfCraft] Reading effects file: " + configDirectory + configEffectsFileName);
 		try {
 			CSVReader csv = new CSVReader(configDirectory + configEffectsFileName);
 			Iterator<CSVRecord> records = csv.getRecords();
@@ -359,7 +359,7 @@ public final class ConfigManager {
 
 	@SuppressWarnings("resource")
 	protected boolean readRacesFile() {
-		System.out.println("DC Init: Reading races file: " + configDirectory + cfgRaceFile);
+		System.out.println("[DwarfCraft] Reading races file: " + configDirectory + cfgRaceFile);
 		try {
 			FileReader fr = new FileReader(configDirectory + cfgRaceFile);
 			BufferedReader br = new BufferedReader(fr);
@@ -408,7 +408,7 @@ public final class ConfigManager {
 					name = false;
 					desc = false;
 					skills = false;
-					System.out.println("DC Init: Loaded race: " + race.getName());
+					System.out.println("[DwarfCraft] Loaded race: " + race.getName());
 					continue;
 				}
 			}
@@ -426,7 +426,7 @@ public final class ConfigManager {
 
 	@SuppressWarnings("resource")
 	protected boolean readGreeterMessagesfile() {
-		System.out.println("DC Init: Reading greeter messages file: " + configDirectory + cfgGreeterFile);
+		System.out.println("[DwarfCraft] Reading greeter messages file: " + configDirectory + cfgGreeterFile);
 		try {
 			getDefaultValues();
 			FileReader fr = new FileReader(configDirectory + cfgGreeterFile);
@@ -458,7 +458,7 @@ public final class ConfigManager {
 
 	@SuppressWarnings("resource")
 	private boolean readMessagesFile() {
-		System.out.println("DC Init: Reading general messages file: " + configDirectory + configMessagesFileName);
+		System.out.println("[DwarfCraft] Reading general messages file: " + configDirectory + configMessagesFileName);
 		try {
 			getDefaultValues();
 			FileReader fr = new FileReader(configDirectory + configMessagesFileName);
@@ -496,7 +496,7 @@ public final class ConfigManager {
 	}
 
 	private boolean readSkillsFile() {
-		System.out.println("DC Init: Reading skills file: " + configDirectory + configSkillsFileName);
+		System.out.println("[DwarfCraft] Reading skills file: " + configDirectory + configSkillsFileName);
 		try {
 			CSVReader csv = new CSVReader(configDirectory + configSkillsFileName);
 			configSkillsVersion = csv.getVersion();
@@ -505,8 +505,8 @@ public final class ConfigManager {
 				CSVRecord item = records.next();
 
 				@SuppressWarnings("deprecation")
-				Skill skill = new Skill(item.getInt("ID"), item.getString("Name"), 0, new ArrayList<Effect>(), new TrainingItem(Util.parseItem(item.getString("Item1")), item.getDouble("Item1Base"), item.getInt("Item1Max")), new TrainingItem(Util.parseItem(item.getString("Item2")),
-						item.getDouble("Item2Base"), item.getInt("Item2Max")), new TrainingItem(Util.parseItem(item.getString("Item3")), item.getDouble("Item3Base"), item.getInt("Item3Max")), Material.getMaterial(item.getInt("Held")));
+				Skill skill = new Skill(item.getInt("ID"), item.getString("Name"), 0, new ArrayList<Effect>(), new TrainingItem(plugin.getUtil().parseItem(item.getString("Item1")), item.getDouble("Item1Base"), item.getInt("Item1Max")), new TrainingItem(plugin.getUtil().parseItem(item.getString("Item2")),
+						item.getDouble("Item2Base"), item.getInt("Item2Max")), new TrainingItem(plugin.getUtil().parseItem(item.getString("Item3")), item.getDouble("Item3Base"), item.getInt("Item3Max")), Material.getMaterial(item.getInt("Held")));
 
 				skillsArray.put(skill.getId(), skill);
 
@@ -522,7 +522,7 @@ public final class ConfigManager {
 
 	@SuppressWarnings("resource")
 	private boolean readBlockGroupsFile() {
-		System.out.println("DC Init: Reading Block Groups file: " + configDirectory + cfgBlockGroupsFile);
+		System.out.println("[DwarfCraft] Reading Block Groups file: " + configDirectory + cfgBlockGroupsFile);
 
 		try {
 			FileReader fr = new FileReader(configDirectory + cfgBlockGroupsFile);

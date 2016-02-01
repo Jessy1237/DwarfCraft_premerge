@@ -25,7 +25,6 @@ import com.Jessy1237.DwarfCraft.DwarfVehicle;
 import com.Jessy1237.DwarfCraft.Effect;
 import com.Jessy1237.DwarfCraft.EffectType;
 import com.Jessy1237.DwarfCraft.Skill;
-import com.Jessy1237.DwarfCraft.Util;
 import com.Jessy1237.DwarfCraft.events.DwarfCraftEffectEvent;
 
 public class DCVehicleListener implements Listener {
@@ -42,7 +41,7 @@ public class DCVehicleListener implements Listener {
      */
 	@EventHandler(priority = EventPriority.HIGHEST)
     public void onVehicleDestroy(VehicleDestroyEvent event) {
-		if (!Util.isWorldAllowed(event.getAttacker().getWorld()))
+		if (!plugin.getUtil().isWorldAllowed(event.getAttacker().getWorld()))
 			return;
 		
     	boolean dropChange = false;
@@ -89,7 +88,7 @@ public class DCVehicleListener implements Listener {
     }
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onVehicleEnter(VehicleEnterEvent event) {
-		if (!Util.isWorldAllowed(event.getVehicle().getWorld()))
+		if (!plugin.getUtil().isWorldAllowed(event.getVehicle().getWorld()))
 			return;
 		
 		if (!(event.getVehicle() instanceof CraftBoat)) return;
@@ -110,7 +109,7 @@ public class DCVehicleListener implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onVehicleMove(VehicleMoveEvent event) {
-		if (!Util.isWorldAllowed(event.getVehicle().getWorld()))
+		if (!plugin.getUtil().isWorldAllowed(event.getVehicle().getWorld()))
 			return;
 		
 		if (event.getVehicle().getPassenger() == null) return;
