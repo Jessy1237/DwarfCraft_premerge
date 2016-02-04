@@ -23,7 +23,7 @@ public class DCListener implements Listener{
 		Skill skill = event.getSkill();
 		
 		if(skill.getLevel() % plugin.getConfigManager().getAnnouncementInterval() == 0 && plugin.getConfigManager().announce) {
-			String name = plugin.getChat().getPlayerPrefix(player.getPlayer()) + player.getPlayer().getDisplayName() + plugin.getChat().getPlayerSuffix(player.getPlayer());
+			String name = plugin.getChat().getPlayerPrefix(player.getPlayer()) + player.getPlayer().getName() + plugin.getChat().getPlayerSuffix(player.getPlayer());
 			plugin.getOut().sendBroadcast(plugin.getServer(), plugin.getConfigManager().getAnnouncementMessage().replace("%playername%", name).replace("%skillname%", skill.getDisplayName()).replace("%level%", ""+skill.getLevel()));
 		}
 	}

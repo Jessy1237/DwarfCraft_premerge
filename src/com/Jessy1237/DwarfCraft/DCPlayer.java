@@ -235,9 +235,9 @@ public class DCPlayer {
 		this.skills = skills;
 	}
 
-	protected int skillLevel(int i) {
+	public int getSkillLevel(int id) {
 		for (Skill s : getSkills().values())
-			if (s.getId() == i)
+			if (s.getId() == id)
 				return s.getLevel();
 		return 0;
 	}

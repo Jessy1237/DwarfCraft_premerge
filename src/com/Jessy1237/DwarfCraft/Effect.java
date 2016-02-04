@@ -296,7 +296,7 @@ public class Effect {
 	 * @return
 	 */
 	public double getEffectAmount(DCPlayer dCPlayer) {
-		return getEffectAmount(dCPlayer.skillLevel(this.mID / 10), dCPlayer);
+		return getEffectAmount(dCPlayer.getSkillLevel(this.mID / 10), dCPlayer);
 	}
 
 	public double getEffectAmount(int skillLevel, DCPlayer dCPlayer) {
