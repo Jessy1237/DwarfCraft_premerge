@@ -116,7 +116,7 @@ public class DCPlayer {
 	 * 
 	 * @return
 	 */
-	protected int getDwarfLevel() {
+	public int getDwarfLevel() {
 		int playerLevel = 5;
 		int highestSkill = 0;
 		for (Skill s : getSkills().values()) {
@@ -212,7 +212,7 @@ public class DCPlayer {
 	 * 
 	 * @return total level
 	 */
-	protected int level() {
+	public int level() {
 		int playerLevel = 5;
 		int highestSkill = 0;
 		for (Skill s : getSkills().values()) {

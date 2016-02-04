@@ -113,7 +113,7 @@ public class DwarfCraftEffectEvent extends Event implements Cancellable {
 	}
 
 	/**
-	 * Gets an ItemStack Array containing the original items that wouldve been dropped/smelter/etc or null
+	 * Gets an ItemStack Array containing the original items that wouldve been dropped/smelted/etc or null
 	 * if no items were altered.
 	 * 
 	 * @return ItemStack[]
@@ -166,7 +166,7 @@ public class DwarfCraftEffectEvent extends Event implements Cancellable {
 	}
 
 	/**
-	 * Gets the original taken by or given by the player, can also be the damage to a tool. Will return null if
+	 * Gets the original damage taken by or given by the player, can also be the damage to a tool. Will return null if
 	 * the effect doesn't alter damage.
 	 * 
 	 * @return Integer
@@ -176,7 +176,7 @@ public class DwarfCraftEffectEvent extends Event implements Cancellable {
 	}
 
 	/**
-	 * Gets the altered taken by or given by the player, can also be the damage to a tool. Will return null if the
+	 * Gets the altered damage taken by or given by the player, can also be the damage to a tool. Will return null if the
 	 * effect doesn't alter damage.
 	 * 
 	 * @return Integer
@@ -190,7 +190,7 @@ public class DwarfCraftEffectEvent extends Event implements Cancellable {
 	 * doesn't altered damage then changing this value will do nothing.
 	 * 
 	 * @param newDmg
-	 *            The altered dmg taken by or given by the player after the
+	 *            The altered damage taken by or given by the player after the
 	 *            effect takes place.
 	 * 
 	 */
@@ -200,7 +200,7 @@ public class DwarfCraftEffectEvent extends Event implements Cancellable {
 
 	/**
 	 * Gets the entity that is involved with the effect. If there is no entity
-	 * involved with the event other then the player then this will return null
+	 * involved with the effect other then the player then this will return null
 	 * 
 	 * @return Entity
 	 */
@@ -221,7 +221,7 @@ public class DwarfCraftEffectEvent extends Event implements Cancellable {
 
 	/**
 	 * Gets the item in the hand slot of the player. Will return null if the
-	 * item in hand didnt help fire the effect of if the player didn't have an
+	 * item in hand didn't help fire the effect of if the player didn't have an
 	 * item in hand
 	 * 
 	 * @return ItemStack

@@ -280,13 +280,13 @@ public class DwarfCraft extends JavaPlugin {
 		CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(DwarfTrainerTrait.class).withName("DwarfTrainer"));
 
 		npcr = CitizensAPI.getNPCRegistry();
+		util = new Util(this);
 		cm = new ConfigManager(this, getDataFolder().getAbsolutePath(), "DwarfCraft.config");
 		dm = new DataManager(this, cm);
 
 		dm.dbInitialize();
 
 		out = new Out(this);
-		util = new Util(this);
 
 		// readGreeterMessagesfile() depends on datamanager existing, so this
 		// has to go here
@@ -309,7 +309,7 @@ public class DwarfCraft extends JavaPlugin {
 			System.out.println("[DwarfCraft] Couldn't find LogBlock!");
 		}
 
-		System.out.println(getDescription().getName() + " version " + getDescription().getVersion() + " is enabled!");
+		System.out.println("[DwarfCraft]" + getDescription().getName() + " version " + getDescription().getVersion() + " is enabled!");
 	}
 
 	public void despawnById(int ID) {
