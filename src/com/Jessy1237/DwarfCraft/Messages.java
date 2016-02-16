@@ -5,14 +5,19 @@ package com.Jessy1237.DwarfCraft;
  */
 
 public final class Messages {
+	
+	private static DwarfCraft plugin;
+	
+	@SuppressWarnings("static-access")
+	public Messages(DwarfCraft plugin) {
+		this.plugin = plugin;
+	}
 
 	// String messages fixed for DwarfCraft, and backup messages when loading
 	// fails.
 	public enum Fixed {
 		SERVERRULESMESSAGE(
-				"This is a dummy Server Rules Message, please place a message in your messages.config"),  
-		COMMANDLIST1(""), 
-		COMMANDLIST2(""),
+				"This is a dummy Server Rules Message, please place a message in your messages.config"),
 
 		TUTORIAL1(
 				  "&fWelcome to the dwarfcraft tutorial. To get started, type &4/skillsheet full&f."
@@ -34,7 +39,7 @@ public final class Messages {
 				+ "but becoming a master is very challenging. Continue with &4/tutorial 5&f"), 
 		TUTORIAL5(
 				  "&fMost trainers can only take you to a limited level, you'll need to seek out the "
-				+ "best trainers in the world to eventually reach level 30 in a skill. Go gather"
+				+ "best trainers in the world to eventually reach level " + plugin.getConfigManager().getMaxSkillLevel() + " in a skill. Go gather"
 				+ "some dirt, stone, or logs and try to train up a relevant skill, using what"
 				+ "you have learned, then continue with &4/tutorial 6&f"),
 		TUTORIAL6(

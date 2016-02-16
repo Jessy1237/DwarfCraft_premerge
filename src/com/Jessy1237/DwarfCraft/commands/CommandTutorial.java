@@ -41,7 +41,7 @@ public class CommandTutorial extends Command {
 				page = (Integer) outputList.get(0);
 			} catch (DCCommandException e) {
 				if (e.getType() == Type.TOOFEWARGS)
-					page = 0;
+					page = 1;
 				else
 					throw e;
 			}
