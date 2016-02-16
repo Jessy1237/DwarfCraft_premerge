@@ -113,6 +113,10 @@ public class DwarfCraft extends JavaPlugin {
 		perms = rsp.getProvider();
 		return perms != null;
 	}
+	
+	private boolean isPermissionEnabled() {
+		return perms != null;
+	}
 
 	public Permission getPermission() {
 		return perms;
@@ -253,9 +257,29 @@ public class DwarfCraft extends JavaPlugin {
 	 */
 	@Override
 	public void onEnable() {
-		setupPermissions();
-		setupChat();
 		PluginManager pm = getServer().getPluginManager();
+		
+		if (pm.getPlugin("Vault") == null || pm.getPlugin("Vault").isEnabled() == false) {
+			System.out.println("[DwarfCraft] Couldn't find Vault!");
+			System.out.println("[DwarfCraft] DwarfCraft now disabiling...");
+			pm.disablePlugin(this);
+			return;
+		}
+		
+		try {
+			setupPermissions();
+			setupChat();
+		} catch (Exception e) {
+			System.out.println("[DwarfCraft] Unable to find a permissions plugin.");
+			pm.disablePlugin(this);
+			return;
+		}
+		
+		if(!perms.isEnabled()) {
+			System.out.println("[DwarfCraft] Unable to find a permissions plugin.");
+			pm.disablePlugin(this);
+			return;
+		}
 
 		pm.registerEvents(playerListener, this);
 
@@ -269,10 +293,10 @@ public class DwarfCraft extends JavaPlugin {
 
 		pm.registerEvents(dcListener, this);
 
-		if (getServer().getPluginManager().getPlugin("Citizens") == null || getServer().getPluginManager().getPlugin("Citizens").isEnabled() == false) {
+		if (pm.getPlugin("Citizens") == null || pm.getPlugin("Citizens").isEnabled() == false) {
 			System.out.println("[DwarfCraft] Couldn't find Citizens!");
 			System.out.println("[DwarfCraft] DwarfCraft now disabiling...");
-			getServer().getPluginManager().disablePlugin(this);
+			pm.disablePlugin(this);
 			return;
 		}
 		System.out.println("[DwarfCraft] Hooked into Citizens!");
@@ -283,6 +307,7 @@ public class DwarfCraft extends JavaPlugin {
 		util = new Util(this);
 		cm = new ConfigManager(this, getDataFolder().getAbsolutePath(), "DwarfCraft.config");
 		dm = new DataManager(this, cm);
+		new Messages(this);
 
 		dm.dbInitialize();
 
