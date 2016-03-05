@@ -15,18 +15,24 @@ import com.Jessy1237.DwarfCraft.CommandParser;
 import com.Jessy1237.DwarfCraft.DCCommandException;
 import com.Jessy1237.DwarfCraft.DCCommandException.Type;
 import com.Jessy1237.DwarfCraft.DwarfCraft;
-public class CommandTutorial extends Command {
-	private final DwarfCraft plugin;
 
-	public CommandTutorial(final DwarfCraft plugin) {
+public class CommandTutorial extends Command
+{
+	private final DwarfCraft	plugin;
+	
+	public CommandTutorial(final DwarfCraft plugin)
+	{
 		super("Tutorial");
 		this.plugin = plugin;
 	}
 	
 	@Override
-	public boolean execute(CommandSender sender, String commandLabel, String[] args){
-		try{
-	
+	public boolean execute(CommandSender sender, String commandLabel,
+			String[] args)
+	{
+		try
+		{
+			
 			CommandParser parser = new CommandParser(plugin, sender, args);
 			List<Object> desiredArguments = new ArrayList<Object>();
 			List<Object> outputList = null;
@@ -36,10 +42,12 @@ public class CommandTutorial extends Command {
 			int page = 0;
 			desiredArguments.add(page);
 			
-			try {
+			try
+			{
 				outputList = parser.parse(desiredArguments, false);
 				page = (Integer) outputList.get(0);
-			} catch (DCCommandException e) {
+			} catch (DCCommandException e)
+			{
 				if (e.getType() == Type.TOOFEWARGS)
 					page = 1;
 				else
@@ -51,10 +59,11 @@ public class CommandTutorial extends Command {
 			plugin.getOut().tutorial(sender, page);
 			return true;
 			
-		} catch (DCCommandException e) {
+		} catch (DCCommandException e)
+		{
 			e.describe(sender);
 			sender.sendMessage(Usage.TUTORIAL.getUsage());
-			return false;		
+			return false;
 		}
 	}
 }

@@ -23,33 +23,44 @@ import com.Jessy1237.DwarfCraft.DwarfCraft;
 import com.Jessy1237.DwarfCraft.DwarfTrainerTrait;
 import com.Jessy1237.DwarfCraft.Skill;
 
-public class CommandCreateTrainer extends Command {
-	private final DwarfCraft plugin;
-
-	public CommandCreateTrainer(final DwarfCraft plugin) {
+public class CommandCreateTrainer extends Command
+{
+	private final DwarfCraft	plugin;
+	
+	public CommandCreateTrainer(final DwarfCraft plugin)
+	{
 		super("CreateTrainer");
 		this.plugin = plugin;
 	}
-
+	
 	@SuppressWarnings("deprecation")
 	@Override
-	public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+	public boolean execute(CommandSender sender, String commandLabel,
+			String[] args)
+	{
 		if (DwarfCraft.debugMessagesThreshold < 1)
 			System.out.println("DC1: started command 'createtrainer'");
-
-		if (args.length == 0 || args[0].equals(null)) {
-			plugin.getOut().sendMessage(sender, CommandInformation.Usage.CREATETRAINER.getUsage());
-		} else if (args[0].equalsIgnoreCase("?")) {
-			plugin.getOut().sendMessage(sender, CommandInformation.Desc.CREATETRAINER.getDesc());
-		} else {
-			try {
+		
+		if (args.length == 0 || args[0].equals(null))
+		{
+			plugin.getOut().sendMessage(sender,
+					CommandInformation.Usage.CREATETRAINER.getUsage());
+		} else if (args[0].equalsIgnoreCase("?"))
+		{
+			plugin.getOut().sendMessage(sender,
+					CommandInformation.Desc.CREATETRAINER.getDesc());
+		} else
+		{
+			try
+			{
 				CommandParser parser = new CommandParser(plugin, sender, args);
 				List<Object> desiredArguments = new ArrayList<Object>();
 				List<Object> outputList = null;
-
+				
 				String uniqueId = "UniqueIdAdd";
 				String name = "Name";
-				Skill skill = new Skill(0, null, 0, null, null, null, null, null);
+				Skill skill = new Skill(0, null, 0, null, null, null, null,
+						null);
 				Integer maxSkill = 1;
 				Integer minSkill = 1;
 				String type = "Type";
@@ -59,9 +70,11 @@ public class CommandCreateTrainer extends Command {
 				desiredArguments.add(maxSkill);
 				desiredArguments.add(minSkill);
 				desiredArguments.add(type);
-				try {
+				try
+				{
 					if (!(sender instanceof Player))
-						throw new DCCommandException(plugin, Type.CONSOLECANNOTUSE);
+						throw new DCCommandException(plugin,
+								Type.CONSOLECANNOTUSE);
 					outputList = parser.parse(desiredArguments, false);
 					uniqueId = (String) outputList.get(0);
 					name = (String) outputList.get(1);
@@ -69,8 +82,10 @@ public class CommandCreateTrainer extends Command {
 					maxSkill = (Integer) outputList.get(3);
 					minSkill = (Integer) outputList.get(4);
 					type = (String) outputList.get(5);
-				} catch (DCCommandException e) {
-					if (e.getType() == Type.TOOFEWARGS) {
+				} catch (DCCommandException e)
+				{
+					if (e.getType() == Type.TOOFEWARGS)
+					{
 						outputList = parser.parse(desiredArguments, true);
 						uniqueId = (String) outputList.get(0);
 						name = (String) outputList.get(1);
@@ -81,28 +96,43 @@ public class CommandCreateTrainer extends Command {
 					} else
 						throw e;
 				}
-
-				if (minSkill == 0) {
+				
+				if (minSkill == 0)
+				{
 					minSkill = -1;
 				}
-
+				
 				Player p = (Player) sender;
-				if (plugin.getNPCRegistry().getById(Integer.parseInt(uniqueId)) != null) {
-					plugin.getOut().sendMessage(sender, "An NPC with that ID already exsists! Try another ID.");
+				if (plugin.getNPCRegistry().getById(
+						Integer.parseInt(uniqueId)) != null)
+				{
+					plugin.getOut()
+							.sendMessage(sender,
+									"An NPC with that ID already exsists! Try another ID.");
 					return true;
 				}
 				AbstractNPC npc;
-				if(type.equalsIgnoreCase("PLAYER")) {
-					npc = (AbstractNPC) plugin.getNPCRegistry().createNPC(EntityType.PLAYER, UUID.randomUUID(), Integer.parseInt(uniqueId), name);
-				} else {
-					npc = (AbstractNPC) plugin.getNPCRegistry().createNPC(EntityType.fromName(type), UUID.randomUUID(), Integer.parseInt(uniqueId), name);
+				if (type.equalsIgnoreCase("PLAYER"))
+				{
+					npc = (AbstractNPC) plugin.getNPCRegistry().createNPC(
+							EntityType.PLAYER, UUID.randomUUID(),
+							Integer.parseInt(uniqueId), name);
+				} else
+				{
+					npc = (AbstractNPC) plugin.getNPCRegistry().createNPC(
+							EntityType.fromName(type), UUID.randomUUID(),
+							Integer.parseInt(uniqueId), name);
 				}
 				npc.spawn(p.getLocation());
-				npc.addTrait(new DwarfTrainerTrait(plugin, Integer.parseInt(uniqueId), skill.getId(), maxSkill, minSkill, false, null));
+				npc.addTrait(new DwarfTrainerTrait(plugin, Integer
+						.parseInt(uniqueId), skill.getId(), maxSkill,
+						minSkill, false, null));
 				npc.setProtected(true);
-			} catch (DCCommandException e) {
+			} catch (DCCommandException e)
+			{
 				e.describe(sender);
-				sender.sendMessage(CommandInformation.Usage.CREATETRAINER.getUsage());
+				sender.sendMessage(CommandInformation.Usage.CREATETRAINER
+						.getUsage());
 			}
 		}
 		return true;

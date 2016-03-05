@@ -9,19 +9,23 @@ import org.bukkit.command.CommandSender;
 
 import com.Jessy1237.DwarfCraft.DwarfCraft;
 
-public class CommandRules extends Command {
-	private final DwarfCraft plugin;
-
-	public CommandRules(final DwarfCraft plugin) {
+public class CommandRules extends Command
+{
+	private final DwarfCraft	plugin;
+	
+	public CommandRules(final DwarfCraft plugin)
+	{
 		super("Rules");
 		this.plugin = plugin;
 	}
 	
 	@Override
-	public boolean execute(CommandSender sender, String commandLabel, String[] args){
+	public boolean execute(CommandSender sender, String commandLabel,
+			String[] args)
+	{
 		if (DwarfCraft.debugMessagesThreshold < 1)
 			System.out.println("DC1: started command 'rules'");
 		plugin.getOut().rules(sender);
-		return true;		
+		return true;
 	}
 }
