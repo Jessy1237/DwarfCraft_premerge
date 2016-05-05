@@ -22,6 +22,8 @@ import org.bukkit.World;
 import org.jbls.LexManos.CSV.CSVReader;
 import org.jbls.LexManos.CSV.CSVRecord;
 
+import com.Jessy1237.DwarfCraft.events.DwarfCraftLoadSkillsEvent;
+
 public final class ConfigManager
 {
 
@@ -592,6 +594,7 @@ public final class ConfigManager
             CSVReader csv = new CSVReader( configDirectory + configSkillsFileName );
             configSkillsVersion = csv.getVersion();
             Iterator<CSVRecord> records = csv.getRecords();
+            HashMap<Integer, Skill> skills = new HashMap<Integer, Skill>();
             while ( records.hasNext() )
             {
                 CSVRecord item = records.next();
@@ -603,9 +606,14 @@ public final class ConfigManager
                         new TrainingItem( plugin.getUtil().parseItem( item.getString( "Item3" ) ), item.getDouble( "Item3Base" ), item.getInt( "Item3Max" ) ),
                         Material.getMaterial( item.getInt( "Held" ) ) );
 
-                skillsArray.put( skill.getId(), skill );
+                skills.put( skill.getId(), skill );
 
             }
+            DwarfCraftLoadSkillsEvent e = new DwarfCraftLoadSkillsEvent(skills);
+            plugin.getServer().getPluginManager().callEvent( e );
+            
+            skillsArray = e.getSkills();
+            
             return true;
         }
         catch ( FileNotFoundException fN )
