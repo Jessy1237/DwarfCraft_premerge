@@ -22,6 +22,7 @@ import org.bukkit.World;
 import org.jbls.LexManos.CSV.CSVReader;
 import org.jbls.LexManos.CSV.CSVRecord;
 
+import com.Jessy1237.DwarfCraft.events.DwarfCraftLoadRacesEvent;
 import com.Jessy1237.DwarfCraft.events.DwarfCraftLoadSkillsEvent;
 
 public final class ConfigManager
@@ -429,6 +430,7 @@ public final class ConfigManager
             boolean desc = false;
             boolean skills = false;
             Race race = null;
+            ArrayList<Race> races = new ArrayList<Race>();
             while ( line != null )
             {
                 if ( line.length() == 0 )
@@ -474,7 +476,7 @@ public final class ConfigManager
                 }
                 if ( name && desc && skills )
                 {
-                    raceList.add( race );
+                    races.add( race );
                     name = false;
                     desc = false;
                     skills = false;
@@ -482,6 +484,10 @@ public final class ConfigManager
                     continue;
                 }
             }
+
+            DwarfCraftLoadRacesEvent event = new DwarfCraftLoadRacesEvent( races );
+            plugin.getServer().getPluginManager().callEvent( event );
+            raceList = event.getRaces();
         }
         catch ( Exception e )
         {
@@ -609,11 +615,11 @@ public final class ConfigManager
                 skills.put( skill.getId(), skill );
 
             }
-            DwarfCraftLoadSkillsEvent e = new DwarfCraftLoadSkillsEvent(skills);
+            DwarfCraftLoadSkillsEvent e = new DwarfCraftLoadSkillsEvent( skills );
             plugin.getServer().getPluginManager().callEvent( e );
-            
+
             skillsArray = e.getSkills();
-            
+
             return true;
         }
         catch ( FileNotFoundException fN )

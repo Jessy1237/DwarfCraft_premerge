@@ -37,8 +37,8 @@ public class DwarfCraftLoadSkillsEvent extends Event implements Cancellable
 
     /**
      * The event for when DwarfCraft loads all the skills from the csv file but
-     * before it is set into the plugins memory. So you can inject or remove
-     * skills into the plugin via this event
+     * before it is set into the plugins memory. So you can inject, remove or
+     * edit skills into the plugin via this event
      * 
      * @param skills
      *            the skills that were loaded by DwarfCraft from the csv file.
