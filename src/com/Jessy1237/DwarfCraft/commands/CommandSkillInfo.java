@@ -21,79 +21,76 @@ import com.Jessy1237.DwarfCraft.Skill;
 
 public class CommandSkillInfo extends Command
 {
-	private final DwarfCraft	plugin;
-	
-	public CommandSkillInfo(final DwarfCraft plugin)
-	{
-		super("SkillInfo");
-		this.plugin = plugin;
-	}
-	
-	@Override
-	public boolean execute(CommandSender sender, String commandLabel,
-			String[] args)
-	{
-		if (DwarfCraft.debugMessagesThreshold < 1)
-			System.out.println("DC1: started command 'skillinfo'");
-		
-		if (args.length == 0 || args == null)
-		{
-			plugin.getOut().sendMessage(sender,
-					CommandInformation.Usage.SKILLINFO.getUsage());
-		} else if (args[0].equalsIgnoreCase("?"))
-		{
-			plugin.getOut().sendMessage(sender,
-					CommandInformation.Desc.SKILLINFO.getDesc());
-		} else
-		{
-			try
-			{
-				CommandParser parser = new CommandParser(plugin, sender, args);
-				List<Object> desiredArguments = new ArrayList<Object>();
-				List<Object> outputList = null;
-				
-				DCPlayer dCPlayer = new DCPlayer(plugin, null);
-				Skill skill = new Skill(0, null, 0, null, null, null, null,
-						null);
-				desiredArguments.add(skill);
-				desiredArguments.add(dCPlayer);
-				
-				try
-				{
-					outputList = parser.parse(desiredArguments, false);
-					if (args.length > outputList.size())
-						throw new DCCommandException(plugin, Type.TOOMANYARGS);
-					
-					skill = (Skill) outputList.get(0);
-					dCPlayer = (DCPlayer) outputList.get(1);
-				} catch (DCCommandException dce)
-				{
-					if (dce.getType() == Type.PARSEDWARFFAIL
-							|| dce.getType() == Type.TOOFEWARGS)
-					{
-						desiredArguments.remove(0);
-						outputList = parser.parse(desiredArguments, true);
-						skill = (Skill) outputList.get(0);
-						if (!(sender instanceof Player))
-							throw new DCCommandException(plugin,
-									Type.CONSOLECANNOTUSE);
-						dCPlayer = plugin.getDataManager().find(
-								(Player) sender);
-					} else
-						throw dce;
-				}
-				plugin.getOut().printSkillInfo(sender, skill, dCPlayer, 30);
-				return true;
-				
-			} catch (DCCommandException e)
-			{
-				e.describe(sender);
-				sender.sendMessage(CommandInformation.Usage.SKILLINFO
-						.getUsage());
-				return false;
-			}
-		}
-		return true;
-		
-	}
+    private final DwarfCraft plugin;
+
+    public CommandSkillInfo( final DwarfCraft plugin )
+    {
+        super( "SkillInfo" );
+        this.plugin = plugin;
+    }
+
+    @Override
+    public boolean execute( CommandSender sender, String commandLabel, String[] args )
+    {
+        if ( DwarfCraft.debugMessagesThreshold < 1 )
+            System.out.println( "DC1: started command 'skillinfo'" );
+
+        if ( args.length == 0 || args == null )
+        {
+            plugin.getOut().sendMessage( sender, CommandInformation.Usage.SKILLINFO.getUsage() );
+        }
+        else if ( args[0].equalsIgnoreCase( "?" ) )
+        {
+            plugin.getOut().sendMessage( sender, CommandInformation.Desc.SKILLINFO.getDesc() );
+        }
+        else
+        {
+            try
+            {
+                CommandParser parser = new CommandParser( plugin, sender, args );
+                List<Object> desiredArguments = new ArrayList<Object>();
+                List<Object> outputList = null;
+
+                DCPlayer dCPlayer = new DCPlayer( plugin, null );
+                Skill skill = new Skill( 0, null, 0, null, null, null, null, null );
+                desiredArguments.add( skill );
+                desiredArguments.add( dCPlayer );
+
+                try
+                {
+                    outputList = parser.parse( desiredArguments, false );
+                    if ( args.length > outputList.size() )
+                        throw new DCCommandException( plugin, Type.TOOMANYARGS );
+
+                    skill = ( Skill ) outputList.get( 0 );
+                    dCPlayer = ( DCPlayer ) outputList.get( 1 );
+                }
+                catch ( DCCommandException dce )
+                {
+                    if ( dce.getType() == Type.PARSEDWARFFAIL || dce.getType() == Type.TOOFEWARGS )
+                    {
+                        desiredArguments.remove( 0 );
+                        outputList = parser.parse( desiredArguments, true );
+                        skill = ( Skill ) outputList.get( 0 );
+                        if ( !( sender instanceof Player ) )
+                            throw new DCCommandException( plugin, Type.CONSOLECANNOTUSE );
+                        dCPlayer = plugin.getDataManager().find( ( Player ) sender );
+                    }
+                    else
+                        throw dce;
+                }
+                plugin.getOut().printSkillInfo( sender, skill, dCPlayer, 30 );
+                return true;
+
+            }
+            catch ( DCCommandException e )
+            {
+                e.describe( sender );
+                sender.sendMessage( CommandInformation.Usage.SKILLINFO.getUsage() );
+                return false;
+            }
+        }
+        return true;
+
+    }
 }
