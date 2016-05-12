@@ -2,7 +2,7 @@ name: DwarfCraft
 description: A skills and progression plugin for character development in RPG worlds.
 author: Jessy1237
 main: com.Jessy1237.DwarfCraft.DwarfCraft
-version: 2.6.2
+version: 2.6.5
 depend: [Vault, Citizens]
 commands: 
    dcdebug: 
@@ -41,7 +41,7 @@ commands:
              /<command> <full/-f)> <Player Name or blank>
              Example: /skillsheet smartaleq - Prints smartaleq's skillsheet
              Example: /ss -f - Prints your complete skillsheet with level 0 Skills
-      aliases: [ss]
+      aliases: [skills, ss]
    skillinfo: 
       description: Displays a description of a dwarf's skill and training costs
       usage: |

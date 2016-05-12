@@ -7,10 +7,7 @@ package com.Jessy1237.DwarfCraft.listeners;
 import java.util.HashMap;
 import java.util.List;
 
-import net.citizensnpcs.api.event.NPCLeftClickEvent;
-import net.citizensnpcs.api.event.NPCRightClickEvent;
-
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftSheep;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftSheep;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
@@ -35,6 +32,9 @@ import com.Jessy1237.DwarfCraft.EffectType;
 import com.Jessy1237.DwarfCraft.Skill;
 import com.Jessy1237.DwarfCraft.TrainSkillSchedule;
 import com.Jessy1237.DwarfCraft.events.DwarfCraftEffectEvent;
+
+import net.citizensnpcs.api.event.NPCLeftClickEvent;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
 
 public class DCEntityListener implements Listener
 {

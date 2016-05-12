@@ -407,7 +407,7 @@ public class DwarfCraft extends JavaPlugin
         if ( !getConfigManager().readGreeterMessagesfile() )
         {
             System.out.println( "[SEVERE] Failed to read DwarfCraft Greeter Messages)" );
-            getServer().getPluginManager().disablePlugin( this );
+            pm.disablePlugin( this );
         }
 
         for ( Player player : getServer().getOnlinePlayers() )
@@ -428,7 +428,7 @@ public class DwarfCraft extends JavaPlugin
             System.out.println( "[DwarfCraft] Couldn't find LogBlock!" );
         }
 
-        System.out.println( "[DwarfCraft]" + getDescription().getName() + " version " + getDescription().getVersion() + " is enabled!" );
+        System.out.println( "[DwarfCraft] " + getDescription().getName() + " version " + getDescription().getVersion() + " is enabled!" );
     }
 
     public void despawnById( int ID )
