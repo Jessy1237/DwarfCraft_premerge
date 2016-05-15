@@ -67,6 +67,7 @@ public final class ConfigManager
     public boolean prefix = false;
     public boolean announce = false;
 
+    @SuppressWarnings( "unchecked" )
     protected ConfigManager( DwarfCraft plugin, String directory, String paramsFileName )
     {
         this.plugin = plugin;
@@ -82,6 +83,18 @@ public final class ConfigManager
             {
                 System.out.println( "[SEVERE] Failed to Enable DwarfCraft Skills and Effects)" );
                 plugin.getServer().getPluginManager().disablePlugin( plugin );
+            }
+            else
+            {
+                //Runs the proceeding events after all the config files are read so that the skillArray is complete with effects
+                DwarfCraftLoadSkillsEvent e = new DwarfCraftLoadSkillsEvent( ( HashMap<Integer, Skill> ) skillsArray.clone() );
+                plugin.getServer().getPluginManager().callEvent( e );
+                skillsArray = e.getSkills();
+                
+                DwarfCraftLoadRacesEvent event = new DwarfCraftLoadRacesEvent( ( ArrayList<Race> ) raceList.clone() );
+                plugin.getServer().getPluginManager().callEvent( event );
+                raceList = event.getRaces();
+                
             }
         }
         catch ( Exception e )
@@ -430,7 +443,6 @@ public final class ConfigManager
             boolean desc = false;
             boolean skills = false;
             Race race = null;
-            ArrayList<Race> races = new ArrayList<Race>();
             while ( line != null )
             {
                 if ( line.length() == 0 )
@@ -476,7 +488,7 @@ public final class ConfigManager
                 }
                 if ( name && desc && skills )
                 {
-                    races.add( race );
+                    raceList.add( race );
                     name = false;
                     desc = false;
                     skills = false;
@@ -484,10 +496,6 @@ public final class ConfigManager
                     continue;
                 }
             }
-
-            DwarfCraftLoadRacesEvent event = new DwarfCraftLoadRacesEvent( races );
-            plugin.getServer().getPluginManager().callEvent( event );
-            raceList = event.getRaces();
         }
         catch ( Exception e )
         {
@@ -600,7 +608,6 @@ public final class ConfigManager
             CSVReader csv = new CSVReader( configDirectory + configSkillsFileName );
             configSkillsVersion = csv.getVersion();
             Iterator<CSVRecord> records = csv.getRecords();
-            HashMap<Integer, Skill> skills = new HashMap<Integer, Skill>();
             while ( records.hasNext() )
             {
                 CSVRecord item = records.next();
@@ -612,14 +619,9 @@ public final class ConfigManager
                         new TrainingItem( plugin.getUtil().parseItem( item.getString( "Item3" ) ), item.getDouble( "Item3Base" ), item.getInt( "Item3Max" ) ),
                         Material.getMaterial( item.getInt( "Held" ) ) );
 
-                skills.put( skill.getId(), skill );
+                skillsArray.put( skill.getId(), skill );
 
             }
-            DwarfCraftLoadSkillsEvent e = new DwarfCraftLoadSkillsEvent( skills );
-            plugin.getServer().getPluginManager().callEvent( e );
-
-            skillsArray = e.getSkills();
-
             return true;
         }
         catch ( FileNotFoundException fN )
