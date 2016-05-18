@@ -16,7 +16,6 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 
 import com.Jessy1237.DwarfCraft.DCPlayer;
 import com.Jessy1237.DwarfCraft.DwarfCraft;
@@ -113,8 +112,6 @@ public class DCVehicleListener implements Listener
     @EventHandler( priority = EventPriority.NORMAL )
     public void onVehicleExit( VehicleExitEvent event )
     {
-        if ( !( event.getVehicle() instanceof Boat ) )
-            return;
         plugin.getDataManager().removeVehicle( event.getVehicle() );
     }
 
@@ -123,6 +120,7 @@ public class DCVehicleListener implements Listener
      * 
      * @param event
      */
+    @SuppressWarnings( "deprecation" )
     @EventHandler( priority = EventPriority.LOWEST )
     public void onVehicleMove( VehicleMoveEvent event )
     {
@@ -138,13 +136,14 @@ public class DCVehicleListener implements Listener
 
         DCPlayer dCPlayer = plugin.getDataManager().find( ( Player ) event.getVehicle().getPassenger() );
         double effectAmount = 1.0;
-
+        Effect effect = null;
         for ( Skill s : dCPlayer.getSkills().values() )
         {
             for ( Effect e : s.getEffects() )
             {
                 if ( e.getEffectType() == EffectType.VEHICLEMOVE )
                 {
+                    effect = e;
                     effectAmount = e.getEffectAmount( dCPlayer );
                 }
             }
@@ -153,12 +152,19 @@ public class DCVehicleListener implements Listener
         DwarfVehicle dv = plugin.getDataManager().getVehicle( event.getVehicle() );
         if ( dv != null )
         {
-            Location oldLoc = event.getVehicle().getLocation();
-            Vector vel = event.getVehicle().getVelocity().multiply( effectAmount );
-            Location location = new Location( event.getVehicle().getWorld(), oldLoc.getX(), oldLoc.getY(), oldLoc.getZ() );
-            location.setX( location.getX() + vel.getX() );
-            location.setZ( location.getZ() + vel.getZ() );
-            event.getVehicle().teleport( location );
+            if ( !dv.changedSpeed() )
+            {
+                Boat boat = ( Boat ) event.getVehicle();
+
+                //The original boat speed and altered boat speed are assigned to the damage variables
+                DwarfCraftEffectEvent e = new DwarfCraftEffectEvent( dCPlayer, effect, null, null, null, null, boat.getMaxSpeed(), boat.getMaxSpeed() * effectAmount, event.getVehicle(), null, null );
+                plugin.getServer().getPluginManager().callEvent( e );
+                if ( !e.isCancelled() )
+                {
+                    boat.setMaxSpeed( e.getAlteredDamage() );
+                    dv.speedChanged();
+                }
+            }
         }
     }
 }

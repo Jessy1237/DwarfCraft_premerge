@@ -249,7 +249,7 @@ public class Effect
                 description = String.format( "&6Your Arrows (Fully Charge Bow) do %s%.0f &6hp damage (half hearts)", effectLevelColor, effectAmount + 2 );
                 break;
             case VEHICLEDROP:
-                description = String.format( "&6DISABLED: When you break a boat &6approx. %s%.2f &2%s&6 are created", effectLevelColor, effectAmount, output );
+                description = String.format( "&6When you break a boat &6approx. %s%.2f &2%s&6 are created", effectLevelColor, effectAmount, output );
                 break;
             case VEHICLEMOVE:
                 description = String.format( "&6Your boat travels %s%d%% &6faster than normal", effectLevelColor, ( int ) ( effectAmount * 100 - 100 ) );

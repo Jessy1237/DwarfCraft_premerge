@@ -50,12 +50,12 @@ public class DwarfCraftEffectEvent extends Event implements Cancellable
      *            players hunger is not altered
      * @param orgDmg
      *            The original Damgage taken by or given by the player before
-     *            the event, can also be damage done to a tool. Put null if the
-     *            damage is not altered
+     *            the event, can also be damage done to a tool. Null if the
+     *            damage is not altered. Can also be the original boat speed
      * @param newDmg
      *            The altered damage taken by or given by the player, can also
      *            be damage done to a tool. Put null if the damage is not
-     *            altered
+     *            altered. Can also be the altered boat speed
      * @param entity
      *            The Entity that is involved with the effect. Put null if no
      *            entity other than the player is involved.

@@ -31,7 +31,7 @@ public class DataManager
 {
 
     private List<DCPlayer> dwarves = new ArrayList<DCPlayer>();
-    private List<DwarfVehicle> vehicleList = new ArrayList<DwarfVehicle>();
+    public HashMap<Integer, DwarfVehicle> vehicleMap = new HashMap<Integer, DwarfVehicle>();
     public HashMap<Integer, DwarfTrainer> trainerList = new HashMap<Integer, DwarfTrainer>();
     private HashMap<String, GreeterMessage> greeterMessageList = new HashMap<String, GreeterMessage>();
     private final ConfigManager configManager;
@@ -46,7 +46,7 @@ public class DataManager
 
     public void addVehicle( DwarfVehicle v )
     {
-        vehicleList.add( v );
+        vehicleMap.put( v.getVehicle().getEntityId(), v );
     }
 
     /**
@@ -483,11 +483,11 @@ public class DataManager
 
     public DwarfVehicle getVehicle( Vehicle v )
     {
-        for ( DwarfVehicle i : vehicleList )
+        for ( Integer i : vehicleMap.keySet() )
         {
-            if ( i.equals( v ) )
+            if ( i == v.getEntityId() )
             {
-                return i;
+                return vehicleMap.get( i );
             }
         }
         return null;
@@ -537,15 +537,18 @@ public class DataManager
 
     public void removeVehicle( Vehicle v )
     {
-        for ( DwarfVehicle i : vehicleList )
+        int id = -1;
+        for ( Integer i : vehicleMap.keySet() )
         {
-            if ( i.equals( v ) )
+            if ( i == v.getEntityId() )
             {
-                plugin.getDataManager().vehicleList.remove( i );
+                id = i;
                 if ( DwarfCraft.debugMessagesThreshold < 5 )
                     System.out.println( "DC5:Removed DwarfVehicle from vehicleList" );
             }
         }
+        if(id != -1)
+            vehicleMap.remove( id );
     }
 
     private int getPlayerID( UUID uuid )

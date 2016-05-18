@@ -1,24 +1,16 @@
 package com.Jessy1237.DwarfCraft;
 
-/**
- * Original Authors: smartaleq, LexManos and RCarretta
- */
-
-import org.bukkit.Location;
 import org.bukkit.entity.Vehicle;
-import org.bukkit.util.Vector;
 
 public class DwarfVehicle
 {
     private Vehicle vehicle;
-    private Vector velocity;
-    private Location location;
+    private boolean changedSpeed;
 
     public DwarfVehicle( Vehicle vehicle )
     {
         this.vehicle = vehicle;
-        this.velocity = vehicle.getVelocity().clone();
-        this.location = vehicle.getLocation().clone();
+        this.changedSpeed = false;
     }
 
     @Override
@@ -26,25 +18,23 @@ public class DwarfVehicle
     {
         if ( that instanceof Vehicle )
         {
-            if ( that == vehicle )
+            Vehicle vec = (Vehicle) that;
+            if ( vec.getEntityId() == vehicle.getEntityId() )
                 return true;
         }
         return false;
     }
 
-    protected Location getLocation()
+    public Vehicle getVehicle()
     {
-        return location;
+        return this.vehicle;
     }
 
-    protected Vehicle getVehicle()
-    {
-        return vehicle;
+    public boolean changedSpeed() {
+        return this.changedSpeed;
     }
-
-    protected Vector getVelocity()
-    {
-        return velocity;
+    
+    public void speedChanged() {
+        this.changedSpeed = true;
     }
-
 }
