@@ -324,10 +324,10 @@ public class Out
             if ( !odd )
             {
                 int interimLen = plugin.getUtil().msgLength( interim );
-                int numSpaces = ( ( 124 - interimLen ) / 4 ) - 1;
+                int numSpaces = ( ( 180 - interimLen ) / 4 ) - 1;
                 for ( int i = 0; i < numSpaces; i++ )
                     interim = interim.concat( " " );
-                interimLen = 124 - interimLen - numSpaces * 4;
+                interimLen = 180 - interimLen - numSpaces * 4;
                 // 4 possible cases - need 4, 5, 6, or 7
                 if ( interimLen == 4 )
                     interim = interim.concat( "&0 | &b" );

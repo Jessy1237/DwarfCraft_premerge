@@ -6,7 +6,6 @@ package com.Jessy1237.DwarfCraft.listeners;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_9_R2.entity.CraftBoat;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -104,7 +103,7 @@ public class DCVehicleListener implements Listener
         if ( !plugin.getUtil().isWorldAllowed( event.getVehicle().getWorld() ) )
             return;
 
-        if ( !( event.getVehicle() instanceof CraftBoat ) )
+        if ( !( event.getVehicle() instanceof Boat ) )
             return;
         plugin.getDataManager().addVehicle( new DwarfVehicle( event.getVehicle() ) );
         if ( DwarfCraft.debugMessagesThreshold < 6 )
@@ -114,7 +113,7 @@ public class DCVehicleListener implements Listener
     @EventHandler( priority = EventPriority.NORMAL )
     public void onVehicleExit( VehicleExitEvent event )
     {
-        if ( !( event.getVehicle() instanceof CraftBoat ) )
+        if ( !( event.getVehicle() instanceof Boat ) )
             return;
         plugin.getDataManager().removeVehicle( event.getVehicle() );
     }
@@ -132,7 +131,7 @@ public class DCVehicleListener implements Listener
 
         if ( event.getVehicle().getPassenger() == null )
             return;
-        if ( !( event.getVehicle() instanceof CraftBoat ) )
+        if ( !( event.getVehicle() instanceof Boat ) )
             return;
         if ( !( event.getVehicle().getPassenger() instanceof Player ) )
             return;

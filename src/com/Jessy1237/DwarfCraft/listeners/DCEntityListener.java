@@ -7,13 +7,14 @@ package com.Jessy1237.DwarfCraft.listeners;
 import java.util.HashMap;
 import java.util.List;
 
-import org.bukkit.craftbukkit.v1_9_R2.entity.CraftSheep;
+import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -445,8 +446,8 @@ public class DCEntityListener implements Listener
                         {
                             ItemStack output = effect.getOutput( killer );
 
-                            if ( deadThing instanceof CraftSheep )
-                                output.setDurability( ( short ) ( ( CraftSheep ) deadThing ).getColor().ordinal() );
+                            if ( deadThing instanceof Sheep && output.getType() == Material.WOOL )
+                                output.setDurability( ( short ) ( ( Sheep ) deadThing ).getColor().ordinal() );
 
                             if ( DwarfCraft.debugMessagesThreshold < 5 )
                             {
@@ -476,8 +477,8 @@ public class DCEntityListener implements Listener
                         {
                             ItemStack output = effect.getOutput( killer );
 
-                            if ( deadThing instanceof CraftSheep )
-                                output.setDurability( ( short ) ( ( CraftSheep ) deadThing ).getColor().ordinal() );
+                            if ( deadThing instanceof Sheep && output.getType() == Material.WOOL )
+                                output.setDurability( ( short ) ( ( Sheep ) deadThing ).getColor().ordinal() );
 
                             if ( DwarfCraft.debugMessagesThreshold < 5 )
                             {
