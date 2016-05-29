@@ -2,16 +2,14 @@ package com.Jessy1237.DwarfCraft.events;
 
 import java.util.HashMap;
 
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import com.Jessy1237.DwarfCraft.Skill;
 
-public class DwarfCraftLoadSkillsEvent extends Event implements Cancellable
+public class DwarfCraftLoadSkillsEvent extends Event
 {
     private static final HandlerList handlers = new HandlerList();
-    private boolean cancelled;
     private HashMap<Integer, Skill> skills = new HashMap<Integer, Skill>();
 
     @Override
@@ -23,16 +21,6 @@ public class DwarfCraftLoadSkillsEvent extends Event implements Cancellable
     public static HandlerList getHandlerList()
     {
         return handlers;
-    }
-
-    public boolean isCancelled()
-    {
-        return cancelled;
-    }
-
-    public void setCancelled( boolean cancel )
-    {
-        cancelled = cancel;
     }
 
     /**
