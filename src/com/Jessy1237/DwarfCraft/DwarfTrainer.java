@@ -14,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import com.Jessy1237.DwarfCraft.events.DwarfCraftLevelUpEvent;
 
@@ -176,6 +177,9 @@ public final class DwarfTrainer
 
         boolean hasMats = true;
         boolean deposited = false;
+        
+        final PlayerInventory oldInv = player.getInventory();
+        
         for ( ItemStack costStack : trainingCostsToLevel )
         {
             if ( costStack == null )
@@ -267,17 +271,42 @@ public final class DwarfTrainer
 
         }
 
+        DwarfCraftLevelUpEvent e = null;
+        final int dep1 = skill.getDeposit1(), dep2 = skill.getDeposit2(), dep3 = skill.getDeposit3();
         if ( hasMats )
         {
             skill.setLevel( skill.getLevel() + 1 );
             skill.setDeposit1( 0 );
             skill.setDeposit2( 0 );
             skill.setDeposit3( 0 );
-            plugin.getServer().getPluginManager().callEvent( new DwarfCraftLevelUpEvent( dCPlayer, this, skill ) );
-            plugin.getOut().sendMessage( player, "&6Training Successful!", tag );
+
+            e = new DwarfCraftLevelUpEvent( dCPlayer, this, skill );
+
+            plugin.getServer().getPluginManager().callEvent( e );
         }
         if ( deposited || hasMats )
         {
+
+            if ( e != null )
+            {
+                if ( e.isCancelled() )
+                {
+                    skill.setLevel(  skill.getLevel() - 1 );
+                    skill.setDeposit1( dep1 );
+                    skill.setDeposit2( dep2 );
+                    skill.setDeposit3( dep3 );
+                    
+                    player.getInventory().setContents( oldInv.getContents() );
+                    player.getInventory().setExtraContents( oldInv.getExtraContents() );
+                    
+                    setWait( false );
+                    
+                    return;
+                } else {
+                    plugin.getOut().sendMessage( player, "&6Training Successful!", tag );
+                }
+            }
+
             Skill[] dCSkills = new Skill[1];
             dCSkills[0] = skill;
             plugin.getDataManager().saveDwarfData( dCPlayer, dCSkills );
