@@ -4,7 +4,7 @@ public class CommandInformation
 {
 
     /**
-     * Authors: Jessy1237 & Curtis1509
+     * Authors: Jessy1237
      */
 
     public enum Desc
